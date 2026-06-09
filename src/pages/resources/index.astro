@@ -1,0 +1,69 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { resources } from '../../data/site';
+import generatedPages from '../../data/generatedSeoPages.json';
+
+const livePages = generatedPages.filter((page) => page.published !== false);
+const categoryOrder = ['CRM', 'Automation', 'Lead Generation', 'Booked Calls', 'Appointment Booking', 'Funnels', 'Search', 'Paid Media', 'Contractors', 'Growth', 'Full Stack'];
+const grouped = livePages.reduce((acc, page) => {
+  const category = page.category || page.service || 'Service Resources';
+  acc[category] = acc[category] || [];
+  acc[category].push(page);
+  return acc;
+}, {});
+const sortedCategories = Object.keys(grouped).sort((a, b) => {
+  const ai = categoryOrder.indexOf(a);
+  const bi = categoryOrder.indexOf(b);
+  if (ai !== -1 || bi !== -1) return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  return a.localeCompare(b);
+});
+---
+<Base title="Resources for service-business growth" description="Simplufy resources for CRM, automation, booked calls, estimate requests, ads, SEO, AI, and connected growth systems for service businesses.">
+<Header />
+<main>
+  <section class="container service-hero">
+    <p class="eyebrow">Resources</p>
+    <h1>Service-business resources for CRM, ads, SEO, automation, and follow-up.</h1>
+    <p>Browse practical Simplufy resources by operating problem: CRM handoffs, booked calls, estimate requests, appointment booking, paid media, search visibility, AI workflows, and full-service growth systems.</p>
+  </section>
+
+  {sortedCategories.map((category) => (
+    <section class="container section">
+      <div class="section-title-v4">
+        <p class="eyebrow">{category}</p>
+        <h2>{category} resources</h2>
+        <p>Use these guides to understand what breaks, what to fix first, and how Simplufy connects the page, campaign, CRM, and follow-up path around this part of the system.</p>
+      </div>
+      <div class="industry-grid">
+        {grouped[category].map((page) => (
+          <a class="industry-card" href={`/resources/${page.slug}/`}>
+            <p class="eyebrow">{page.heroEyebrow || page.category || 'Service resource'}</p>
+            <h3>{page.title}</h3>
+            <p>{page.metaDescription}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <section class="container section">
+    <div class="section-title-v4">
+      <p class="eyebrow">Foundational guides</p>
+      <h2>Start with the core marketing system pieces.</h2>
+      <p>These shorter guides cover SEO/AEO/GEO, CRM follow-up, and contractor paid-media channel decisions.</p>
+    </div>
+    <div class="industry-grid">
+      {resources.map((resource) => (
+        <a class="industry-card" href={`/resources/${resource.slug}/`}>
+          <p class="eyebrow">{resource.category}</p>
+          <h3>{resource.title}</h3>
+          <p>{resource.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</main>
+<Footer />
+</Base>

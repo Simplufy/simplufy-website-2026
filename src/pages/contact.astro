@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ContactForm from '../components/ContactForm.astro';
+---
+<Base title="Contact Simplufy" description="Contact Simplufy to book a strategy call or discuss web development, CRM automation, paid advertising, SEO/AEO/GEO, and AI implementation.">
+<Header />
+<main class="container"><section class="service-hero"><p class="eyebrow">Contact</p><h1>Start with the next step that fits where you are.</h1><p>If you are ready to talk, book a strategy call. If you would rather send details first, request a free audit and we will review the opportunity before recommending what to fix.</p></section><ContactForm headline="Book a strategy call" subhead="Choose a time on the calendar. We will use the call to identify the highest-impact fix across your website, ads, CRM, search visibility, follow-up, and AI opportunities." /><ContactForm mode="form" headline="Request a free audit" subhead="Prefer to send details before scheduling? Tell us about the business, your current marketing, and what you want to improve. We will review it and follow up with a practical recommendation." /></main>
+<Footer />
+</Base>

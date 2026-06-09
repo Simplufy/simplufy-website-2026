@@ -1,0 +1,81 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import { caseStudies } from '../../data/site';
+
+export function getStaticPaths(){ return caseStudies.map(study => ({ params:{ slug: study.slug }, props:{ study }})); }
+const { study } = Astro.props;
+const hasFullStudy = Boolean(study.results || study.pillars || study.images);
+const relatedIndustryHref = study.industry?.includes('Pest') ? '/industries/pest-control-companies/' : study.industry?.includes('Exotic') ? '/industries/auto-styling-shops/' : '/industries/auto-detailing-shops/';
+const relatedIndustryLabel = study.industry?.includes('Pest') ? 'Pest control marketing' : study.industry?.includes('Exotic') ? 'Luxury auto marketing' : 'Auto detailing marketing';
+---
+<Base title={study.title} description={study.description}>
+  <Header />
+  <main>
+    <section class="case-hero container reveal">
+      <div>
+        <div class="breadcrumb"><a href="/case-studies/">Case Studies</a> / {study.industry}</div>
+        <p class="eyebrow">{study.client ? `${study.client} case study` : study.industry}</p>
+        <h1 set:html={study.heading ?? study.title}></h1>
+        <p>{study.description}</p>
+        <div class="actions"><a class="button primary" href="/contact/">Build a similar system</a><a class="button ghost" href={relatedIndustryHref}>{relatedIndustryLabel}</a></div>
+      </div>
+      <aside class="case-summary-card">
+        <span>{study.location ?? 'Client result'}</span>
+        <strong>{study.metric}</strong>
+        <p>{study.headlineResult ?? 'A practical growth-system example showing how web, ads, CRM, search visibility, automation, and follow-up can work together to create more qualified opportunities.'}</p>
+      </aside>
+    </section>
+
+    {hasFullStudy ? (
+      <>
+        <section class="container case-metrics reveal">
+          {study.results?.map((result) => <div><span>{result.label}</span><strong>{result.value}</strong><p>{result.note}</p></div>)}
+        </section>
+
+        <section class="container section case-proof-grid case-study-proof">
+          <div class="section-head">
+            <p class="eyebrow">Client results</p>
+            <h2 set:html={study.proofHeading ?? 'From inconsistent word-of-mouth to a <span class="accent-word">predictable lead engine</span>.'}></h2>
+            <p>{study.challengeIntro}</p>
+          </div>
+          <div class="case-image-stack">
+            {study.images?.map((image) => <figure><img src={image.src} alt={image.alt} loading="lazy" /><figcaption>{image.caption}</figcaption></figure>)}
+          </div>
+        </section>
+
+        <section class="split-section"><div class="container split"><div><p class="eyebrow">The challenge</p><h2 set:html={study.challengeHeading ?? 'A premium service with no <span class="accent-word">predictable acquisition</span> system.'}></h2></div><div>{study.challenge?.map((item) => <p>{item}</p>)}</div></div></section>
+
+        <section class="container section">
+          <div class="section-head"><p class="eyebrow">Growth framework</p><h2 set:html={study.frameworkHeading ?? 'The three-part system behind the <span class="accent-word">10x+ ad return</span>.'}></h2></div>
+          <div class="case-pillar-grid">
+            {study.pillars?.map((pillar, index) => <div class="rich-card"><b>0{index + 1}</b><h3>{pillar.title}</h3><p>{pillar.body}</p></div>)}
+          </div>
+        </section>
+
+        <section class="container section case-data-section">
+          <div class="section-head"><p class="eyebrow">{study.dataEyebrow ?? 'Ad performance'}</p><h2 set:html={study.dataHeading ?? 'Premium local leads tracked from spend to <span class="accent-word">pipeline value</span>.'}></h2></div>
+          <div class="case-table-wrap">
+            <table class="case-table">
+              {study.comparison ? <thead><tr><th>Operational feature</th><th>The outdated legacy platform</th><th>The modernized growth architecture</th></tr></thead> : <thead><tr><th>Campaign</th><th>Leads</th><th>Avg. CPL</th><th>Investment</th></tr></thead>}
+              {study.comparison ? <tbody>{study.comparison.map((item) => <tr><td>{item.feature}</td><td>{item.legacy}</td><td>{item.modern}</td></tr>)}</tbody> : <tbody>{study.campaigns?.map((campaign) => <tr><td>{campaign.name}</td><td>{campaign.leads}</td><td>{campaign.cpl}</td><td>{campaign.spend}</td></tr>)}</tbody>}
+            </table>
+          </div>
+          <div class="case-revenue-grid">
+            {study.revenue?.map((item) => <div><span>{item.label}</span><strong>{item.value}</strong><p>{item.note}</p></div>)}
+          </div>
+        </section>
+
+        <section class="container section case-takeaway">
+          <div class="rich-card"><p class="eyebrow">Ultimate takeaway</p><h2>{study.takeawayTitle}</h2><p>{study.takeaway}</p><div class="actions"><a class="button primary" href="/contact/">Request a free pipeline audit</a></div></div>
+        </section>
+      </>
+    ) : (
+      <section class="container rich service-layout"><div><div class="rich-card"><h2>Snapshot</h2><p><strong>{study.metric}</strong> — a focused example of the type of marketing system Simplufy builds: clear positioning, conversion-focused pages, tracked lead sources, CRM follow-up, and practical reporting.</p></div><div class="rich-card"><h2>What the strategy focuses on</h2><ul class="mini-list"><li>Clarifying the offer and buyer journey</li><li>Connecting website, SEO, paid ads, CRM, AI, or automation into one path</li><li>Improving lead quality, speed-to-lead, and sales visibility</li><li>Making the next step easier for qualified buyers</li></ul></div></div><aside class="rich-card"><h3>Want this kind of system?</h3><p>Request an audit and we will look for the highest-impact opportunities in your current marketing path.</p><a class="button primary" href="/contact/">Request a free audit</a></aside></section>
+    )}
+    <ContactForm headline="Want results like this?" variant="full-page" />
+  </main>
+  <Footer />
+</Base>

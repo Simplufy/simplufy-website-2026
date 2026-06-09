@@ -1,0 +1,291 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import FAQ from '../../components/FAQ.astro';
+import PageHeroVisual from '../../components/PageHeroVisual.astro';
+import { services, industries, site } from '../../data/site';
+export function getStaticPaths(){ return services.map(service => ({ params:{ slug: service.slug }, props:{ service }})); }
+const { service } = Astro.props;
+const serviceFaqsBySlug = {
+  'web-development': [
+    { q:'When should a service business rebuild its website instead of editing the old one?', a:'A rebuild makes sense when the homepage cannot explain the offer quickly, service pages are too thin to rank, mobile visitors have to work too hard, or forms and calendars do not connect to the follow-up process. For web development, Simplufy looks at trust, conversion paths, technical SEO, page speed, and whether the site gives each buyer type a clear next step.' },
+    { q:'Will the website be built for SEO from the start?', a:'Yes. Web development work includes crawlable static pages, semantic headings, internal links, service and industry page architecture, metadata, schema, image alt text, and fast Cloudflare-ready performance. The goal is a site that looks premium and gives Google enough context to understand what Simplufy or the client actually offers.' },
+    { q:'Can you connect forms, calendars, and CRM tracking?', a:'Yes. A website should not end at a form submit. Simplufy can connect GoHighLevel forms, booking calendars, tracking scripts, thank-you paths, CRM stages, and follow-up workflows so the site becomes part of the sales system.' }
+  ],
+  'crm-solutions': [
+    { q:'What CRM problems does Simplufy usually fix first?', a:'The first fixes are usually lead routing, missed-call recovery, calendar reminders, pipeline stages, source tracking, and follow-up timing. If a good lead enters the business but nobody knows who owns it, what stage it is in, or when the next touch happens, the CRM is costing revenue.' },
+    { q:'Do CRM automations replace the sales team?', a:'No. CRM automation should protect the sales team from repetitive gaps, not pretend the human relationship does not matter. The strongest systems send reminders, route leads, capture notes, trigger confirmations, and keep the next step clear while the team handles the actual conversation.' },
+    { q:'Can this work with GoHighLevel?', a:'Yes. Simplufy builds GoHighLevel pipelines, forms, calendars, workflows, SMS/email follow-up, missed-call text-back, task creation, reporting views, and campaign attribution when GoHighLevel is the right operating system for the business.' }
+  ],
+  'google-ppc-management': [
+    { q:'What makes Google PPC different from other paid media?', a:'Google PPC captures people already searching for a service, location, problem, or company. The work is less about creating demand from scratch and more about matching search intent with the right ad, landing page, offer, tracking, and follow-up path.' },
+    { q:'Why do Google Ads campaigns fail even with good keywords?', a:'Campaigns often fail because traffic lands on a weak page, calls are not tracked, forms do not route into a CRM, negative keywords are ignored, or the offer does not match the search. Simplufy reviews the entire path from query to booked opportunity instead of only changing bids.' },
+    { q:'Will reporting show booked opportunities, not just clicks?', a:'That is the goal. Google PPC management should connect conversion tracking, call tracking, form submissions, CRM stages, and sales feedback so budget decisions are based on lead quality and booked opportunities instead of surface-level traffic metrics.' }
+  ],
+  'meta-advertising': [
+    { q:'What types of businesses are a good fit for Meta Ads?', a:'Meta Ads work well when the offer can be explained visually, when proof matters, when retargeting can warm up visitors, or when the business has a lead magnet, consultation, seasonal promotion, or high-value service that benefits from repeated exposure.' },
+    { q:'How do you avoid low-quality Facebook leads?', a:'Lead quality improves when the creative pre-qualifies the buyer, the form asks the right friction questions, the offer is clear, and the CRM follow-up happens fast. Simplufy also separates testing, retargeting, and higher-intent paths so cheap form fills do not get mistaken for real pipeline.' },
+    { q:'Do Meta campaigns need landing pages?', a:'Sometimes native lead forms are best for speed; other times landing pages are better for education, proof, and higher-intent conversion. Simplufy chooses the path based on the offer, ticket size, sales cycle, and how much trust the buyer needs before taking action.' }
+  ],
+  'google-local-service-ads': [
+    { q:'Who is eligible for Google Local Service Ads?', a:'Eligibility depends on the industry, location, licensing, background checks, verification status, and Google’s current category rules. Simplufy starts by checking category fit and account readiness before treating LSA as a viable lead source.' },
+    { q:'Why do LSAs need active management?', a:'Local Service Ads depend on reviews, response speed, call quality, dispute review, category fit, budget pacing, and lead feedback. If calls are missed, weak, or miscategorized, the account can spend without producing profitable jobs.' },
+    { q:'Can LSA calls be routed into CRM follow-up?', a:'Yes. LSA performance improves when calls, missed calls, booked appointments, job notes, and follow-up tasks are tracked instead of living only inside the ad platform or a phone log.' }
+  ],
+  'tiktok-ad-management': [
+    { q:'When does TikTok make sense for a service business?', a:'TikTok makes sense when the business can show transformations, demonstrations, founder education, behind-the-scenes proof, strong hooks, or visual outcomes. It is usually strongest as an awareness, retargeting, and creative-learning channel rather than a standalone magic lead source.' },
+    { q:'What does Simplufy test on TikTok?', a:'Testing focuses on hooks, video formats, proof angles, offer framing, audience response, landing paths, and retargeting sequences. Short-form creative should teach the rest of the marketing system what buyers actually stop and care about.' },
+    { q:'How is TikTok connected to the rest of the funnel?', a:'TikTok traffic can support landing pages, lead forms, remarketing audiences, CRM nurture, and creative insights for Meta, website copy, and sales enablement. The channel works best when it has a clear next step after the view.' }
+  ],
+  'seo-aeo-geo': [
+    { q:'How are SEO, AEO, and GEO different on a real website?', a:'SEO helps pages rank in Google. AEO structures pages so they answer buyer questions clearly. GEO improves how the brand and content can be understood by AI-driven search and answer systems. On the site, that means stronger architecture, clearer entities, better FAQs, schema, proof, and content built around real search intent.' },
+    { q:'What pages should a service business build first?', a:'The first pages usually cover core services, high-intent industries, profitable locations, comparison questions, pricing or process questions, and proof. Simplufy prioritizes based on buyer intent, revenue potential, competition, and whether the page can support paid traffic as well as organic search.' },
+    { q:'How do you measure search visibility beyond rankings?', a:'Search visibility is reviewed through impressions, clicks, qualified inquiries, map and local intent, AI/answer presence, content coverage, internal linking, conversion rates, and whether traffic turns into booked opportunities.' }
+  ],
+  'ai-implementation-agent-orchestration': [
+    { q:'What kind of AI implementation is practical for service companies?', a:'Practical AI usually starts with reporting summaries, lead intake support, research, content drafting, CRM task assistance, proposal prep, knowledge-base retrieval, and internal handoff workflows. The best first use cases remove repetitive work without giving an unsupervised system control over sensitive decisions.' },
+    { q:'How do you keep AI workflows reliable?', a:'Simplufy designs AI systems with clear inputs, narrow tasks, human review points, approval steps, logging, and fallback paths. The goal is useful leverage, not a fragile black box that produces work nobody can trust.' },
+    { q:'Can AI connect to CRM, ads, content, and operations?', a:'Yes, when the workflow is designed carefully. AI can summarize lead context, draft follow-up, prepare reports, support content production, research accounts, and help coordinate handoffs between tools, but it should be orchestrated around real business rules.' }
+  ]
+};
+const serviceFaqs = serviceFaqsBySlug[service.slug] ?? serviceFaqsBySlug['web-development'];
+const serviceVisuals = {
+  'web-development': { badge:'Website engine', icon:'⌁', title:'Pages built to convert search demand', theme:'red', kind:'web', items:[{label:'Hero message', value:'clear in seconds'}, {label:'Service pages', value:'SEO-ready'}, {label:'Cloudflare', value:'fast static build'}], flow:['Click','Read','Trust','Book'] },
+  'crm-solutions': { badge:'CRM pipeline', icon:'◈', title:'Lead capture, routing, and follow-up', theme:'red', kind:'crm', items:[{label:'New lead', value:'instant routing'}, {label:'SMS + email', value:'speed-to-lead'}, {label:'Pipeline', value:'stage clarity'}], flow:['Form','Calendar','Pipeline','Follow up'] },
+  'google-ppc-management': { badge:'Google PPC', icon:'G', title:'High-intent searches into tracked opportunities', theme:'red', kind:'ppc', items:[{label:'Search terms', value:'buyer intent'}, {label:'Landing pages', value:'message match'}, {label:'Attribution', value:'click to CRM'}], flow:['Query','Ad','Page','Lead'] },
+  'meta-advertising': { badge:'Meta Ads', icon:'◎', title:'Creative demand across Facebook and Instagram', theme:'red', kind:'meta', items:[{label:'Creative tests', value:'angles'}, {label:'Retargeting', value:'warm audiences'}, {label:'Lead forms', value:'CRM routed'}], flow:['Scroll','Ad','Offer','Follow up'] },
+  'google-local-service-ads': { badge:'Google LSA', icon:'LSA', title:'Eligible local service calls with trust signals', theme:'red', kind:'lsa', items:[{label:'Eligibility', value:'verified'}, {label:'Reviews', value:'trust'}, {label:'Call quality', value:'monitored'}], flow:['Map','Badge','Call','Booked'] },
+  'tiktok-ad-management': { badge:'TikTok Ads', icon:'♪', title:'Short-form creative that earns attention', theme:'red', kind:'tiktok', items:[{label:'Hooks', value:'first 3 seconds'}, {label:'Video tests', value:'creative volume'}, {label:'Retargeting', value:'next step'}], flow:['Watch','Click','Learn','Book'] },
+  'seo-aeo-geo': { badge:'Search visibility', icon:'✦', title:'Google, maps, and AI answer coverage', theme:'red', kind:'seo', items:[{label:'Technical SEO', value:'crawlable'}, {label:'AEO', value:'clear answers'}, {label:'GEO', value:'AI visibility'}], flow:['Query','Answer','Page','Lead'] },
+  'ai-implementation-agent-orchestration': { badge:'AI workflow', icon:'✺', title:'Agents for repetitive internal work', theme:'red', kind:'ai', items:[{label:'Research', value:'agent-assisted'}, {label:'Reporting', value:'summarized'}, {label:'Human review', value:'controlled'}], flow:['Task','Agent','Review','Output'] }
+};
+const visual = serviceVisuals[service.slug] ?? serviceVisuals['web-development'];
+const proofVisuals = {
+  'web-development': {
+    eyebrow: 'Before / after rebuild',
+    title: 'Real redesign proof: State Termite moved from dated and crowded to focused, modern, and conversion-led.',
+    body: 'The old site relied on heavy red and blue navigation, crowded banners, and mixed priorities. The new direction uses a cleaner green brand system, stronger hierarchy, a direct protection-plan CTA, and an above-the-fold form built around lead capture.',
+    type: 'beforeAfter',
+    cards: [
+      { label:'Before', title:'Legacy red / blue site', src:'/assets/proof/state-termite/state-termite-old-red-blue-homepage.png', alt:'Old State Termite red and blue website homepage before redesign' },
+      { label:'After', title:'Modern green conversion page', src:'/assets/proof/state-termite/state-termite-new-green-homepage.png', alt:'New State Termite green website homepage after redesign' }
+    ]
+  },
+  'crm-solutions': {
+    eyebrow:'CRM operating system', title:'A lead should never disappear after the form submit.', body:'CRM work is visualized around the movement from capture to assignment, follow-up, booked call, pipeline stage, and reporting. The goal is a system your team can actually operate every day.', type:'system', steps:['Form captured','Auto-routed','Follow-up sent','Pipeline updated','Revenue tracked']
+  },
+  'google-ppc-management': {
+    eyebrow:'Paid search path', title:'Every paid click needs a matching page, offer, and follow-up path.', body:'Google PPC performance is represented as a controlled path from high-intent search to ad message, landing page, conversion, CRM stage, and revenue signal.', type:'system', steps:['Search intent','Ad message','Landing page','Tracked lead','Booked opportunity']
+  },
+  'meta-advertising': {
+    eyebrow:'Creative testing system', title:'Meta Ads work best when creative, offer, retargeting, and CRM are connected.', body:'The graphic shows the campaign loop: scroll-stopping creative, offer testing, warm retargeting, form capture, and follow-up that gives the lead somewhere useful to go.', type:'system', steps:['Creative angles','Offer test','Retargeting','Lead capture','Follow-up']
+  },
+  'google-local-service-ads': {
+    eyebrow:'Local trust path', title:'LSA performance depends on eligibility, reviews, call quality, and speed.', body:'The visual breaks Local Service Ads into the signals that matter: verified category fit, local trust, call handling, booked jobs, and feedback that improves lead quality.', type:'system', steps:['Eligibility','Reviews','Calls','Booked jobs','Lead quality']
+  },
+  'tiktok-ad-management': {
+    eyebrow:'Short-form funnel', title:'TikTok campaigns need creative volume and a clear next step.', body:'TikTok is represented as a creative pipeline: hook, video test, landing path, retargeting audience, and a conversion step that connects back to the CRM.', type:'system', steps:['Hook','Video test','Click path','Retargeting','Conversion']
+  },
+  'seo-aeo-geo': {
+    eyebrow:'Search visibility map', title:'Modern search visibility spans Google, maps, answers, and AI discovery.', body:'The graphic maps the relationship between technical SEO, service pages, industry pages, FAQs, schema, local relevance, and answer-ready content.', type:'system', steps:['Technical base','Service pages','Industry pages','Answer content','AI visibility']
+  },
+  'ai-implementation-agent-orchestration': {
+    eyebrow:'AI workflow architecture', title:'AI should support real workflows, not create a black box.', body:'AI implementation is shown as an orchestrated workflow with intake, data, agent tasking, human review, approved output, and reporting loops.', type:'system', steps:['Intake','Data source','Agent task','Human review','Output']
+  }
+};
+const proofVisual = proofVisuals[service.slug] ?? proofVisuals['web-development'];
+
+const serviceCopy = {
+  'web-development': {
+    problemTitle:'A website cannot win trust if it looks polished but answers the wrong questions.',
+    problemParas:['Web development for a service business is not just layout, animation, and a contact button. The site has to make a stranger understand the offer, believe the company is credible, compare the service options, and know exactly what to do next.', 'Simplufy builds websites around buyer intent: what people search, what proof they need, which pages should exist, which CTAs should appear first, and how the form or booking step connects into CRM follow-up.'],
+    splitTitle:'A premium website should create clarity before the sales call happens.', splitBody:'The build is judged by speed, hierarchy, crawlability, trust signals, mobile behavior, and whether the page path turns traffic into real conversations. Design matters because buyers use it as a trust shortcut, but the structure matters because search engines and prospects both need a clear map.',
+    includedIntro:'Website scope is shaped around the pages, proof, integrations, and conversion paths your buyers need before they contact you.',
+    bulletDetails:['Clarify the hero, navigation, CTAs, and proof stack so a first-time visitor understands the offer without digging.','Build service and industry pages around search intent, internal links, schema, and comparison questions that buyers actually ask.','Write each service and industry page around its real buyer, proof, objections, and conversion path instead of reusing generic copy.','Ship a fast Astro/Cloudflare build with clean metadata, optimized images, sitemap output, and CRM-ready forms or calendars.'],
+    approachTitle:'Design the site around trust moments, not just sections.', approachParas:['A roofing estimate page, med spa treatment page, and B2B consulting page each need their own proof, objections, CTA timing, and service explanation. The copy should feel specific to the person deciding whether to call, book, or request an estimate.', 'Simplufy plans the site as a sales asset and search asset at the same time: what the buyer sees, what Google can crawl, and what your team receives after conversion all have to line up.'],
+    modes:[['Conversion rebuild','For companies whose current site looks dated, explains too little, or loses mobile visitors before they contact the business.'],['SEO architecture build','For brands that need service, industry, location, resource, and case-study pages that can scale without thin or duplicate copy.']],
+    industryIntro:'Web development changes by buyer type: visual proof for auto brands, emergency clarity for trades, compliance-aware trust for clinics, enrollment paths for education, and authority signals for B2B.',
+    differentTitle:'The website is built as the front door to the whole growth system.', differentParas:['A stronger website should improve ads, SEO, CRM handoff, sales confidence, and follow-up quality. That means the copy, page structure, tracking, and forms are planned together instead of bolted on later.'], leaks:['Hero copy that sounds impressive but does not say what the company does','Service pages too thin to rank or persuade','No visible proof above the first CTA','Slow mobile pages and unclear forms','Leads entering email instead of a real CRM path'], ctaSubhead:'Bring the current site, the services you want to sell more of, and the markets you want to win. We will review the page path from first impression to booked opportunity.'
+  },
+  'crm-solutions': {
+    problemTitle:'CRM problems show up after the lead arrives — when speed, ownership, and follow-up matter most.',
+    problemParas:['A lead is only valuable if someone responds quickly, understands the context, and knows the next step. Many companies have forms, calendars, inboxes, spreadsheets, and ad platforms all collecting pieces of the truth.', 'Simplufy builds CRM systems around how the team actually sells: who owns the lead, which stage it enters, what message goes out, when reminders trigger, and how management sees pipeline quality.'],
+    splitTitle:'CRM should make follow-up obvious, not add another dashboard nobody uses.', splitBody:'The work centers on routing, stages, source visibility, reminders, automations, missed-call recovery, and reporting. A strong CRM setup gives operators a real command center for calls, forms, bookings, estimates, consultations, enrollments, and sales conversations.',
+    includedIntro:'CRM scope depends on the offers, sales team, response expectations, and reporting gaps that are costing opportunities.',
+    bulletDetails:['Define pipeline stages that match the real sales process instead of generic labels nobody updates.','Trigger SMS, email, call tasks, reminders, and missed-call recovery while keeping human handoff clear.','Route forms and calendars by service, location, offer, or buyer type so leads reach the right workflow.','Tie sources and stages together so reports show which channels become booked calls, estimates, or jobs.'],
+    approachTitle:'Map the lead journey before building automations.', approachParas:['A med spa consult, roof inspection, plumbing emergency, coaching application, and B2B sales call all need different routing logic. The automation should respect urgency, value, and buyer expectations.', 'Simplufy starts with the real handoff: what the prospect just did, what they need next, who should respond, and what the system should remember if the team gets busy.'],
+    modes:[['Pipeline rebuild','For teams losing leads because stages, ownership, notes, or source tracking are unclear.'],['Automation cleanup','For businesses with existing GoHighLevel workflows that need better triggers, messages, reporting, and human review.']],
+    industryIntro:'CRM for emergency trades prioritizes speed; CRM for premium services prioritizes qualification; CRM for education prioritizes nurture; CRM for B2B prioritizes context and pipeline visibility.',
+    differentTitle:'The CRM is designed around revenue moments, not software features.', differentParas:['The point is not to create more automations. The point is to make sure important opportunities get the right response, in the right channel, with the right context, before they go cold.'], leaks:['New leads sitting without ownership','Missed calls with no instant text-back','Calendar bookings not tied to source or pipeline stage','Sales notes scattered across inboxes and phones','Reports that show lead volume but not opportunity quality'], ctaSubhead:'Show us where leads currently enter the business and where follow-up breaks. We will map the highest-impact CRM fixes first.'
+  },
+  'google-ppc-management': {
+    problemTitle:'Google Ads can buy intent, but it cannot rescue a weak landing path.',
+    problemParas:['Paid search reaches people who are actively looking, which makes the channel powerful and unforgiving. If the query, ad, page, offer, tracking, and follow-up do not match, budget disappears quickly.', 'Simplufy manages Google PPC around search intent and downstream quality: which searches deserve spend, what the landing page promises, what gets tracked, and whether the lead becomes a booked opportunity.'],
+    splitTitle:'The best PPC account is connected to the page and CRM behind it.', splitBody:'A campaign is not successful because it produced clicks. It is successful when profitable searches turn into calls, forms, booked estimates, consultations, enrollments, or sales conversations that the business can actually handle.',
+    includedIntro:'Google PPC work is shaped by search demand, budget, conversion friction, local competition, and the quality of the destination page.',
+    bulletDetails:['Build campaigns around buyer-intent searches, negative keywords, match types, and service segmentation.','Align landing pages with the exact query, location, offer, and proof a searcher expects to see.','Connect calls, forms, bookings, and CRM opportunities so optimization is based on business outcomes.','Review search terms, budgets, bids, conversion data, and lead feedback continuously instead of “setting and forgetting.”'],
+    approachTitle:'Separate expensive curiosity from profitable intent.', approachParas:['A contractor search, med spa treatment query, school program search, and B2B service comparison all signal different urgency. PPC structure should reflect those differences instead of dumping all clicks into one campaign.', 'Simplufy looks for the searches that deserve a dedicated message, a dedicated page, and a dedicated follow-up path — then cuts the waste that does not fit.'],
+    modes:[['Account rescue','For campaigns spending on broad queries, weak landing pages, messy tracking, or unclear conversion quality.'],['Intent expansion','For businesses ready to scale into more service, industry, or location-specific search demand.']],
+    industryIntro:'PPC strategy changes by economics: emergency calls for trades, consult intent for clinics, appointment demand for auto services, application intent for education, and comparison searches for B2B.',
+    differentTitle:'Optimization happens after the click as much as inside Google Ads.', differentParas:['A clean account still loses if the landing page is generic, the form is buried, the phone call is missed, or the CRM cannot show whether the lead was useful. Simplufy reviews the whole conversion chain.'], leaks:['Broad keywords attracting low-intent traffic','Landing pages that do not match the ad promise','Call tracking missing from the source report','No CRM stage for paid search leads','Budget decisions made from clicks instead of booked opportunities'], ctaSubhead:'Bring the account, landing pages, and conversion data. We will identify where spend is leaking before recommending a new campaign structure.'
+  },
+  'meta-advertising': {
+    problemTitle:'Meta Ads need a reason to stop the scroll and a system for what happens next.',
+    problemParas:['Facebook and Instagram are interruption channels. People are not always searching right now, so the creative, offer, proof, and follow-up have to create enough interest to earn the next step.', 'Simplufy builds Meta campaigns around angles, visual proof, retargeting, lead qualification, and CRM response so the campaign does not confuse cheap form volume with real demand.'],
+    splitTitle:'Creative testing only matters when the offer and follow-up are built to convert.', splitBody:'The work connects hooks, visuals, audiences, forms, landing pages, retargeting, and CRM workflows. A good campaign teaches what buyers respond to and gives warm prospects a clear path to book, apply, request, or call.',
+    includedIntro:'Meta scope depends on the offer, creative assets, buyer awareness, ticket size, retargeting pool, and speed-to-lead requirements.',
+    bulletDetails:['Test creative angles around proof, transformation, problem awareness, seasonality, founder voice, and offer clarity.','Build retargeting paths for visitors, video viewers, form openers, and warm audiences who need more trust.','Choose lead forms or landing pages based on how much qualification and education the buyer needs.','Route leads into CRM follow-up fast enough that interest does not decay after the form submit.'],
+    approachTitle:'Use Meta to create demand, qualify interest, and learn what buyers care about.', approachParas:['A med spa injectable offer, ceramic coating transformation, roofing storm message, and B2B coaching lead magnet should not share the same creative logic. The buying context changes the hook.', 'Simplufy uses Meta as both an acquisition channel and a research engine: winners inform landing pages, service copy, retargeting, and sales conversations.'],
+    modes:[['Lead generation build','For offers that need native forms, fast response, qualification questions, and pipeline tracking.'],['Creative testing system','For brands that need to discover which proof, visuals, hooks, and offers create qualified demand.']],
+    industryIntro:'Meta works differently for visual transformations, consultative offers, seasonal services, education programs, and B2B authority campaigns — the creative and follow-up have to match the buyer temperature.',
+    differentTitle:'The campaign is not judged by cheap leads alone.', differentParas:['Simplufy looks at lead quality, speed to conversation, booked opportunities, close feedback, and creative learning. A $3 lead that never answers is not better than a $30 lead that books.'], leaks:['Boosted posts with no offer architecture','Native lead forms that ask too little and flood the CRM','Creative fatigue with no testing pipeline','Retargeting audiences left unused','Follow-up too slow for social leads'], ctaSubhead:'Show us the offer, past creatives, and current lead quality. We will find the gap between attention and booked opportunities.'
+  },
+  'google-local-service-ads': {
+    problemTitle:'Local Service Ads depend on trust, eligibility, and call handling — not just budget.',
+    problemParas:['Google LSA can put local service companys in front of high-intent buyers, but the channel has rules. Category eligibility, verification, reviews, response behavior, disputes, and call quality all affect whether spend turns into real jobs.', 'Simplufy reviews LSA as a local trust system: can the business qualify, can the profile earn confidence, can calls be answered, and can each lead be tracked into the right follow-up path?'],
+    splitTitle:'A verified badge is only useful if the call becomes a booked job.', splitBody:'LSA management connects profile readiness, review strength, budget pacing, call review, dispute process, CRM routing, and job outcome feedback. The channel rewards operators who respond quickly and treat each call as part of the pipeline.',
+    includedIntro:'LSA scope starts with eligibility and profile readiness, then moves into budget, call quality, lead feedback, and CRM integration.',
+    bulletDetails:['Review category, service area, license, insurance, verification, and profile requirements before launch.','Optimize service areas, business details, reviews, badges, and budgets around profitable job types.','Monitor call quality, disputes, spam, booked-job feedback, and category mismatches that waste spend.','Route calls and missed calls into CRM tasks or reminders so LSA leads do not disappear after the phone rings.'],
+    approachTitle:'Treat every LSA lead as a phone-based sales workflow.', approachParas:['A pest inspection call, plumbing repair, roofing estimate, and window replacement request all need different intake details and urgency. The LSA account should feed a process that captures those details quickly.', 'Simplufy focuses on what happens before and after the call: trust signals that earn it, response systems that catch it, and reporting that shows whether it became real revenue.'],
+    modes:[['Eligibility and launch','For businesses that need LSA category review, profile setup, verification readiness, and first-call tracking.'],['Lead quality management','For active accounts that need dispute review, budget control, call feedback, and CRM routing.']],
+    industryIntro:'LSA is strongest for eligible local services where phone response, reviews, and service-area trust matter: roofing, plumbing, pest control, windows, and other high-intent home services.',
+    differentTitle:'The lead source is managed like an operations channel.', differentParas:['LSA is not only a media buy. It exposes how quickly the business answers, how well intake works, and whether booked jobs can be traced back to the source.'], leaks:['Profiles launched before eligibility is truly understood','Reviews or trust badges weaker than nearby competitors','Missed calls with no recovery workflow','Poor lead feedback that lets bad calls keep spending','No connection between LSA call and booked-job outcome'], ctaSubhead:'We will review eligibility, profile quality, call handling, and whether LSA is a smart fit before recommending spend.'
+  },
+  'tiktok-ad-management': {
+    problemTitle:'TikTok only works when short-form attention has a clear business destination.',
+    problemParas:['TikTok can create awareness fast, but raw views do not pay for the campaign. Service businesses need hooks that match real buyer problems, proof that feels native to the platform, and a follow-up path for people who are not ready to buy instantly.', 'Simplufy approaches TikTok as a creative testing and retargeting engine that can support landing pages, Meta learnings, CRM nurture, and brand demand when the offer has visual or educational strength.'],
+    splitTitle:'Short-form creative should create momentum for the rest of the funnel.', splitBody:'The channel is strongest when the videos teach, demonstrate, compare, show transformation, or make the founder/operator more trusted. The ad account then needs landing paths and retargeting so attention has somewhere productive to go.',
+    includedIntro:'TikTok scope depends on available creative, offer type, audience awareness, video testing volume, and whether retargeting can support the conversion path.',
+    bulletDetails:['Develop hooks and short-form angles around objections, proof, transformation, education, and urgency.','Test videos for watch behavior, click intent, audience resonance, and downstream lead quality.','Connect TikTok traffic to landing pages, forms, retargeting pools, and CRM follow-up instead of letting viewers drift away.','Use creative learnings to improve Meta, website copy, FAQs, and sales messaging across the rest of the system.'],
+    approachTitle:'Build for native attention first, then guide the buyer to the next step.', approachParas:['A detailing transformation, med spa treatment explanation, education program story, or smart-home install walkthrough can earn attention if it feels useful rather than overproduced.', 'Simplufy keeps the business goal clear: the video has to create curiosity, the page has to create trust, and the CRM has to capture interest while the buyer is warm.'],
+    modes:[['Creative test sprint','For brands that need to find which hooks, formats, and proof angles deserve more spend.'],['Retargeting support channel','For businesses using TikTok to feed warmer audiences and support Meta, Google, or SEO demand.']],
+    industryIntro:'TikTok is most useful for offers with visual proof, explainable processes, founder voice, transformations, or education — not for every service category equally.',
+    differentTitle:'The strategy is honest about what TikTok should and should not do.', differentParas:['Simplufy does not treat TikTok as a guaranteed direct-response machine for every industry. It is evaluated based on creative fit, buyer behavior, and how well the attention can be converted elsewhere.'], leaks:['Videos chasing trends without an offer path','Clicks going to generic pages that do not continue the story','No retargeting audience strategy','Creative tests judged only by views','No CRM nurture for early-stage interest'], ctaSubhead:'Bring the offer, examples of content you like, and any past video performance. We will decide whether TikTok should be acquisition, retargeting, or creative research.'
+  },
+  'seo-aeo-geo': {
+    problemTitle:'Search visibility is no longer just ten blue links and a keyword list.',
+    problemParas:['Buyers search in Google, maps, featured snippets, comparison content, local results, and AI-assisted answer tools. Thin service pages and generic blog posts do not give those systems enough confidence to understand what the business does.', 'Simplufy builds SEO/AEO/GEO programs around content architecture, entity clarity, schema, internal links, buyer questions, proof, and service/industry pages that answer search intent directly.'],
+    splitTitle:'The goal is to become easier to find, easier to understand, and easier to choose.', splitBody:'Search work should support rankings, AI visibility, local relevance, paid landing pages, sales enablement, and trust. That requires useful pages, not keyword stuffing or repetitive pages with different city names pasted in.',
+    includedIntro:'Search scope depends on current crawlability, page depth, local footprint, proof assets, competition, and whether the site explains each service and industry clearly.',
+    bulletDetails:['Fix technical SEO foundations, metadata, schema, crawl paths, sitemap output, internal links, and page hierarchy.','Plan service, industry, location, FAQ, resource, and case-study pages around real buyer intent and revenue potential.','Write answer-ready sections that explain process, pricing factors, comparisons, objections, and next steps clearly.','Structure content so Google, maps, and AI search tools can understand the brand, services, markets, and proof.'],
+    approachTitle:'Build topical authority page by page, not with generic articles.', approachParas:['A page for Google Ads for roofers should not read like a page for SEO for med spas. The questions, proof, offers, and decision triggers are different.', 'Simplufy prioritizes pages that can win demand and help sales: high-intent service pages, industry pages, case studies, resources, FAQs, and internal links that make the site feel like a connected knowledge base.'],
+    modes:[['Search architecture rebuild','For sites with thin service pages, weak internal linking, missing schema, and unclear topical coverage.'],['Answer and AI visibility program','For brands that need clearer entities, better FAQs, proof-backed content, and pages that AI systems can cite or summarize accurately.']],
+    industryIntro:'Search strategy changes by category: emergency intent for trades, treatment and trust questions for med spas, program comparison for education, portfolio proof for auto services, and expertise validation for B2B.',
+    differentTitle:'The work connects search visibility to actual conversion paths.', differentParas:['Traffic is useful only if the page explains the offer, builds trust, and sends the visitor into the right form, calendar, call, or CRM workflow.'], leaks:['Core services described only on the homepage','Industry pages with swapped keywords but no real buyer insight','FAQs too shallow to answer objections','Schema and internal links missing from important pages','Organic traffic not connected to booked opportunity reporting'], ctaSubhead:'We will review search coverage, page quality, technical SEO, schema, and the highest-value pages to build next.'
+  },
+  'ai-implementation-agent-orchestration': {
+    problemTitle:'AI creates value when it is attached to a real workflow, not when it is added for novelty.',
+    problemParas:['Most teams do not need a vague AI transformation. They need fewer repetitive tasks, faster reporting, cleaner handoffs, better research, more consistent content operations, or support for lead intake and follow-up.', 'Simplufy designs AI implementation around controlled workflows: what data goes in, what the agent is allowed to do, where human review happens, and how the output moves back into the business.'],
+    splitTitle:'Useful AI has boundaries, approvals, and a clear job to do.', splitBody:'Agent orchestration is about task design: research, summarize, draft, classify, route, enrich, report, or prepare. Each workflow needs the right inputs, guardrails, review points, and fallback behavior so the team trusts it.',
+    includedIntro:'AI scope depends on repetitive workload, data quality, risk tolerance, tool stack, approval requirements, and where human review needs to stay in control.',
+    bulletDetails:['Audit repetitive operational, reporting, research, content, intake, and follow-up tasks for practical AI fit.','Design agent workflows with clear prompts, tool access, data sources, approval gates, and human review steps.','Connect AI assistance to CRM, reporting, content production, internal knowledge, lead context, or sales handoff where useful.','Monitor outputs, edge cases, reliability, and team adoption so the system improves instead of becoming shelfware.'],
+    approachTitle:'Start with bottlenecks the team already feels every week.', approachParas:['AI should not be a separate toy. It should help with real pressure: summarizing campaign data, preparing sales context, drafting follow-up, researching accounts, creating first-pass content, or routing internal requests.', 'Simplufy starts narrow, proves the workflow, then expands carefully into more agent-assisted operations once the team can trust the output.'],
+    modes:[['Workflow discovery','For teams unsure where AI can safely save time or improve response speed.'],['Agent orchestration build','For companies ready to connect prompts, tools, data, review gates, and operating procedures into a working system.']],
+    industryIntro:'AI use cases differ by company: lead intake for trades, consultation support for clinics, enrollment nurture for education, research and reporting for B2B, and content operations for multi-service brands.',
+    differentTitle:'The system is designed for controlled leverage, not black-box automation.', differentParas:['Simplufy keeps humans in the right places. AI can draft, summarize, enrich, and route, but approvals and sensitive decisions stay where they belong.'], leaks:['Teams experimenting with AI but not saving time','Outputs copied manually between disconnected tools','No review point before customer-facing messages','Reports still taking hours to assemble','Internal knowledge scattered across documents, inboxes, and chats'], ctaSubhead:'Tell us the repetitive work slowing the team down. We will identify the safest high-leverage AI workflow to build first.'
+  }
+};
+const pageCopy = serviceCopy[service.slug] ?? serviceCopy['web-development'];
+const schema = [
+  { '@context':'https://schema.org', '@type':'Service', name:service.eyebrow, provider:{'@type':'ProfessionalService', name:site.name, url:site.url}, areaServed:'United States', description:service.description },
+  { '@context':'https://schema.org', '@type':'FAQPage', mainEntity: serviceFaqs.map(f => ({ '@type':'Question', name:f.q, acceptedAnswer:{ '@type':'Answer', text:f.a }})) }
+];
+---
+<Base title={service.title} description={`${service.description} Based in St. Petersburg, Florida and serving contractors, clinics, education brands, auto businesses, and B2B service companies across the U.S.`} keywords={service.keywords} schema={schema}>
+<Header />
+<main>
+  <section class="service-hero visual-hero container reveal">
+    <div class="visual-hero-copy">
+      <div class="breadcrumb"><a href="/">Home</a> / Services / {service.nav}</div>
+      <p class="eyebrow">{service.eyebrow}</p>
+      <h1>{service.title}</h1>
+      <p>{service.description}</p>
+      <div class="actions"><a class="button primary" href="/contact/">{service.cta}</a><a class="button ghost" href="#included">See what is included</a></div>
+    </div>
+    <PageHeroVisual visual={visual} />
+  </section>
+
+  <section class="container service-content intro-block">
+    <div class="content-main">
+      <p class="eyebrow">The problem</p>
+      <h2>{pageCopy.problemTitle}</h2>
+      {pageCopy.problemParas.map(paragraph => <p>{paragraph}</p>)}
+    </div>
+    <aside class="sticky-card">
+      <h3>Best fit</h3>
+      <ul class="mini-list">{industries.slice(0,8).map(i => <li><a href={`/industries/${i.slug}/`}>{i.nav}</a></li>)}</ul>
+      <a class="button primary" href="/contact/">Book a strategy call</a>
+    </aside>
+  </section>
+
+  <section class="split-section service-split">
+    <div class="container split">
+      <div><p class="eyebrow">Service-specific strategy</p><h2>{pageCopy.splitTitle}</h2></div>
+      <div><p>{pageCopy.splitBody}</p></div>
+    </div>
+  </section>
+
+  <section class="container section" id="included">
+    <div class="section-head"><p class="eyebrow">What is included</p><h2>A practical <span class="accent-word">{service.nav.toLowerCase()} system</span>, not a vague monthly retainer.</h2><p>{pageCopy.includedIntro}</p></div>
+    <div class="feature-list">{service.bullets.map((b, index) => <div><span>{String(index + 1).padStart(2,'0')}</span><h3>{b}</h3><p>{pageCopy.bulletDetails[index]}</p></div>)}</div>
+  </section>
+
+  <section class="container service-content">
+    <div class="content-main">
+      <p class="eyebrow">How we approach it</p>
+      <h2>{pageCopy.approachTitle}</h2>
+      {pageCopy.approachParas.map(paragraph => <p>{paragraph}</p>)}
+    </div>
+    <div class="content-side-grid">
+      {pageCopy.modes.map(mode => <div class="rich-card"><h3>{mode[0]}</h3><p>{mode[1]}</p></div>)}
+    </div>
+  </section>
+
+  <section class={`container section media-showcase proof-showcase proof-${service.slug}`}>
+    <div class="section-head"><p class="eyebrow">{proofVisual.eyebrow}</p><h2>{proofVisual.title}</h2><p>{proofVisual.body}</p></div>
+    {proofVisual.type === 'beforeAfter' ? (
+      <div class="before-after-grid">
+        {proofVisual.cards.map(card => (
+          <figure class={`proof-image-card ${card.label.toLowerCase()}`}>
+            <div class="proof-browser-bar"><span></span><span></span><span></span><b>{card.label}</b></div>
+            <img src={card.src} alt={card.alt} loading="lazy" />
+            <figcaption><span>{card.label}</span><strong>{card.title}</strong></figcaption>
+          </figure>
+        ))}
+      </div>
+    ) : (
+      <div class="proof-system-card">
+        <div class="proof-system-header"><span>{service.icon}</span><div><p>{service.eyebrow}</p><strong>{proofVisual.title}</strong></div></div>
+        <div class="proof-system-flow">
+          {proofVisual.steps.map((step, index) => <div style={`--i:${index}`}><span>{String(index + 1).padStart(2, '0')}</span><strong>{step}</strong></div>)}
+        </div>
+        <div class="proof-system-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      </div>
+    )}
+  </section>
+
+  <section class="container section">
+    <div class="section-head"><p class="eyebrow">Industry-specific strategy</p><h2>The strongest pages speak to the exact buyer you want more of.</h2><p>{pageCopy.industryIntro}</p></div>
+    <div class="industry-grid">{industries.map(i => <a class="industry-card" href={`/industries/${i.slug}/`}><h3>{service.nav} for {i.nav}</h3><p>{i.description}</p></a>)}</div>
+  </section>
+
+  <section class="container service-content">
+    <div class="content-main">
+      <p class="eyebrow">What makes this different</p>
+      <h2>{pageCopy.differentTitle}</h2>
+      {pageCopy.differentParas.map(paragraph => <p>{paragraph}</p>)}
+    </div>
+    <aside class="rich-card"><h3>Common leaks we look for</h3><ul class="mini-list">{pageCopy.leaks.map(leak => <li>{leak}</li>)}</ul></aside>
+  </section>
+
+  <section class="container section faq-section">
+    <div class="section-head"><p class="eyebrow">Questions</p><h2>Before you hire someone for {service.nav.toLowerCase()}.</h2></div>
+    <div class="faq-list">{serviceFaqs.map(item => <details><summary>{item.q}</summary><p>{item.a}</p></details>)}</div>
+  </section>
+
+  <div class="container"><ContactForm headline={`Want ${service.nav.toLowerCase()} that connects to the rest of your business?`} subhead={pageCopy.ctaSubhead} points={pageCopy.leaks.slice(0,4)} /></div>
+</main>
+<Footer />
+</Base>

@@ -1,0 +1,7 @@
+---
+import { faqs } from '../data/site';
+---
+<section class="container section faq-section" id="faq">
+  <div class="section-head"><p class="eyebrow">FAQ</p><h2>Questions buyers ask before building a better growth system.</h2></div>
+  <div class="faq-list">{faqs.map(item => <details><summary>{item.q}</summary><p>{item.a}</p></details>)}</div>
+</section>

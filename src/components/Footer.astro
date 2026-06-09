@@ -1,0 +1,11 @@
+---
+import { services, industries, site } from '../data/site';
+---
+<footer class="footer">
+  <div class="container footer-grid">
+    <div><a class="brand footer-brand" href="/"><img class="brand-img" src="/assets/simplufy-s-mark.png" alt="" /><span>Simplufy</span></a><p>{site.tagline}</p><p class="fine">Based in St. Petersburg, Florida. Built for contractors, specialty trades, clinics, education brands, and B2B service companies across the U.S.</p></div>
+    <div><h3>Services</h3>{services.map(s => <a href={`/services/${s.slug}/`}>{s.nav}</a>)}</div>
+    <div><h3>Industries</h3>{industries.slice(0,8).map(i => <a href={`/industries/${i.slug}/`}>{i.nav}</a>)}</div>
+    <div><h3>Start</h3><a href="/case-studies/">Case studies</a><a href="/resources/">Resources</a><a href="/contact/">Request an audit</a><a href="/contact/">Book a strategy call</a></div>
+  </div>
+</footer>

@@ -1,0 +1,81 @@
+---
+const {
+  headline,
+  subhead,
+  variant = 'default',
+  mode = 'booking',
+  points
+} = Astro.props;
+
+const isForm = mode === 'form';
+const eyebrow = isForm ? 'Request a free audit' : 'Book a strategy call';
+const defaultHeadline = isForm
+  ? 'Tell us what you want to improve.'
+  : 'Want to see what is holding your growth back?';
+const defaultSubhead = isForm
+  ? 'Share a few details about your business, current marketing, and goals. We will review the opportunity and follow up with a practical next step.'
+  : 'Pick a time for a strategy call. We will look at your website, ads, CRM, search visibility, and follow-up process before recommending what to fix first.';
+const classes = ['form-panel', variant === 'full-page' ? 'full-page-booking' : '', isForm ? 'inbound-panel' : 'booking-panel'].filter(Boolean).join(' ');
+---
+<section class={classes} id={isForm ? 'audit-form' : 'contact-form'}>
+  <div>
+    <p class="eyebrow">{eyebrow}</p>
+    <h2>{headline ?? defaultHeadline}</h2>
+    <p>{subhead ?? defaultSubhead}</p>
+    <ul class="booking-list">
+      {points && points.length ? (
+        points.map(point => <li>{point}</li>)
+      ) : isForm ? (
+        <>
+          <li>Tell us what you sell and where you want to grow</li>
+          <li>Share what is currently working or leaking</li>
+          <li>Get a clear recommendation for the next step</li>
+          <li>No generic package pitch before we understand the business</li>
+        </>
+      ) : (
+        <>
+          <li>Website and SEO review</li>
+          <li>Paid ads and tracking review</li>
+          <li>CRM and follow-up review</li>
+          <li>AI automation opportunities</li>
+        </>
+      )}
+    </ul>
+  </div>
+
+  {isForm ? (
+    <div class="embed-card inbound-card">
+      <p class="eyebrow">Send the details</p>
+      <h3>Request your Simplufy audit.</h3>
+      <div class="calendar-embed inbound-form-embed">
+        <iframe
+          src="https://api.leadconnectorhq.com/widget/form/e38LR5S7tD7YqKhI9po7"
+          style="width:100%;height:100%;border:none;border-radius:8px"
+          id="inline-e38LR5S7tD7YqKhI9po7"
+          data-layout="{'id':'INLINE'}"
+          data-trigger-type="alwaysShow"
+          data-trigger-value=""
+          data-activation-type="alwaysActivated"
+          data-activation-value=""
+          data-deactivation-type="neverDeactivate"
+          data-deactivation-value=""
+          data-form-name="INBOUND WEBSITE FORM"
+          data-height="909"
+          data-layout-iframe-id="inline-e38LR5S7tD7YqKhI9po7"
+          data-form-id="e38LR5S7tD7YqKhI9po7"
+          title="INBOUND WEBSITE FORM"
+        ></iframe>
+      </div>
+      <script is:inline src="https://link.msgsndr.com/js/form_embed.js"></script>
+    </div>
+  ) : (
+    <div class="embed-card schedule-card">
+      <p class="eyebrow">Schedule a call</p>
+      <h3>Pick a time that works for you.</h3>
+      <div class="calendar-embed schedule-embed">
+        <iframe src="https://api.leadconnectorhq.com/widget/booking/hkNEVMfmHfPISzWE536J" style="width:100%;height:620px;min-height:620px;border:none;overflow:hidden;border-radius:18px;" scrolling="no" id="oEzXXwKzDjJSHrlEBCF5_1779922590792" title="Book a Simplufy strategy call"></iframe>
+      </div>
+      <script is:inline src="https://link.msgsndr.com/js/form_embed.js"></script>
+    </div>
+  )}
+</section>

@@ -1,0 +1,76 @@
+---
+import { services, industries } from '../data/site';
+---
+<header class="site-header">
+  <a class="brand" href="/" aria-label="Simplufy home"><img class="brand-img" src="/assets/simplufy-s-mark.png" alt="" /><span>Simplufy</span></a>
+  <nav class="desktop-nav" aria-label="Primary navigation">
+    <div class="nav-item has-dropdown">
+      <a class="nav-trigger" href="/#services" aria-haspopup="true">Services</a>
+      <div class="dropdown-menu services-menu">
+        <a class="dropdown-overview" href="/#services"><strong>Services overview</strong><span>See the full Simplufy service stack.</span></a>
+        <div class="dropdown-kicker">What we build</div>
+        {services.map(service => <a class="dropdown-card" href={`/services/${service.slug}/`}><strong>{service.nav}</strong><span>{service.description}</span><em>Open service page →</em></a>)}
+      </div>
+    </div>
+    <div class="nav-item has-dropdown">
+      <a class="nav-trigger" href="/#industries" aria-haspopup="true">Industries</a>
+      <div class="dropdown-menu industries-menu">
+        <a class="dropdown-overview" href="/#industries"><strong>Industries overview</strong><span>Browse the markets Simplufy is built to support.</span></a>
+        <div class="dropdown-kicker">Who we help</div>
+        {industries.map(industry => <a class="dropdown-card" href={`/industries/${industry.slug}/`}><strong>{industry.nav}</strong><span>{industry.description}</span><em>Open industry page →</em></a>)}
+      </div>
+    </div>
+    <a href="/case-studies/">Case Studies</a>
+    <a href="/resources/">Resources</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+  <a class="nav-cta" href="/contact/">Book a call</a>
+  <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+  <div class="mobile-menu-overlay" aria-hidden="true"></div>
+  <div class="mobile-menu-drawer" aria-label="Mobile navigation">
+    <div class="mobile-menu-header">
+      <a class="brand" href="/"><img class="brand-img" src="/assets/simplufy-s-mark.png" alt="" /><span>Simplufy</span></a>
+      <button class="mobile-menu-close" aria-label="Close menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="mobile-menu-content">
+      <div class="mobile-nav-section">
+        <span class="mobile-nav-label">Services</span>
+        {services.map(service => <a class="mobile-nav-link" href={`/services/${service.slug}/`}>{service.nav}</a>)}
+      </div>
+      <div class="mobile-nav-section">
+        <span class="mobile-nav-label">Industries</span>
+        {industries.map(industry => <a class="mobile-nav-link" href={`/industries/${industry.slug}/`}>{industry.nav}</a>)}
+      </div>
+      <div class="mobile-nav-section">
+        <span class="mobile-nav-label">Company</span>
+        <a class="mobile-nav-link" href="/case-studies/">Case Studies</a>
+        <a class="mobile-nav-link" href="/resources/">Resources</a>
+        <a class="mobile-nav-link" href="/contact/">Contact</a>
+      </div>
+      <a class="mobile-cta" href="/contact/">Book a strategy call</a>
+    </div>
+  </div>
+</header>
+<script>
+  const menuBtn = document.querySelector('.mobile-menu-btn');
+  const drawer = document.querySelector('.mobile-menu-drawer');
+  const overlay = document.querySelector('.mobile-menu-overlay');
+  const closeBtn = document.querySelector('.mobile-menu-close');
+  function toggleMenu() {
+    const isOpen = drawer.classList.contains('open');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(!isOpen));
+    document.body.style.overflow = !isOpen ? 'hidden' : '';
+  }
+  menuBtn?.addEventListener('click', toggleMenu);
+  closeBtn?.addEventListener('click', toggleMenu);
+  overlay?.addEventListener('click', toggleMenu);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && drawer?.classList.contains('open')) toggleMenu(); });
+</script>

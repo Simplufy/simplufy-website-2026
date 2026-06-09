@@ -1,0 +1,1 @@
+{"scripts":{"dev":"astro dev --host 0.0.0.0","build":"astro build","preview":"astro preview --host 0.0.0.0","deploy":"npm run build && wrangler pages deploy dist --project-name simplufy-website-2026"},"dependencies":{"@astrojs/sitemap":"latest","@browserbasehq/sdk":"^2.12.0","astro":"latest"},"devDependencies":{"playwright":"^1.60.0","wrangler":"^4.95.0"}}

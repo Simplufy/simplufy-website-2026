@@ -1,0 +1,284 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import generatedPages from '../../data/generatedSeoPages.json';
+import { resources, services, site } from '../../data/site';
+
+export function getStaticPaths(){
+  const pagePaths = generatedPages.filter((page) => page.published !== false).map((page) => ({ params:{ slug: page.slug }, props:{ kind:'generated', page }}));
+  const resourcePaths = resources.map((resource) => ({ params:{ slug: resource.slug }, props:{ kind:'legacy', resource }}));
+  return [...pagePaths, ...resourcePaths];
+}
+
+const { kind, page, resource } = Astro.props;
+const isGenerated = kind === 'generated';
+const currentTitle = isGenerated ? page.title : resource.title;
+const currentDescription = isGenerated ? page.metaDescription : resource.description;
+const canonical = `${site.url}/resources/${isGenerated ? page.slug : resource.slug}/`;
+const inlineLinks = isGenerated ? (page.inlineLinks || []) : [];
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const escapeHtml = (value) => String(value || '')
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;');
+const renderInline = (text) => {
+  if (!text || !inlineLinks.length) return escapeHtml(text || '');
+  const matches = [];
+  inlineLinks
+    .filter((link) => link.text && link.href)
+    .sort((a, b) => b.text.length - a.text.length)
+    .forEach((link) => {
+      const regex = new RegExp(escapeRegExp(link.text), 'i');
+      const match = text.match(regex);
+      if (!match || match.index === undefined) return;
+      const start = match.index;
+      const end = start + match[0].length;
+      if (matches.some((existing) => start < existing.end && end > existing.start)) return;
+      matches.push({ start, end, text: match[0], href: link.href, external: link.external });
+    });
+  matches.sort((a, b) => a.start - b.start);
+  const parts = [];
+  let cursor = 0;
+  matches.forEach((match) => {
+    if (match.start > cursor) parts.push(escapeHtml(text.slice(cursor, match.start)));
+    const target = match.external ? ' target="_blank" rel="noopener"' : '';
+    parts.push(`<a class="content-link" href="${escapeHtml(match.href)}"${target}>${escapeHtml(match.text)}</a>`);
+    cursor = match.end;
+  });
+  if (cursor < text.length) parts.push(escapeHtml(text.slice(cursor)));
+  return parts.join('');
+};
+const legacyCopy = {
+  'seo-aeo-geo-for-service-industries': {
+    introTitle:'Search content has to explain services the way buyers actually compare them.',
+    intro:'For service companies, SEO is not a blog calendar detached from revenue. The strongest search pages answer practical buying questions: what the service includes, where it is available, how the process works, what proof exists, what makes one company safer than another, and what step the prospect should take next.',
+    sections:[
+      { title:'Start with service and industry architecture', body:'A contractor, med spa, auto shop, education organization, and B2B firm should not share the same search strategy. The site needs core service pages, industry pages, proof pages, FAQs, and resources that connect together so Google and AI systems can understand the business from multiple angles.' },
+      { title:'Write for answer engines without sounding robotic', body:'AEO works when the page gives clear definitions, comparisons, process explanations, eligibility notes, pricing factors, and next steps. The copy should sound helpful to a buyer while being structured enough for snippets, AI summaries, and entity understanding.' },
+      { title:'Use proof as part of search content', body:'Case studies, screenshots, before/after visuals, campaign metrics, and CRM examples make SEO pages more persuasive. They also reduce the risk of building thin pages that rank for a phrase but do not convince anyone to contact the business.' }
+    ],
+    checklist:['Map each service to a buyer problem and revenue goal','Create distinct pages for profitable industries and service lines','Add FAQs that answer objections, not filler questions','Use schema, internal links, and descriptive metadata','Connect organic traffic to forms, calendars, and CRM stages'],
+    related:['seo-aeo-geo','web-development','crm-solutions'],
+    cta:'Want search pages that are useful enough to rank and persuasive enough to convert?'
+  },
+  'crm-follow-up-system-for-booked-calls': {
+    introTitle:'A booked call is not the finish line — it is the first operational handoff.',
+    intro:'Many businesses think they have a lead-generation problem when they actually have a follow-up problem. Forms arrive without ownership, calls get missed, calendar bookings lack context, and sales teams rely on memory instead of a visible pipeline.',
+    sections:[
+      { title:'Define what happens in the first five minutes', body:'Speed-to-lead matters most when the prospect still remembers why they reached out. The CRM should send confirmation, notify the right person, create a task, preserve source context, and make the next step obvious.' },
+      { title:'Separate lead types before they hit the same pipeline', body:'A roof inspection, med spa consult, B2B discovery call, education inquiry, and detailing quote should not all enter the same generic workflow. Intake fields, reminders, nurture, and sales tasks should match the buyer’s intent and urgency.' },
+      { title:'Report on movement, not just submissions', body:'A useful CRM shows which leads became conversations, appointments, estimates, proposals, jobs, enrollments, or lost opportunities. That lets marketing decisions reflect pipeline quality instead of raw form volume.' }
+    ],
+    checklist:['Route every form, call, and booking into a defined stage','Send instant confirmations and internal notifications','Track source, offer, service interest, and next step','Use missed-call text-back and appointment reminders','Review stuck opportunities before they go cold'],
+    related:['crm-solutions','google-ppc-management','meta-advertising'],
+    cta:'Want a follow-up system that protects good leads from slipping through the cracks?'
+  },
+  'google-ads-lsa-meta-for-contractors': {
+    introTitle:'Contractors need different paid channels for different levels of buyer intent.',
+    intro:'Google Ads, Local Service Ads, and Meta Ads can all work for contractors, but they do not solve the same problem. Search captures existing demand, LSA emphasizes local trust and phone calls, and Meta creates demand or retargets people who need more proof before requesting an estimate.',
+    sections:[
+      { title:'Use Google PPC when the search is already high-intent', body:'Roof repair, emergency plumbing, window replacement, remodel estimates, and specialty trade searches often signal an active project. Those clicks need tight keywords, local landing pages, call tracking, and a CRM path that shows which searches became real estimates.' },
+      { title:'Use LSA when eligibility and call handling are strong', body:'Local Service Ads can be powerful for eligible categories, but reviews, verification, response behavior, dispute review, and call quality matter. LSA should be tied to missed-call recovery and booked-job tracking, not treated as a passive phone lead source.' },
+      { title:'Use Meta when proof and timing need to create demand', body:'Meta helps contractors show finished projects, seasonal offers, financing angles, storm reminders, before/after proof, and retargeting. It is strongest when creative, offer, landing page, and follow-up are connected.' }
+    ],
+    checklist:['Match each channel to buyer intent and project value','Send traffic to service-specific landing pages','Track calls, forms, booked estimates, and closed work','Use retargeting for visitors who need more trust','Review lead quality before scaling budget'],
+    related:['google-ppc-management','google-local-service-ads','meta-advertising'],
+    cta:'Want to know which paid channel should get budget first?'
+  }
+};
+const legacy = !isGenerated ? (legacyCopy[resource.slug] ?? legacyCopy['seo-aeo-geo-for-service-industries']) : null;
+const relatedServices = legacy ? services.filter(service => legacy.related.includes(service.slug)) : [];
+const schemas = isGenerated ? [
+  {
+    '@context':'https://schema.org',
+    '@type':'BreadcrumbList',
+    itemListElement:[
+      {'@type':'ListItem', position:1, name:'Home', item:site.url},
+      {'@type':'ListItem', position:2, name:'Resources', item:`${site.url}/resources/`},
+      {'@type':'ListItem', position:3, name:page.title, item:canonical}
+    ]
+  },
+  {
+    '@context':'https://schema.org',
+    '@type':'FAQPage',
+    mainEntity: page.faqs.map((faq) => ({ '@type':'Question', name:faq.q, acceptedAnswer:{ '@type':'Answer', text:faq.a }}))
+  },
+  {
+    '@context':'https://schema.org',
+    '@type': page.schemaType || 'Service',
+    name: page.title,
+    description: page.metaDescription,
+    provider:{ '@type':'Organization', name:site.name, url:site.url },
+    serviceType: page.service || 'Digital marketing system',
+    areaServed: page.location || 'United States'
+  }
+] : { '@context':'https://schema.org', '@type':'Article', headline:resource.title, description:resource.description, author:{'@type':'Organization', name:site.name}, publisher:{'@type':'Organization', name:site.name}, mainEntityOfPage:canonical };
+---
+
+<Base title={currentTitle} description={currentDescription} keywords={isGenerated ? page.keyword : `${resource.title}, contractor marketing, service industry marketing, Simplufy`} canonical={canonical} schema={schemas}>
+<Header />
+<main>
+{isGenerated && (
+<Fragment>
+  <section class="solution-hero-v4">
+    <div class="container solution-hero-grid-v4">
+      <div>
+        <div class="breadcrumb"><a href="/">Home</a> / <a href="/resources/">Resources</a> / {page.title}</div>
+        <p class="eyebrow">{page.heroEyebrow || 'Built for service businesses'}</p>
+        <h1>{page.heroHeadline}</h1>
+        <p class="lede">{page.heroSubhead}</p>
+        <div class="hero-actions">
+          <a class="button secondary" href="#included">See what is included</a>
+          <a class="button ghost" href="#process">How the process works</a>
+        </div>
+      </div>
+      <aside class="search-card-v4" aria-label={`${page.title} offer snapshot`}>
+        <div class="mock-search-bar"><span></span><span></span><span></span></div>
+        <p class="eyebrow">Buyer path</p>
+        <h2>{page.visualTitle || page.title}</h2>
+        <div class="path-stack-v4">
+          {(page.buyerPath || page.dashboard?.stages || []).map((stage, index) => <div><b>{index + 1}</b><span>{stage}</span></div>)}
+        </div>
+        <div class="mini-proof-v4">
+          {(page.proofStats || page.dashboard?.metrics || []).map((metric) => <div><strong>{metric.value}</strong><span>{metric.label}</span></div>)}
+        </div>
+      </aside>
+    </div>
+
+    <div class="container revenue-strip-v4">
+      {(page.outcomes || []).map((item) => <div><strong>{item.value}</strong><span>{item.label}</span><p>{item.note}</p></div>)}
+    </div>
+  </section>
+
+  <section class="container split-story-v4">
+    <div class="story-copy-v4">
+      <p class="eyebrow">The real problem</p>
+      <h2>{page.problemSection?.title || page.intro?.title}</h2>
+      {(page.problemSection?.paragraphs || page.intro?.paragraphs || []).map((paragraph) => <p set:html={renderInline(paragraph)}></p>)}
+    </div>
+    <div class="leak-list-v4">
+      <p class="eyebrow">Where leads usually leak</p>
+      {(page.leakPoints || page.sidebar?.points || []).map((point) => <div><span>✕</span><p>{point}</p></div>)}
+    </div>
+  </section>
+
+  <section class="container section" id="included">
+    <div class="section-title-v4">
+      <p class="eyebrow">What you get</p>
+      <h2>{page.includedTitle || page.buildTitle}</h2>
+      <p>{page.includedIntro || 'A finished growth asset should make the offer clear to the buyer and make the inquiry usable for the team that has to follow up.'}</p>
+    </div>
+    <div class="offer-grid-v4">
+      {page.modules.map((module) => <article><span>{module.kicker}</span><h3>{module.title}</h3><p set:html={renderInline(module.body)}></p><ul>{module.points.map((point) => <li set:html={renderInline(point)}></li>)}</ul></article>)}
+    </div>
+  </section>
+
+  <section class="results-panel-v4">
+    <div class="container results-grid-v4">
+      <div>
+        <p class="eyebrow">Proof, not vague promises</p>
+        <h2>{page.proofSection?.title || 'Simplufy connects the work to visible business outcomes'}</h2>
+        <p set:html={renderInline(page.proofSection?.body || page.dataIntro)}></p>
+      </div>
+      <div class="case-stack-v4">
+        {(page.caseLinks || []).slice(0,3).map((link) => <a href={link.href}><strong>{link.label}</strong><span>{link.reason}</span></a>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="container section process-board-v4" id="process">
+    <div class="section-title-v4">
+      <p class="eyebrow">Process</p>
+      <h2>{page.processTitle}</h2>
+    </div>
+    <div class="process-columns-v4">
+      {page.process.map((step, index) => <article><b>{String(index + 1).padStart(2,'0')}</b><h3>{step.title}</h3><p set:html={renderInline(step.body)}></p></article>)}
+    </div>
+  </section>
+
+  <section class="container section decision-section-v4">
+    <div>
+      <p class="eyebrow">Cost and scope</p>
+      <h2>{page.costSection?.title || 'What affects the investment'}</h2>
+      <p set:html={renderInline(page.costSection?.body || 'The right scope depends on how much of the website, CRM, paid media, SEO, and automation layer already exists and how much needs to be rebuilt before growth can scale.')}></p>
+      <div class="factor-list-v4">
+        {(page.costSection?.factors || []).map((factor) => <div><strong>{factor.title}</strong><span set:html={renderInline(factor.body)}></span></div>)}
+      </div>
+    </div>
+    <div class="fit-card-v4">
+      <p class="eyebrow">Best fit</p>
+      <h3>{page.fitSection?.title || 'This is for teams that want the whole revenue path fixed'}</h3>
+      <ul>{(page.fitSection?.bullets || []).map((bullet) => <li>{bullet}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="container section education-v4">
+    <div class="section-title-v4">
+      <p class="eyebrow">What to know before hiring anyone</p>
+      <h2>{page.educationTitle}</h2>
+    </div>
+    {(page.education || []).map((block) => <article><h3>{block.title}</h3>{block.paragraphs.map((paragraph) => <p set:html={renderInline(paragraph)}></p>)}</article>)}
+  </section>
+
+  <section class="container section comparison-v4">
+    <div class="section-title-v4">
+      <p class="eyebrow">How to compare options</p>
+      <h2>{page.comparisonTitle}</h2>
+    </div>
+    <div class="comparison-grid-v4">
+      {page.comparisons.map((item) => <article><span>{item.label}</span><h3>{item.title}</h3><p set:html={renderInline(item.body)}></p></article>)}
+    </div>
+  </section>
+
+  <section class="container section faq-section-v4">
+    <div class="section-title-v4">
+      <p class="eyebrow">Questions before you book</p>
+      <h2>{page.faqTitle || 'Frequently asked questions'}</h2>
+    </div>
+    <div class="faq-grid-v4">
+      {page.faqs.map((faq) => <article><h3>{faq.q}</h3><p set:html={renderInline(faq.a)}></p></article>)}
+    </div>
+  </section>
+
+  <section class="container section related-row-v4">
+    <div class="section-title-v4">
+      <p class="eyebrow">Related Simplufy services</p>
+      <h2>Build the rest of the system around this page</h2>
+    </div>
+    <div class="related-grid-v4">
+      {page.internalLinks.slice(0,8).map((link) => <a href={link.href}><strong>{link.label}</strong><span>{link.reason}</span></a>)}
+    </div>
+  </section>
+
+  <section class="container section final-cta-split">
+    <div><p class="eyebrow">Free funnel audit</p><h2>{page.ctaHeadline}</h2><p set:html={renderInline(page.ctaSubhead)}></p></div>
+    <ContactForm points={page.sidebar?.points || page.leakPoints || []} />
+  </section>
+</Fragment>
+)}
+{!isGenerated && (
+<Fragment>
+  <article class="container service-hero">
+    <div class="breadcrumb"><a href="/resources/">Resources</a> / {resource.category}</div>
+    <p class="eyebrow">{resource.category}</p>
+    <h1>{resource.title}</h1>
+    <p>{resource.description}</p>
+  </article>
+  <section class="container rich service-layout">
+    <div>
+      <div class="rich-card"><h2>{legacy.introTitle}</h2><p>{legacy.intro}</p></div>
+      {legacy.sections.map(section => <div class="rich-card"><h2>{section.title}</h2><p>{section.body}</p></div>)}
+      <div class="rich-card"><h2>Implementation checklist</h2><ul class="mini-list">{legacy.checklist.map(item => <li>{item}</li>)}</ul></div>
+      <div class="rich-card"><h2>Related Simplufy services</h2><ul class="mini-list">{relatedServices.map(s => <li><a href={`/services/${s.slug}/`}>Open the {s.nav.toLowerCase()} service page</a></li>)}</ul></div>
+    </div>
+    <aside class="rich-card"><h3>{legacy.cta}</h3><p>Share the pages, campaigns, CRM workflow, or reporting gap you want reviewed. Simplufy will look for the highest-impact fix before recommending more spend.</p><a class="button primary" href="/contact/">Request a free audit</a></aside>
+  </section>
+  <ContactForm mode="form" headline={`Apply this ${resource.category.toLowerCase()} strategy to your business`} subhead="Tell us what you sell, where the current growth path breaks down, and what outcome you want to improve first." points={legacy.checklist.slice(0,4)} />
+</Fragment>
+)}
+</main>
+<Footer />
+</Base>

@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { caseStudies } from '../../data/site';
+---
+<Base title="Case Studies & Client Results" description="Explore Simplufy client results and case studies for auto detailing shops, contractors, med spas, education, B2B services, websites, paid ads, CRM, SEO, and AI systems.">
+  <Header />
+  <main class="container">
+    <section class="service-hero">
+      <p class="eyebrow">Case studies</p>
+      <h1>Client wins, screenshots, and <span class="accent-word">measurable growth systems</span>.</h1>
+      <p>Explore proof from real campaigns across auto, trades, education, B2B services, and search-driven growth systems.</p>
+    </section>
+    <section class="rich">
+      <div class="case-card-grid">
+        {caseStudies.map(c => <a class="service-card case-index-card" href={`/case-studies/${c.slug}/`}><figure class="case-card-thumb"><img src={c.images?.[0]?.src ?? '/assets/simplufy-s-mark.png'} alt={c.images?.[0]?.alt ?? `${c.client ?? c.industry} case study visual`} loading="lazy" /></figure><span>{c.client ?? 'Case study'}</span><h3>{c.title}</h3><p>{c.description}</p><em>{c.industry} →</em></a>)}
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>
