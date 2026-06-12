@@ -1,0 +1,10 @@
+---
+interface Props { items?: string[]; label?: string; }
+const { items = ['Google Partner', 'Meta Business Partner', 'GoHighLevel Certified'], label = 'Built on platforms you already trust' } = Astro.props;
+---
+<div class="partner-badges">
+  {label && <span class="partner-badges__label">{label}</span>}
+  <ul>
+    {items.map((i) => <li><span class="partner-badges__dot" aria-hidden="true"></span>{i}</li>)}
+  </ul>
+</div>

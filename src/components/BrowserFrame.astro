@@ -1,0 +1,12 @@
+---
+interface Props { src: string; alt: string; url?: string; caption?: string; tone?: 'light' | 'dark'; }
+const { src, alt, url, caption, tone = 'light' } = Astro.props;
+---
+<figure class={`bframe bframe--${tone}`}>
+  <div class="bframe__bar">
+    <span></span><span></span><span></span>
+    {url && <div class="bframe__url">{url}</div>}
+  </div>
+  <div class="bframe__viewport"><img src={src} alt={alt} loading="lazy" decoding="async" /></div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

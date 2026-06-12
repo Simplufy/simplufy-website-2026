@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import ContactForm from '../../components/ContactForm.astro';
 import FAQ from '../../components/FAQ.astro';
 import PageHeroVisual from '../../components/PageHeroVisual.astro';
+import Icon from '../../components/Icon.astro';
 import { services, industries, site } from '../../data/site';
 export function getStaticPaths(){ return services.map(service => ({ params:{ slug: service.slug }, props:{ service }})); }
 const { service } = Astro.props;
@@ -257,7 +258,7 @@ const schema = [
       </div>
     ) : (
       <div class="proof-system-card">
-        <div class="proof-system-header"><span>{service.icon}</span><div><p>{service.eyebrow}</p><strong>{proofVisual.title}</strong></div></div>
+        <div class="proof-system-header"><span><Icon name={service.icon} /></span><div><p>{service.eyebrow}</p><strong>{proofVisual.title}</strong></div></div>
         <div class="proof-system-flow">
           {proofVisual.steps.map((step, index) => <div style={`--i:${index}`}><span>{String(index + 1).padStart(2, '0')}</span><strong>{step}</strong></div>)}
         </div>

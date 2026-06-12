@@ -1,32 +1,16 @@
-:root {
-  --ink: #080808;
-  --muted: #5b6471;
-  --line: #e6e8ee;
-  --red: #ff120d;
-  /* Accessible red for small text / links (WCAG AA on white). Keep --red for fills & glows only. */
-  --red-ink: #d10600;
-  --red2: #ff4a3d;
-  --black: #080808;
-  --soft: #fff1f0;
-  --white: #ffffff;
-  --wash: #fafafa;
-  --shadow: 0 30px 70px rgba(10, 10, 10, 0.10), 0 12px 28px rgba(255, 18, 13, 0.07);
-  /* Radius scale — use these instead of ad-hoc values */
-  --r-sm: 14px;
-  --r-md: 20px;
-  --r-lg: 28px;
-  --r-xl: 34px;
-  --r-pill: 999px;
-  --radius: var(--r-lg);
-}
+@import './tokens.css';
+/* The Growth v3/v4 SERP-page system at the bottom is fenced in @layer growth
+   so it can never out-specify the flagship system (unlayered rules win). */
+@layer growth;
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: linear-gradient(180deg, #fff 0%, #fafafa 55%, #fff 100%);
-  color: var(--ink);
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: var(--fs-body);
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; text-decoration: none; }
@@ -748,6 +732,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, .button:focus-visi
   *, *:before, *:after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
 
+@layer growth {
 /* Growth keyword pages: buyer-facing SERP-informed landing pages */
 .growth-hero {
   padding: 96px 0 54px;
@@ -939,3 +924,4 @@ a:focus-visible, button:focus-visible, summary:focus-visible, .button:focus-visi
   .mini-proof-v4 div{padding:9px;}
   .revenue-strip-v4{margin-top:12px;}
 }
+} /* end @layer growth */

@@ -1,0 +1,14 @@
+---
+interface Props { src: string; alt: string; label?: string; metric?: string; note?: string; }
+const { src, alt, label, metric, note } = Astro.props;
+---
+<figure class="shotcard">
+  {label && <div class="shotcard__bar"><span>{label}</span></div>}
+  <div class="shotcard__viewport"><img src={src} alt={alt} loading="lazy" decoding="async" /></div>
+  {(metric || note) && (
+    <figcaption>
+      {metric && <strong>{metric}</strong>}
+      {note && <span>{note}</span>}
+    </figcaption>
+  )}
+</figure>

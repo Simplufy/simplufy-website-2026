@@ -1,0 +1,11 @@
+---
+interface Props { src: string; alt: string; caption?: string; }
+const { src, alt, caption } = Astro.props;
+---
+<figure class="dframe">
+  <div class="dframe__device">
+    <span class="dframe__notch"></span>
+    <div class="dframe__screen"><img src={src} alt={alt} loading="lazy" decoding="async" /></div>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

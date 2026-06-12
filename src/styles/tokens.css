@@ -1,0 +1,95 @@
+/* ============================================================
+   Simplufy design tokens — light editorial premium
+   New semantic system. Legacy names are kept as ALIASES at the
+   bottom so the existing cascade keeps rendering during migration.
+   ============================================================ */
+:root {
+  /* ---- Primitive neutral ramp (warm) ---- */
+  --warm-50:  #faf9f7;
+  --warm-100: #f4f2ee;
+  --warm-200: #e9e6e0;
+  --warm-300: #d9d5cd;
+  --warm-400: #b4afa6;
+  --warm-500: #857f74;
+  --warm-600: #5b5650;
+  --warm-700: #3a3733;
+  --warm-900: #16140f;
+
+  /* ---- Refined scarlet (deeper than the old hot #ff120d) ---- */
+  --scarlet-50:  #fdf3f1;
+  --scarlet-500: #e0241c;
+  --scarlet-600: #bf1a13;
+  --scarlet-700: #9c150f;
+  --green-600:   #1f8a4c;
+
+  /* ---- Semantic ---- */
+  --bg:             var(--warm-50);   /* flat page background — NOT a gradient */
+  --surface:        #ffffff;
+  --surface-sunken: var(--warm-100);
+  --border:         var(--warm-200);
+  --border-strong:  var(--warm-300);
+  --text:           var(--warm-900);
+  --text-muted:     var(--warm-600);
+  --text-subtle:    var(--warm-500);
+  --accent:         var(--scarlet-600);   /* the ONE red, used sparingly */
+  --accent-hover:   var(--scarlet-700);
+  --accent-weak:    var(--scarlet-50);
+  --on-accent:      #ffffff;
+  --ink-surface:    var(--warm-900);       /* warm near-black for dark sections */
+
+  /* ---- Spacing (4px base) ---- */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 24px;
+  --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 128px;
+  --section-y: clamp(64px, 9vw, 128px);
+
+  /* ---- Type ---- */
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-serif: 'Fraunces', Georgia, 'Times New Roman', ui-serif, serif;
+  --fs-display: clamp(40px, 5.2vw, 72px);
+  --fs-h1:      clamp(34px, 4.4vw, 56px);
+  --fs-h2:      clamp(28px, 3.4vw, 44px);
+  --fs-h3: 22px;
+  --fs-h4: 18px;
+  --fs-body-lg: 19px;
+  --fs-body: 17px;
+  --fs-small: 15px;
+  --fs-label: 13px;
+  --lh-tight: 1.05;
+  --lh-snug: 1.2;
+  --lh-body: 1.65;
+  --tracking-display: -0.025em;
+  --tracking-tight: -0.015em;
+  --tracking-label: 0.08em;
+  --fw-reg: 400; --fw-med: 500; --fw-semi: 600; --fw-bold: 700; --fw-black: 850;
+
+  /* ---- Radius (consolidated) ---- */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+  --radius: var(--r-lg);
+
+  /* ---- Shadow (soft, neutral — no red-tinted glows) ---- */
+  --shadow-sm: 0 1px 2px rgba(22,20,15,.04), 0 2px 8px rgba(22,20,15,.05);
+  --shadow-md: 0 4px 12px rgba(22,20,15,.06), 0 16px 40px rgba(22,20,15,.07);
+  --shadow: var(--shadow-md);
+
+  /* ---- Motion ---- */
+  --ease: cubic-bezier(.4, 0, .2, 1);
+  --dur-fast: .15s;
+  --dur: .24s;
+  --dur-slow: .5s;
+
+  /* ---- Legacy aliases (remove in final cleanup once unused) ---- */
+  --ink: var(--text);
+  --muted: var(--text-muted);
+  --line: var(--border);
+  --red: var(--accent);
+  --red-ink: var(--accent);
+  --red2: var(--scarlet-500);
+  --black: var(--warm-900);
+  --soft: var(--accent-weak);
+  --white: #ffffff;
+  --wash: var(--bg);
+}
