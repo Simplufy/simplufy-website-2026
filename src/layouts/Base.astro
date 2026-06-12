@@ -15,6 +15,10 @@ const schemas = Array.isArray(schema) ? schema : [schema];
     <meta name="description" content={description || site.description} />
     {keywords && <meta name="keywords" content={keywords} />}
     <link rel="canonical" href={url} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&display=swap" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
@@ -28,7 +32,7 @@ const schemas = Array.isArray(schema) ? schema : [schema];
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description || site.description} />
     <meta name="twitter:image" content={`${site.url}/assets/simplufy-social-share.png`} />
-    <meta name="theme-color" content="#f8fbff" />
+    <meta name="theme-color" content="#ffffff" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
