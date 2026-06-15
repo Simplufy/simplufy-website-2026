@@ -18,7 +18,11 @@
 .section-head p { font-size: var(--fs-body-lg); color: var(--text-muted); line-height: var(--lh-body); }
 .eyebrow { color: var(--accent); letter-spacing: var(--tracking-label); font-weight: var(--fw-black); font-size: var(--fs-label); }
 .accent-word { font-family: var(--font-serif); font-style: italic; font-weight: 500; letter-spacing: var(--tracking-tight); color: var(--accent); -webkit-text-fill-color: currentColor; background: none; }
-.split-section .accent-word { color: #ff8c84; }
+.split-section .accent-word { color: var(--accent-on-ink); }
+
+/* De-flood the ContactForm embeds (legacy hot-red gradients in global.css) */
+.form-panel.full-page-booking { background: var(--surface-sunken); }
+.embed-card { background: var(--surface); border-color: var(--border); }
 
 /* ---------- Buttons: solid accent, soft shadow ---------- */
 .button { border-radius: var(--r-pill); font-weight: var(--fw-semi); padding: 13px 22px; transition: background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }

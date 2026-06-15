@@ -20,7 +20,7 @@
   --scarlet-500: #e0241c;
   --scarlet-600: #bf1a13;
   --scarlet-700: #9c150f;
-  --green-600:   #1f8a4c;
+  --green-600:   #15703d;   /* deepened for AA on white + light green tints */
 
   /* ---- Semantic ---- */
   --bg:             var(--warm-50);   /* flat page background — NOT a gradient */
@@ -30,10 +30,11 @@
   --border-strong:  var(--warm-300);
   --text:           var(--warm-900);
   --text-muted:     var(--warm-600);
-  --text-subtle:    var(--warm-500);
+  --text-subtle:    #6a655b;               /* AA-compliant on white (was warm-500, 3.97:1) */
   --accent:         var(--scarlet-600);   /* the ONE red, used sparingly */
   --accent-hover:   var(--scarlet-700);
   --accent-weak:    var(--scarlet-50);
+  --accent-on-ink:  color-mix(in srgb, var(--accent) 62%, #fff);  /* accent for dark sections */
   --on-accent:      #ffffff;
   --ink-surface:    var(--warm-900);       /* warm near-black for dark sections */
 
