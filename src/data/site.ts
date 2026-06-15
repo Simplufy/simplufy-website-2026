@@ -300,6 +300,7 @@ export const caseStudies = [
       { name:'Ad 1 Conversion', leads:'16 website leads', cpl:'$0.60 CPL', spend:'$9.63 spend' },
       { name:'Ad 7 Conversion', leads:'9 website leads', cpl:'$0.73 CPL', spend:'$6.59 spend' },
       { name:'Ad 3 Conversion', leads:'4 website leads', cpl:'$0.78 CPL', spend:'$3.10 spend' },
+      { name:'Other conversion ads', leads:'3 website leads', cpl:'$4.99 CPL', spend:'$14.98 spend' },
       { name:'Website totals', leads:'32 website leads', cpl:'$1.07 avg. CPL', spend:'$34.30 spend' }
     ],
     revenue:[
@@ -407,6 +408,7 @@ export const caseStudies = [
       { name:'#1 Core Base', leads:'14 leads', cpl:'2.45% CTR', spend:'$19.43 CPL' },
       { name:'#3 - Copy', leads:'8 leads', cpl:'2.96% CTR', spend:'$32.41 CPL' },
       { name:'#14 Range Rover Variant', leads:'5 leads', cpl:'2.84% CTR', spend:'$20.01 CPL' },
+      { name:'Other ad variants', leads:'4 leads', cpl:'—', spend:'—' },
       { name:'Campaign totals', leads:'139 leads', cpl:'3.05% avg. CTR', spend:'$24.01 avg. CPL' }
     ],
     revenue:[
