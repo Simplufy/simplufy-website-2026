@@ -1,7 +1,111 @@
 ---
-import { faqs } from '../data/site';
+import { faqs as defaultFaqs } from '../data/faqs';
+
+interface Props {
+  items?: { q: string; a: string }[];
+  heading?: string;
+  eyebrow?: string;
+}
+
+const {
+  items = defaultFaqs,
+  eyebrow = 'FAQ',
+  heading = 'Questions buyers ask before building a better growth system.'
+} = Astro.props;
 ---
 <section class="container section faq-section" id="faq">
-  <div class="section-head"><p class="eyebrow">FAQ</p><h2>Questions buyers ask before building a better growth system.</h2></div>
-  <div class="faq-list">{faqs.map(item => <details><summary>{item.q}</summary><p>{item.a}</p></details>)}</div>
+  <div class="section-head">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2>{heading}</h2>
+  </div>
+  <div class="faq-list">
+    {items.map(item => (
+      <details>
+        <summary>{item.q}</summary>
+        <div class="faq-answer"><p>{item.a}</p></div>
+      </details>
+    ))}
+  </div>
 </section>
+
+<style>
+  .faq-list {
+    display: grid;
+    gap: var(--s-3);
+    max-width: 880px;
+  }
+  .faq-list details {
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    padding: 0;
+    transition: border-color var(--dur) var(--ease);
+  }
+  .faq-list details[open] {
+    border-color: var(--border-strong);
+  }
+  .faq-list summary {
+    position: relative;
+    list-style: none;
+    cursor: pointer;
+    padding: var(--s-5);
+    padding-right: calc(var(--s-5) * 2 + 14px);
+    font-weight: var(--fw-semi);
+    font-size: var(--fs-body);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text);
+  }
+  .faq-list summary::-webkit-details-marker {
+    display: none;
+  }
+  /* Custom plus/minus indicator: two bars; the vertical bar rotates flat on open. */
+  .faq-list summary::before,
+  .faq-list summary::after {
+    content: "";
+    position: absolute;
+    right: var(--s-5);
+    top: 50%;
+    width: 14px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--text-subtle);
+    transition: transform var(--dur) var(--ease), background var(--dur) var(--ease);
+  }
+  .faq-list summary::before {
+    transform: translateY(-50%);
+  }
+  .faq-list summary::after {
+    transform: translateY(-50%) rotate(90deg);
+  }
+  .faq-list details[open] summary::before,
+  .faq-list details[open] summary::after {
+    background: var(--accent);
+  }
+  .faq-list details[open] summary::after {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  .faq-list summary:hover::before,
+  .faq-list summary:hover::after {
+    background: var(--text);
+  }
+  .faq-answer {
+    padding: 0 var(--s-5) var(--s-5);
+  }
+  .faq-answer p {
+    margin: 0;
+    max-width: 72ch;
+    color: var(--text-muted);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-list details,
+    .faq-list summary::before,
+    .faq-list summary::after {
+      transition: none;
+    }
+  }
+</style>

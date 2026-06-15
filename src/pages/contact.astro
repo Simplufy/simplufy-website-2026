@@ -3,9 +3,106 @@ import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ContactForm from '../components/ContactForm.astro';
+import { site } from '../data/site';
+
+const callIncludes = [
+  'Website and SEO review',
+  'Paid ads and tracking review',
+  'CRM and follow-up review',
+  'AI automation opportunities',
+];
+const strongFit = [
+  'Service businesses with booked calls, estimates, appointments, consultations, enrollments, or sales conversations.',
+  'Companies that need their website, ads, CRM, search, and follow-up connected into one system.',
+  'Businesses that value proof, tracking, and operational clarity.',
+];
+const notFit = [
+  'Ecommerce-only brands focused on cart and checkout optimization.',
+  'SaaS and product-led growth companies that need onboarding or subscription optimization.',
+  'Companies looking for one cheap tactic without fixing the system around it.',
+];
+const schema = [
+  { '@context':'https://schema.org', '@type':'BreadcrumbList', itemListElement:[
+    { '@type':'ListItem', position:1, name:'Home', item:site.url + '/' },
+    { '@type':'ListItem', position:2, name:'Contact', item:site.url + '/contact/' },
+  ]},
+];
 ---
-<Base title="Contact Simplufy" description="Contact Simplufy to book a strategy call or discuss web development, CRM automation, paid advertising, SEO/AEO/GEO, and AI implementation.">
-<Header />
-<main class="container"><section class="service-hero"><p class="eyebrow">Contact</p><h1>Start with the next step that fits where you are.</h1><p>If you are ready to talk, book a strategy call. If you would rather send details first, request a free audit and we will review the opportunity before recommending what to fix.</p></section><ContactForm headline="Book a strategy call" subhead="Choose a time on the calendar. We will use the call to identify the highest-impact fix across your website, ads, CRM, search visibility, follow-up, and AI opportunities." /><ContactForm mode="form" headline="Request a free audit" subhead="Prefer to send details before scheduling? Tell us about the business, your current marketing, and what you want to improve. We will review it and follow up with a practical recommendation." /></main>
-<Footer />
+<Base title="Book a Strategy Call or Request a Free Audit" description="Book a strategy call with Simplufy or request a free audit. We review your website, ads, tracking, CRM, follow-up, and AI opportunities, then recommend what to fix first." schema={schema}>
+  <Header />
+  <main>
+    <section class="container section contact-hero">
+      <div class="contact-hero-copy reveal">
+        <p class="breadcrumb"><a href="/">Home</a> / Contact</p>
+        <p class="eyebrow">Contact</p>
+        <h1>Find the <span class="accent-word">leak</span> before spending more money.</h1>
+        <p class="contact-lede">Book a strategy call and we will walk through what is working, what is leaking, and what should be fixed first. If you would rather send details first, request a free audit and we will review the opportunity before recommending anything.</p>
+        <ul class="call-includes">
+          {callIncludes.map((item) => (
+            <li>
+              <svg class="ci-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <ContactForm headline="Book a strategy call" subhead="Choose a time on the calendar. We will use the call to identify the highest-impact fix across your website, ads, CRM, search visibility, follow-up, and AI opportunities." />
+    <ContactForm mode="form" headline="Request a free audit" subhead="Prefer to send details before scheduling? Tell us about the business, your current marketing, and what you want to improve. We will review it and follow up with a practical recommendation." />
+
+    <section class="container section fit-section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Is this a fit?</p>
+        <h2>We do our best work for connected service-business systems.</h2>
+        <p>We would rather tell you early if we are not the right partner. Here is who Simplufy is built for, and who is usually better served elsewhere.</p>
+      </div>
+      <div class="fit-grid reveal">
+        <div class="fit-card fit-card--yes">
+          <h3>A strong fit</h3>
+          <ul>
+            {strongFit.map((item) => (
+              <li>
+                <svg class="fit-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="fit-card fit-card--no">
+          <h3>Probably not a fit</h3>
+          <ul>
+            {notFit.map((item) => (
+              <li><span class="fit-dash" aria-hidden="true"></span>{item}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
 </Base>
+
+<style>
+  .contact-hero { padding-bottom: var(--s-5); }
+  .contact-hero-copy { max-width: 760px; }
+  .contact-hero h1 { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--tracking-display); margin: var(--s-2) 0 0; }
+  .contact-lede { font-size: var(--fs-body-lg); color: var(--text-muted); line-height: var(--lh-body); max-width: 640px; margin-top: var(--s-4); }
+  .call-includes { list-style: none; margin: var(--s-6) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3) var(--s-5); max-width: 620px; }
+  .call-includes li { display: flex; align-items: center; gap: var(--s-3); font-weight: var(--fw-semi); color: var(--text); }
+  .ci-check { width: 20px; height: 20px; flex: 0 0 auto; color: var(--accent); }
+
+  .fit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-5); margin-top: var(--s-6); }
+  .fit-card { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow-sm); padding: var(--s-7); }
+  .fit-card h3 { margin: 0 0 var(--s-5); font-size: var(--fs-h3); letter-spacing: var(--tracking-tight); }
+  .fit-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-4); }
+  .fit-card li { display: flex; gap: var(--s-3); line-height: var(--lh-body); color: var(--text-muted); }
+  .fit-card--yes { border-color: color-mix(in srgb, var(--green-600) 30%, var(--border)); }
+  .fit-check { width: 20px; height: 20px; flex: 0 0 auto; margin-top: 2px; color: var(--green-600); }
+  .fit-dash { width: 14px; height: 2px; flex: 0 0 auto; margin-top: 11px; background: var(--border-strong); border-radius: 2px; }
+
+  @media (max-width: 760px) {
+    .call-includes { grid-template-columns: 1fr; }
+    .fit-grid { grid-template-columns: 1fr; }
+  }
+</style>

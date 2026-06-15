@@ -1,0 +1,332 @@
+---
+// LSATrustPath — Signal Flow diagram for the Google Local Service Ads page.
+// Eligibility -> Profile -> Reviews -> Call -> Booked job -> Feedback (loops back).
+const stages = [
+  { key: 'eligibility', title: 'Eligibility', note: 'License, insurance, background check' },
+  { key: 'profile',     title: 'Profile',     note: 'Service area, hours, job types' },
+  { key: 'reviews',     title: 'Reviews',     note: 'Rating fuels ranking', stars: true },
+  { key: 'call',        title: 'Call',        note: 'Screened lead calls in' },
+  { key: 'booked',      title: 'Booked job',  note: 'Logged and won in the CRM' },
+  { key: 'feedback',    title: 'Feedback',    note: 'Rating loops back to your profile' },
+];
+---
+<div class="lsa-path" aria-label="How Local Services Ads work: eligibility, profile, and reviews earn screened calls that become booked jobs, and feedback loops back into ranking">
+  <div class="lsa-flow">
+    <div class="lsa-track" aria-hidden="true"><span class="lsa-dot"></span></div>
+
+    <div class="lsa-shield" aria-hidden="true">
+      <span class="lsa-shield-pill">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3l7 2.6v5.1c0 4.6-3 8.2-7 9.8-4-1.6-7-5.2-7-9.8V5.6L12 3z"/>
+          <path d="M9 11.9l2.1 2.2 3.9-4.4"/>
+        </svg>
+        Screened &amp; verified
+      </span>
+      <span class="lsa-shield-leader"></span>
+    </div>
+
+    <ol class="lsa-stages">
+      {stages.map((s) => (
+        <li class={`lsa-stage stage-${s.key}`}>
+          <span class="lsa-stage-title">
+            {s.key === 'booked' && (
+              <svg class="lsa-won-check" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4.5 12.5l5 5 10-11"/>
+              </svg>
+            )}
+            {s.title}
+            {s.key === 'booked' && <span class="lsa-won-chip">Won</span>}
+          </span>
+          {s.stars && (
+            <span class="lsa-stars" role="img" aria-label="Five star rating">
+              {[0, 1, 2, 3, 4].map(() => (
+                <svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true">
+                  <path d="M12 2.8l2.8 5.7 6.3.9-4.6 4.5 1.1 6.2L12 17.2l-5.6 2.9 1.1-6.2-4.6-4.5 6.3-.9L12 2.8z" fill="currentColor"/>
+                </svg>
+              ))}
+            </span>
+          )}
+          <span class="lsa-stage-note">{s.note}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <div class="lsa-return" aria-hidden="true">
+    <span class="lsa-return-dot"></span>
+    <span class="lsa-return-label">Reviews &amp; responsiveness feed the next ranking</span>
+  </div>
+</div>
+
+<style>
+  .lsa-path {
+    position: relative;
+    width: 100%;
+    padding-bottom: 64px;
+  }
+
+  .lsa-flow {
+    position: relative;
+    padding-top: 62px;
+  }
+
+  /* ---- Track + traveling signal ----
+     The track spans the stage row; its center line sits behind the cards
+     so the traveling dot reads as a signal entering each node. */
+  .lsa-track {
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    top: 62px;
+    bottom: 0;
+  }
+  .lsa-flow .lsa-track::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: var(--border-strong);
+  }
+  .lsa-dot {
+    position: absolute;
+    top: 50%;
+    left: 0%;
+    width: 7px;
+    height: 7px;
+    margin: -3.5px 0 0 -3.5px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+    animation: lsa-travel-x 11s linear infinite;
+  }
+  @keyframes lsa-travel-x {
+    0%   { left: 0%;   opacity: 0; }
+    4%   { opacity: 1; }
+    96%  { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+  }
+
+  /* ---- Shield (neutral trust mark on the Profile-to-Call segment) ---- */
+  .lsa-shield {
+    position: absolute;
+    top: 0;
+    left: 41.5%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+  }
+  .lsa-shield-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    box-shadow: var(--shadow-sm);
+    font-size: 11px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .lsa-shield-pill svg { color: var(--text-muted); flex: none; }
+  .lsa-shield-leader {
+    width: 1px;
+    height: 22px;
+    background: var(--border-strong);
+  }
+
+  /* ---- Stage cards ---- */
+  .lsa-stages {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--s-3);
+    align-items: stretch;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .lsa-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    text-align: center;
+    padding: 14px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+  }
+  .lsa-stage-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text);
+  }
+  .lsa-stage-note {
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: var(--text-subtle);
+  }
+
+  /* Reviews stars — subtle accent fill */
+  .lsa-stars {
+    display: inline-flex;
+    gap: 2px;
+    color: var(--accent);
+    opacity: 0.8;
+  }
+
+  /* Call node — gentle pulse */
+  .stage-call {
+    animation: lsa-call-pulse 3.4s var(--ease) infinite;
+  }
+  @keyframes lsa-call-pulse {
+    0%, 100% { box-shadow: var(--shadow-sm); }
+    50% { box-shadow: var(--shadow-sm), 0 0 0 6px color-mix(in srgb, var(--accent) 9%, transparent); }
+  }
+
+  /* Booked job — won state */
+  .stage-booked {
+    border-color: color-mix(in srgb, var(--green-600) 42%, var(--border));
+  }
+  .lsa-won-check { color: var(--green-600); flex: none; }
+  .lsa-won-chip {
+    font-size: 10px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--green-600);
+    background: color-mix(in srgb, var(--green-600) 10%, #fff);
+    border: 1px solid color-mix(in srgb, var(--green-600) 28%, transparent);
+    border-radius: var(--r-pill);
+    padding: 1px 7px;
+  }
+
+  /* ---- Feedback return loop (Feedback -> Profile) ---- */
+  .lsa-return {
+    position: absolute;
+    left: 25%;
+    right: 8.5%;
+    top: calc(100% - 50px);
+    height: 34px;
+    border: 1px dashed var(--border-strong);
+    border-top: none;
+    border-radius: 0 0 14px 14px;
+  }
+  /* arrowhead pointing back up into Profile */
+  .lsa-return::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -4px;
+    border-left: 3.5px solid transparent;
+    border-right: 3.5px solid transparent;
+    border-bottom: 6px solid var(--text-subtle);
+  }
+  .lsa-return-label {
+    position: absolute;
+    left: 50%;
+    bottom: 7px;
+    transform: translateX(-50%);
+    font-size: 10.5px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-subtle);
+    white-space: nowrap;
+  }
+  .lsa-return-dot {
+    position: absolute;
+    bottom: -2.5px;
+    left: calc(100% - 10px);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 70%, #fff);
+    animation: lsa-return-travel 11s linear infinite backwards;
+    animation-delay: 4s;
+  }
+  @keyframes lsa-return-travel {
+    0%   { left: calc(100% - 10px); opacity: 0; }
+    6%   { opacity: 1; }
+    44%  { opacity: 1; }
+    50%  { left: 6px; opacity: 0; }
+    100% { left: 6px; opacity: 0; }
+  }
+
+  /* ---- Mobile: vertical path ---- */
+  @media (max-width: 760px) {
+    .lsa-path { padding-bottom: 0; }
+    .lsa-flow { padding-top: 0; }
+
+    .lsa-shield {
+      position: static;
+      transform: none;
+      flex-direction: row;
+      margin: 0 0 var(--s-4) 40px;
+    }
+    .lsa-shield-leader { display: none; }
+
+    .lsa-flow .lsa-track {
+      top: 10px;
+      bottom: 10px;
+      left: 15px;
+      right: auto;
+      width: 1px;
+    }
+    .lsa-flow .lsa-track::before {
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      right: auto;
+      width: 1px;
+      height: auto;
+    }
+    .lsa-dot {
+      left: 50%;
+      top: 0%;
+      animation-name: lsa-travel-y;
+    }
+    @keyframes lsa-travel-y {
+      0%   { top: 0%;   opacity: 0; }
+      4%   { opacity: 1; }
+      96%  { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    .lsa-stages {
+      grid-template-columns: 1fr;
+      gap: var(--s-3);
+      margin-left: 40px;
+    }
+    .lsa-stage {
+      align-items: flex-start;
+      text-align: left;
+      padding: 13px 16px;
+    }
+
+    .lsa-return { display: none; }
+  }
+
+  /* ---- Reduced motion: complete static diagram, Booked job highlighted ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .lsa-dot,
+    .lsa-return-dot { display: none; }
+    .stage-call { animation: none; }
+    .stage-booked { box-shadow: var(--shadow-sm), 0 0 0 4px color-mix(in srgb, var(--green-600) 9%, transparent); }
+  }
+</style>

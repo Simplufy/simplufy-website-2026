@@ -1,0 +1,467 @@
+---
+// Signal Flow — paid-search query routing.
+// Real queries are classified by intent, routed to a tight ad group and a
+// matched landing page, then created as CRM opportunities. The junk query is
+// stopped at the negative-keyword gate before it wastes a click.
+
+const queries = [
+  { text: "ceramic coating cost", intent: "Research", tone: "research" },
+  { text: "roof inspection near me", intent: "Local intent", tone: "local" },
+  { text: "emergency plumber open now", intent: "High intent", tone: "high" },
+  { text: "med spa consultation", intent: "High intent", tone: "high" },
+];
+
+// Rail geometry: four 44px rows with 16px gaps -> row centers at 22/82/142/202.
+// Every matched path converges on the pipeline midline (y = 112).
+const railPaths = [
+  "M0 22 C44 22, 40 112, 84 112",
+  "M0 82 C44 82, 40 112, 84 112",
+  "M0 142 C44 142, 40 112, 84 112",
+  "M0 202 C44 202, 40 112, 84 112",
+];
+---
+
+<figure
+  class="ppc-match"
+  role="img"
+  aria-label="Diagram of paid-search query routing. Searches like roof inspection near me and emergency plumber open now are classified by intent, routed to a tight ad group and a matched landing page, and created as CRM opportunities. A junk query, free diy roof repair, is stopped by a negative keyword and the wasted click is blocked."
+>
+  <header class="head">
+    <span class="head-label">Query routing</span>
+    <span class="head-chip">Intent &rarr; pipeline</span>
+  </header>
+
+  <div class="match">
+    <div class="queries">
+      {queries.map((q, i) => (
+        <div class={`qrow${i === 2 ? " qrow-hl" : ""}`} style={`--i:${i}`}>
+          <span class="qchip">
+            <svg viewBox="0 0 12 12" aria-hidden="true"><circle cx="5" cy="5" r="3.4" /><path d="M7.6 7.6 10.4 10.4" /></svg>
+            {q.text}
+          </span>
+          <span class={`intent intent-${q.tone}`}>{q.intent}</span>
+        </div>
+      ))}
+    </div>
+
+    <div class="rail" aria-hidden="true">
+      <svg viewBox="0 0 84 224" width="84" height="224">
+        {railPaths.map((d, i) => <path class={`rp rp-${i}`} d={d} />)}
+      </svg>
+      <span class="rdot" style={`offset-path: path('${railPaths[0]}')`}></span>
+      <span class="rdot rdot-b" style={`offset-path: path('${railPaths[2]}')`}></span>
+    </div>
+
+    <span class="mtick" aria-hidden="true"></span>
+
+    <div class="pipeline">
+      <div class="pnode">
+        <strong>Ad group</strong>
+        <span>Tight theme</span>
+      </div>
+      <span class="plink" aria-hidden="true"></span>
+      <div class="pnode">
+        <strong>Landing page</strong>
+        <span>Message match</span>
+      </div>
+      <span class="plink" aria-hidden="true"><i class="pdot"></i></span>
+      <div class="pnode won">
+        <i class="won-dot" aria-hidden="true"></i>
+        <div>
+          <strong>CRM opportunity</strong>
+          <span class="won-chip">Opportunity created</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="junk">
+      <span class="qchip junk-chip" style="--i:4">
+        <svg viewBox="0 0 12 12" aria-hidden="true"><circle cx="5" cy="5" r="3.4" /><path d="M7.6 7.6 10.4 10.4" /></svg>
+        <s>free diy roof repair</s>
+      </span>
+      <span class="jlink" aria-hidden="true"></span>
+      <div class="gate">
+        <span class="gate-x" aria-hidden="true">
+          <svg viewBox="0 0 10 10"><path d="M2.2 2.2 7.8 7.8 M7.8 2.2 2.2 7.8" /></svg>
+        </span>
+        <div class="gate-text">
+          <strong>Negative keyword</strong>
+          <span class="gate-chip">Wasted click blocked</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .ppc-match {
+    container-type: inline-size;
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--s-5) var(--s-6) var(--s-6);
+  }
+
+  /* ---- Panel head ---- */
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    margin-bottom: var(--s-6);
+  }
+  .head-label {
+    font-size: var(--fs-label);
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    color: var(--text-subtle);
+  }
+  .head-chip {
+    font-size: 11px;
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    background: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+
+  /* ---- Layout ---- */
+  .match {
+    display: grid;
+    grid-template-columns: auto 84px auto;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ---- Queries ---- */
+  .queries {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .qrow {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .qchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    font-size: 13px;
+    font-weight: var(--fw-semi);
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+    opacity: 0;
+    animation: ppcqm-chip 16s var(--ease) infinite;
+    animation-delay: calc(var(--i) * 1.5s);
+  }
+  .qchip svg {
+    width: 11px;
+    height: 11px;
+    fill: none;
+    stroke: var(--text-subtle);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    flex: none;
+  }
+  .intent {
+    font-size: 11px;
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 9px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--border);
+    background: var(--surface-sunken);
+    color: var(--text-muted);
+    white-space: nowrap;
+    opacity: 0;
+    animation: ppcqm-chip 16s var(--ease) infinite;
+    animation-delay: calc(var(--i) * 1.5s + 0.6s);
+  }
+  .intent-high {
+    background: var(--accent-weak);
+    border-color: color-mix(in srgb, var(--accent) 25%, var(--border));
+    color: var(--accent);
+  }
+  .intent-research {
+    color: var(--text-subtle);
+  }
+
+  @keyframes ppcqm-chip {
+    0% { opacity: 0; transform: translateY(5px); }
+    3% { opacity: 1; transform: none; }
+    94% { opacity: 1; transform: none; }
+    100% { opacity: 0; transform: translateY(-3px); }
+  }
+
+  /* ---- Converging rail ---- */
+  .rail {
+    position: relative;
+    width: 84px;
+    height: 224px;
+  }
+  .rail svg { display: block; }
+  .rp {
+    fill: none;
+    stroke: var(--border-strong);
+    stroke-width: 1.5;
+  }
+  .rdot { display: none; }
+  @supports (offset-path: path("M0 0 L1 1")) {
+    .rdot {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+      opacity: 0;
+      animation: ppcqm-travel 7s linear infinite;
+    }
+    .rdot-b { animation-delay: 3.5s; }
+  }
+  @keyframes ppcqm-travel {
+    0% { offset-distance: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    86% { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+
+  /* ---- Pipeline ---- */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pnode {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 9px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+  }
+  .pnode strong {
+    font-size: 13px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .pnode > span {
+    font-size: 11px;
+    color: var(--text-subtle);
+    white-space: nowrap;
+  }
+  .plink {
+    position: relative;
+    width: 34px;
+    height: 1.5px;
+    background: var(--border-strong);
+    flex: none;
+  }
+  .pdot {
+    position: absolute;
+    top: 50%;
+    left: -3px;
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+    opacity: 0;
+    animation: ppcqm-slide 5s linear infinite;
+    animation-delay: 1.2s;
+  }
+  @keyframes ppcqm-slide {
+    0% { transform: translateX(0); opacity: 0; }
+    14% { opacity: 1; }
+    82% { opacity: 1; }
+    100% { transform: translateX(34px); opacity: 0; }
+  }
+  .won {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    border-color: color-mix(in srgb, var(--green-600) 35%, var(--border));
+  }
+  .won > div {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .won-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green-600);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--green-600) 14%, transparent);
+    flex: none;
+  }
+  .won-chip {
+    font-size: 10.5px;
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--green-600);
+    white-space: nowrap;
+  }
+
+  /* ---- Junk lane / negative-keyword gate ---- */
+  .junk {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: var(--s-6);
+  }
+  .junk-chip {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  }
+  .junk-chip s {
+    color: var(--text-subtle);
+    text-decoration-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+  .jlink {
+    width: 56px;
+    height: 0;
+    border-top: 1px dashed var(--border-strong);
+    flex: none;
+  }
+  .gate {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    background: var(--surface);
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    animation: ppcqm-gate 8s var(--ease) infinite;
+  }
+  .gate-x {
+    width: 22px;
+    height: 22px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+    background: var(--accent-weak);
+  }
+  .gate-x svg {
+    width: 9px;
+    height: 9px;
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+  .gate-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .gate-text strong {
+    font-size: 13px;
+    font-weight: var(--fw-bold);
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .gate-chip {
+    font-size: 10.5px;
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  @keyframes ppcqm-gate {
+    0%, 84%, 100% { box-shadow: var(--shadow-sm); }
+    90% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent); }
+  }
+
+  .mtick { display: none; }
+
+  /* ---- Vertical flow on small containers ---- */
+  @container (max-width: 860px) {
+    .ppc-match { padding: var(--s-5); }
+    .match {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .queries { gap: 10px; }
+    .qrow { height: auto; flex-wrap: wrap; }
+    .qchip { white-space: normal; }
+    .rail { display: none; }
+    .mtick {
+      display: block;
+      width: 1.5px;
+      height: 26px;
+      background: var(--border-strong);
+      margin: 14px auto;
+    }
+    .pipeline {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+    .pnode { align-items: center; text-align: center; }
+    .won { justify-content: center; }
+    .plink {
+      width: 1.5px;
+      height: 26px;
+      margin-inline: auto;
+    }
+    .pdot { display: none; }
+    .junk {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      margin-top: var(--s-6);
+    }
+    .junk-chip { align-self: center; }
+    .jlink {
+      width: 1.5px;
+      height: 24px;
+      border-top: none;
+      border-left: 1px dashed var(--border-strong);
+      margin-inline: auto;
+      flex: none;
+    }
+    .gate { align-self: center; }
+  }
+
+  /* ---- Reduced motion: complete static diagram ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .qchip,
+    .intent { opacity: 1 !important; transform: none !important; }
+    .rdot,
+    .pdot { display: none !important; }
+    .rp { opacity: 0.5; }
+    .rp-2 { stroke: var(--accent); opacity: 1; }
+    .qrow-hl .qchip { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+  }
+</style>

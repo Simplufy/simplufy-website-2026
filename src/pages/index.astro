@@ -6,73 +6,805 @@ import ContactForm from '../components/ContactForm.astro';
 import FAQ from '../components/FAQ.astro';
 import Icon from '../components/Icon.astro';
 import BrowserFrame from '../components/BrowserFrame.astro';
-import DeviceFrame from '../components/DeviceFrame.astro';
-import ScreenshotCard from '../components/ScreenshotCard.astro';
 import PartnerBadges from '../components/PartnerBadges.astro';
-import { site, services, industries, faqs, resources, wallLogos } from '../data/site';
-const schema = [{ '@context':'https://schema.org', '@type':['LocalBusiness','ProfessionalService'], name:site.name, url:site.url, description:site.description, address:{'@type':'PostalAddress', addressLocality:site.city, addressRegion:'FL', addressCountry:'US'}, areaServed:'United States', serviceType:services.map(s=>s.eyebrow) }, { '@context':'https://schema.org', '@type':'WebSite', name:site.name, url:site.url }, { '@context':'https://schema.org', '@type':'FAQPage', mainEntity: faqs.map(f => ({ '@type':'Question', name:f.q, acceptedAnswer:{ '@type':'Answer', text:f.a }})) }];
+import SignalFlow from '../components/motion/SignalFlow.astro';
+import FunnelLeakScanner from '../components/motion/FunnelLeakScanner.astro';
+import ServiceOrbit from '../components/motion/ServiceOrbit.astro';
+import { site, services, industries, wallLogos } from '../data/site';
+import { faqs } from '../data/faqs';
+import { serviceDetails } from '../data/serviceDetails';
+import { industryDetails } from '../data/industryDetails';
+
+const serviceNav = Object.fromEntries(services.map((s) => [s.slug, s.nav]));
+
+const leaks = [
+  { title: 'Unclear offer', line: 'Visitors cannot tell what you sell, who it is for, or why they should pick you over the next tab.' },
+  { title: 'Thin service pages', line: 'One generic services page cannot rank for ten different jobs or persuade ten different buyers.' },
+  { title: 'Slow speed-to-lead', line: 'The lead that gets a text in five minutes books. The one that waits five hours keeps shopping.' },
+  { title: 'Disconnected CRM', line: 'Forms land in an inbox, calls go untracked, and nobody can see which leads are still waiting.' },
+  { title: 'Weak tracking', line: 'When nobody knows which channel booked the job, budget goes to whichever report looks busiest.' },
+  { title: 'No proof above the CTA', line: 'Asking for the call before showing evidence makes every click work harder than it should.' }
+];
+
+const osSteps = [
+  { num: '01', title: 'Demand Capture', desc: 'Google, Meta, LSA, TikTok, SEO, referrals, local search.' },
+  { num: '02', title: 'Conversion Path', desc: 'Home, service, industry, landing, and resource pages.' },
+  { num: '03', title: 'CRM Handoff', desc: 'Source, service, contact data, appointment intent.' },
+  { num: '04', title: 'Follow-up', desc: 'SMS, email, missed-call, reminders, nurture.' },
+  { num: '05', title: 'Reporting', desc: 'Lead source, booked opportunity, pipeline, revenue signals.' },
+  { num: '06', title: 'AI Support', desc: 'Reporting summaries, research, intake, content, internal handoffs.' }
+];
+
+const resourceCards = [
+  { cat: 'Search', title: 'SEO/AEO/GEO for service industries', line: 'How to structure pages so Google, maps, and AI search engines all understand who you serve.', href: '/resources/seo-aeo-geo-for-service-industries/' },
+  { cat: 'CRM', title: 'CRM follow-up systems', line: 'What to fix when leads come in but booked calls, estimates, and consultations are not keeping up.', href: '/resources/crm-follow-up-system-for-booked-calls/' },
+  { cat: 'Paid Media', title: 'Paid media for booked jobs', line: 'Where Google Ads, LSA, and Meta each fit when the goal is booked jobs instead of cheap form fills.', href: '/resources/google-ads-lsa-meta-for-contractors/' }
+];
+
+const schema = [
+  { '@context':'https://schema.org', '@type':['LocalBusiness','ProfessionalService'], name:site.name, url:site.url, description:site.description, address:{'@type':'PostalAddress', addressLocality:site.city, addressRegion:'FL', addressCountry:'US'}, areaServed:'United States', serviceType:services.map(s=>s.eyebrow) },
+  { '@context':'https://schema.org', '@type':'WebSite', name:site.name, url:site.url },
+  { '@context':'https://schema.org', '@type':'Organization', name:site.name, url:site.url, logo:`${site.url}/assets/simplufy-original-logo.png` },
+  { '@context':'https://schema.org', '@type':'FAQPage', mainEntity: faqs.map(f => ({ '@type':'Question', name:f.q, acceptedAnswer:{ '@type':'Answer', text:f.a }})) }
+];
 ---
 <Base title="Digital Marketing Agency for Contractors, Clinics, Education & B2B" description="Simplufy builds websites, paid ads, CRM automation, SEO/AEO/GEO, and AI systems for contractors, auto shops, med spas, education brands, and B2B service companies." keywords="digital marketing agency for contractors, med spa marketing agency, auto detailing marketing, B2B service marketing, education marketing agency, AI implementation agency" schema={schema}>
   <Header />
   <main>
+    <!-- 1. HERO -->
     <section class="hero container">
       <div class="hero-copy reveal">
         <p class="eyebrow">Digital growth systems for service industries</p>
         <h1>Get found. Get chosen. <span class="accent-word">Follow up</span> before the lead goes cold.</h1>
-        <p class="hero-sub">Simplufy builds the website, Google PPC, Meta, LSA, TikTok, CRM, search, and AI systems behind companies that live on booked calls, estimates, consultations, appointments, and enrollments.</p>
-        <div class="actions"><a class="button primary" href="/contact/">Book a strategy call</a><a class="button ghost" href="#industries">See industries</a></div>
+        <p class="hero-sub">Simplufy builds the connected growth system behind companies that live on booked calls, estimates, consultations, appointments, enrollments, and sales conversations.</p>
+        <div class="actions">
+          <a class="button primary" href="/contact/">Book a strategy call</a>
+          <a class="button ghost" href="#system">See how the system works</a>
+        </div>
         <PartnerBadges />
+        <p class="hero-microproof">Trusted by brands across automotive, home services, trades, specialty services, education, and B2B.</p>
       </div>
       <div class="hero-visual reveal">
-        <BrowserFrame src="/assets/case-studies/detail-depot/detail-depot-website-preview.png" alt="Detail Depot website built by Simplufy" url="detaildepot.com" />
-        <div class="hero-stat-chip"><strong>$83,260</strong><span>pipeline tracked</span></div>
+        <SignalFlow />
       </div>
     </section>
 
+    <!-- 2. LOGO STRIP -->
     <section class="container">
       <div class="logo-wall-static reveal">
-        <p>Trusted by brands across automotive, home services, trades, and specialty services</p>
+        <p>Client brands running on Simplufy growth systems</p>
         <ul>{wallLogos.map((logo) => <li><img src={logo.src} alt={logo.name} loading="lazy" /></li>)}</ul>
       </div>
     </section>
 
-    <section class="container section" id="services"><div class="section-head reveal"><p class="eyebrow">What we fix</p><h2>Most marketing problems are really <span class="accent-word">system problems</span>.</h2><p>A nice website will not save slow follow-up. Cheap leads will not fix weak positioning. SEO content will not work if the site is thin. Simplufy connects the pieces so your marketing does not depend on one random tactic working forever.</p></div><div class="card-grid services-grid reveal">{services.map(s => <a class="service-card" href={`/services/${s.slug}/`}><span class="icon-chip"><Icon name={s.icon} /></span><h3>{s.nav}</h3><p>{s.description}</p><em>{s.cta} →</em></a>)}</div></section>
-
-    <section class="split-section"><div class="container split reveal"><div><p class="eyebrow">The Simplufy approach</p><h2>Built for companies where every <span class="accent-word">missed lead</span> costs real money.</h2></div><div><p>Roofers need inspection requests. Detailers need coating jobs. Med spas need consultations. B2B firms need qualified calls. Schools, coaches, and training companies need inquiries that turn into enrollments. The strategy changes by industry, but the fundamentals stay the same: clear offer, strong pages, search demand, clean tracking, fast follow-up, and proof.</p></div></div></section>
-
-    <section class="container section"><div class="section-head reveal"><p class="eyebrow">Proof you can understand</p><h2>Marketing should be clear enough to <span class="accent-word">see what is working</span>.</h2><p>Instead of vague reports, Simplufy builds visible systems: modern storefronts, booking paths, campaign data, CRM follow-up, and search visibility that show how real buyers move from first click to booked opportunity.</p></div>
-      <div class="proof-showcase-grid reveal">
-        <BrowserFrame src="/assets/case-studies/detail-depot/detail-depot-website-preview.png" alt="Detail Depot conversion-focused website" url="detaildepot.com" caption="Web presence — conversion pages that make the offer clear and build trust fast." />
-        <DeviceFrame src="/assets/case-studies/jp-mobile-detail/jp-mobile-detail-booking-engine.png" alt="JP Mobile Detail mobile booking engine" caption="Booking path — scheduling built around real buyer intent." />
-        <ScreenshotCard src="/assets/case-studies/detail-depot/detail-depot-meta-ads-results.png" alt="Detail Depot Meta Ads performance" label="Performance" metric="$83,260" note="Lead, booking, pipeline, and revenue signals in one connected view." />
+    <!-- 3. PROBLEM -->
+    <section class="container section">
+      <div class="section-head reveal">
+        <p class="eyebrow">The core problem</p>
+        <h2>Most marketing problems are really <span class="accent-word">system problems</span>.</h2>
+        <p>A polished website will not save slow follow-up. Cheap leads will not fix weak positioning. SEO content will not work if the site is thin. Simplufy connects the pieces so your marketing does not depend on one random tactic working forever.</p>
+      </div>
+      <div class="scanner-wrap reveal">
+        <FunnelLeakScanner />
+      </div>
+      <div class="leak-grid reveal">
+        {leaks.map((l) => (
+          <div class="leak-card">
+            <h3><span class="leak-dot" aria-hidden="true"></span>{l.title}</h3>
+            <p>{l.line}</p>
+          </div>
+        ))}
       </div>
     </section>
 
-    <section class="container section" id="industries"><div class="section-head reveal"><p class="eyebrow">Industries</p><h2>Specific pages for <span class="accent-word">specific buyers</span>, not vague “local business” copy.</h2><p>Each industry has different offers, seasonality, search behavior, trust signals, and sales cycles. The site is structured so we can keep adding pages around the exact markets you want to win.</p></div><div class="industry-grid reveal">{industries.map(i => <a class="industry-card" href={`/industries/${i.slug}/`}><div class="card-head"><span class="icon-chip"><Icon name={i.icon} /></span><h3>{i.nav}</h3></div><p>{i.description}</p></a>)}</div></section>
+    <!-- 4. OPERATING SYSTEM -->
+    <section class="container section" id="system">
+      <div class="section-head reveal">
+        <p class="eyebrow">The operating system</p>
+        <h2>One connected system from first click to booked opportunity.</h2>
+        <p>Traffic, pages, forms, calendars, CRM, follow-up, reporting, and AI should not live in separate silos.</p>
+      </div>
+      <ol class="os-flow reveal" role="list">
+        {osSteps.map((step) => (
+          <li class="os-step">
+            <span class="os-num">{step.num}</span>
+            <h3>{step.title}</h3>
+            <p>{step.desc}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
 
-    <section class="container section results" id="results"><div class="reveal"><p class="eyebrow">Client results</p><h2>Real growth across <span class="accent-word">web, paid, CRM, SEO, and automation</span>.</h2><p>The proof library shows how different growth systems work in the real world: paid acquisition for auto detailers, legacy website modernization for home services, high-ticket B2B lead generation, booking-engine builds, and SEO/AEO visibility for premium brands.</p><div class="actions"><a class="button primary" href="/case-studies/">View case studies</a></div></div>
-      <div class="proof-cards result-proof-cards reveal">
-        <ScreenshotCard src="/assets/case-studies/detail-depot/detail-depot-meta-ads-results.png" alt="Detail Depot Meta Ads and pipeline performance" label="Detail Depot" metric="$83,260" note="Pipeline value from a connected Meta Ads, website, and CRM system." />
-        <ScreenshotCard src="/assets/proof/state-termite/state-termite-new-green-homepage.png" alt="State Termite modernized website" label="State Termite" metric="Since 1933" note="A 93-year brand moved into a clean lead-capture and review engine." />
-        <ScreenshotCard src="/assets/case-studies/momentum-coaching/momentum-coaching-meta-ads-performance.png" alt="Momentum Coaching Meta Ads performance" label="Momentum Coaching" metric="27.6x" note="High-ticket B2B campaign that produced $9,000 from $325.35 in spend." />
+    <!-- 5. SERVICES -->
+    <section class="container section" id="services">
+      <div class="services-lead reveal">
+        <div class="section-head services-head">
+          <p class="eyebrow">Services</p>
+          <h2>The services are separate. The <span class="accent-word">strategy</span> is not.</h2>
+          <p>Eight modules, one output. Every service is built to feed the next step in the system, not to live in its own silo.</p>
+        </div>
+        <ServiceOrbit />
+      </div>
+      <div class="module-grid reveal">
+        {services.map((s) => (
+          <a class="svc-card" href={`/services/${s.slug}/`}>
+            <span class="icon-chip"><Icon name={s.icon} /></span>
+            <h3>{s.nav}</h3>
+            <p class="svc-desc">{s.description}</p>
+            <p class="svc-best">{serviceDetails[s.slug].bestWhen}</p>
+            <em class="svc-cta">{s.cta} →</em>
+          </a>
+        ))}
       </div>
     </section>
 
-    <section class="container section"><div class="section-head reveal"><p class="eyebrow">Client work</p><h2>Proof, screenshots, and <span class="accent-word">case studies</span> from real campaigns.</h2><p>Real builds with screenshots, metrics, and full breakdowns — paid acquisition, automated booking, ecosystem automation, legacy modernization, and luxury SEO/AEO engines.</p></div>
-      <div class="featured-case-card reveal"><div><p class="eyebrow">Featured auto detailing result</p><h3>How Detail Depot scaled from $2,000 to $12,000+/month</h3><p>Naperville ceramic coating and premium detailing campaign with 285 leads, $83,260 in pipeline value, and a 10x+ ad return.</p><a class="button primary" href="/case-studies/detail-depot-auto-detailing-growth-system/">View Detail Depot results</a></div><BrowserFrame src="/assets/case-studies/detail-depot/detail-depot-meta-ads-results.png" alt="Detail Depot Meta Ads results showing lead volume and cost per lead" url="ads.simplufy.com" /></div>
-      <div class="featured-case-card reveal"><div><p class="eyebrow">Featured booking engine result</p><h3>How JP Mobile Detail automated bookings and won Google Search</h3><p>Powell, Ohio mobile detailing campaign with 1,087 Google clicks, $0.44 average CPC, and 31 primary bookings at $15.51 CPA.</p><a class="button primary" href="/case-studies/jp-mobile-detail-automated-booking-google-ads/">View JP Mobile Detail results</a></div><BrowserFrame src="/assets/case-studies/jp-mobile-detail/jp-mobile-detail-google-ads-performance.png" alt="JP Mobile Detail Google Ads campaign performance dashboard" url="ads.google.com" /></div>
-      <div class="featured-case-card reveal"><div><p class="eyebrow">Featured legacy modernization</p><h3>How State Termite dragged a 1933 brand into the modern age</h3><p>A 93-year local pest control brand moved from a dated red/blue web presence into a cleaner lead capture, call tracking, and review-growth engine.</p><a class="button primary" href="/case-studies/state-termite-pest-control-legacy-modernization/">View State Termite results</a></div><BrowserFrame src="/assets/proof/state-termite/state-termite-new-green-homepage.png" alt="State Termite modern website homepage" url="statetermite.com" /></div>
-      <div class="featured-case-card reveal"><div><p class="eyebrow">Featured booking transformation</p><h3>How Venice Dive Center turned a brochure into a booking engine</h3><p>Florida dive shop replaced a broken legacy site with a mobile-first booking system for courses, charters, rentals, and refills.</p><a class="button primary" href="/case-studies/venice-dive-center-booking-engine/">View Venice Dive Center results</a></div><BrowserFrame src="/assets/case-studies/venice-dive-center/venice-dive-center-new-booking-engine.png" alt="Venice Dive Center modern booking website" url="venicedivecenter.com" /></div>
+    <!-- 6. INDUSTRIES -->
+    <section class="container section" id="industries">
+      <div class="section-head reveal">
+        <p class="eyebrow">Industries</p>
+        <h2>Specific pages for <span class="accent-word">specific buyers</span>, not vague “local business” copy.</h2>
+        <p>Each industry has different offers, seasonality, search behavior, trust signals, and sales cycles. The structure changes by market while the system stays consistent.</p>
+      </div>
+      <div class="ind-grid reveal">
+        {industries.map((i) => (
+          <a class="ind-card" href={`/industries/${i.slug}/`}>
+            <div class="ind-head">
+              <span class="icon-chip"><Icon name={i.icon} /></span>
+              <h3>{i.nav}</h3>
+            </div>
+            <p class="ind-outcome">{industryDetails[i.slug].outcome}</p>
+            <ul class="ind-tags" role="list">
+              {industryDetails[i.slug].services.slice(0, 3).map((slug) => (
+                <li>{serviceNav[slug]}</li>
+              ))}
+            </ul>
+            <em class="ind-go">View industry →</em>
+          </a>
+        ))}
+      </div>
     </section>
 
-    <section class="container section"><div class="stat-band reveal"><div><strong>$83,260</strong><span>Pipeline tracked — Detail Depot</span></div><div><strong>27.6x</strong><span>ROAS — Momentum Coaching</span></div><div><strong>1,087</strong><span>Google clicks — JP Mobile Detail</span></div><div><strong>Since 1933</strong><span>Legacy brand modernized — State Termite</span></div></div></section>
+    <!-- 7. PROOF -->
+    <section class="container section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Proof</p>
+        <h2>Real systems. Real campaigns. Real <span class="accent-word">booked opportunity</span> signals.</h2>
+      </div>
+      <div class="stat-band reveal">
+        <div><strong>$83,260</strong><span>Pipeline value — Detail Depot</span></div>
+        <div><strong>1,087</strong><span>Google clicks — JP Mobile Detail</span></div>
+        <div><strong>Since 1933</strong><span>Legacy brand modernized — State Termite</span></div>
+        <div><strong>27.6x</strong><span>ROAS — Momentum Coaching</span></div>
+      </div>
+      <div class="proof-cases">
+        <div class="featured-case-card reveal">
+          <div>
+            <p class="eyebrow">Featured growth system</p>
+            <h3>Detail Depot: $2,000 to $12,000+/month</h3>
+            <p>285 premium detailing and coating leads, $83,260 in tracked pipeline value, and a 10x+ ad return from one connected Meta, website, and CRM system.</p>
+            <div class="actions"><a class="button ghost" href="/case-studies/detail-depot-auto-detailing-growth-system/">Read the Detail Depot case study</a></div>
+          </div>
+          <BrowserFrame src="/assets/case-studies/detail-depot/detail-depot-meta-ads-results.png" alt="Detail Depot Meta Ads results showing 285 leads and cost per lead" url="ads.simplufy.com" />
+        </div>
+        <div class="featured-case-card reveal">
+          <div>
+            <p class="eyebrow">Featured legacy modernization</p>
+            <h3>State Termite: a 1933 brand, modernized</h3>
+            <p>A 93-year pest control brand moved from a dated red-and-blue legacy site into a clean lead-capture, call-tracking, and review-growth engine.</p>
+            <div class="actions"><a class="button ghost" href="/case-studies/state-termite-pest-control-legacy-modernization/">Read the State Termite case study</a></div>
+          </div>
+          <BrowserFrame src="/assets/proof/state-termite/state-termite-new-green-homepage.png" alt="State Termite modernized website homepage" url="statetermite.com" />
+        </div>
+      </div>
+      <div class="actions"><a class="button primary" href="/case-studies/">View case studies</a></div>
+    </section>
 
-    <section class="container section"><div class="section-head reveal"><p class="eyebrow">Resources</p><h2>Search content that turns into <span class="accent-word">rankings, sales assets, and AI visibility</span>.</h2><p>The resource hub is built for articles around services, industries, problems, comparisons, and buying questions.</p></div><div class="resource-list reveal">{resources.map(r => <a href={`/resources/${r.slug}/`}><span class="r-cat">{r.category}</span><div><span class="r-title">{r.title}</span><p class="r-desc">{r.description}</p></div><span class="r-go">Read →</span></a>)}</div></section>
+    <!-- 8. HOW IT WORKS -->
+    <section class="container section">
+      <div class="section-head reveal">
+        <p class="eyebrow">How we work</p>
+        <h2>Find the <span class="accent-word">leak</span> before spending more money.</h2>
+      </div>
+      <div class="loop reveal">
+        <ol class="loop-steps" role="list">
+          <li class="loop-step">
+            <span class="loop-num">01</span>
+            <b>Audit</b>
+            <span class="loop-desc">We look at your pages, tracking, CRM, ads, rankings, offers, and follow-up process.</span>
+          </li>
+          <li class="loop-step">
+            <span class="loop-num">02</span>
+            <b>Build</b>
+            <span class="loop-desc">We create the pages, campaigns, automations, reporting, and AI workflows that the business actually needs.</span>
+          </li>
+          <li class="loop-step">
+            <span class="loop-num">03</span>
+            <b>Improve</b>
+            <span class="loop-desc">We use search data, ad data, CRM data, and sales feedback to keep tightening the system.</span>
+          </li>
+        </ol>
+        <div class="loop-return" aria-hidden="true">
+          <span class="loop-track"><i></i></span>
+          <span class="loop-label">
+            <svg viewBox="0 0 12 12" width="12" height="12" fill="none" focusable="false" aria-hidden="true"><path d="M10 6a4 4 0 1 1-1.2-2.85M10 1.4v2.1H7.9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            The loop keeps tightening
+          </span>
+        </div>
+      </div>
+    </section>
 
-    <section class="container section process" id="process"><div class="section-head reveal"><p class="eyebrow">How we work</p><h2>Find the <span class="accent-word">leak</span> before spending more money.</h2></div><ol class="reveal"><li><b>Audit</b><span>We look at your pages, tracking, CRM, ads, rankings, offers, and follow-up process.</span></li><li><b>Build</b><span>We create the pages, campaigns, automations, reporting, and AI workflows that the business actually needs.</span></li><li><b>Improve</b><span>We use search data, ad data, CRM data, and sales feedback to keep tightening the system.</span></li></ol></section>
+    <!-- 9. RESOURCES PREVIEW -->
+    <section class="container section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Resources</p>
+        <h2>Search content that can turn into rankings, sales assets, and AI visibility.</h2>
+      </div>
+      <div class="res-grid reveal">
+        {resourceCards.map((r) => (
+          <a class="res-card" href={r.href}>
+            <span class="res-cat">{r.cat}</span>
+            <h3>{r.title}</h3>
+            <p>{r.line}</p>
+            <em class="res-go">Read →</em>
+          </a>
+        ))}
+      </div>
+      <div class="actions"><a class="button ghost" href="/resources/">Browse resources</a></div>
+    </section>
 
+    <!-- 10. FAQ + CONTACT -->
     <FAQ />
     <div class="container"><ContactForm headline="Book a strategy call with Simplufy" subhead="Pick a time and we will walk through what is working, what is leaking, and what should be fixed first." /></div>
   </main>
   <Footer />
 </Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero-microproof {
+    margin: var(--s-4) 0 0;
+    color: var(--text-subtle);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-med);
+    line-height: 1.5;
+    max-width: 56ch;
+  }
+
+  /* ---------- Problem / leak cards ---------- */
+  .scanner-wrap {
+    margin-top: var(--s-6);
+  }
+  .leak-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: var(--s-5);
+  }
+  .leak-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 22px;
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .leak-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+  .leak-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 16px;
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--fw-semi);
+  }
+  .leak-dot {
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+  .leak-card p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  /* ---------- Operating system flow ---------- */
+  .os-flow {
+    --os-gap: 20px;
+    list-style: none;
+    margin: var(--s-6) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: var(--os-gap);
+  }
+  .os-step {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    padding: 18px 16px;
+    display: grid;
+    gap: 8px;
+    align-content: start;
+  }
+  .os-num {
+    display: inline-flex;
+    width: max-content;
+    padding: 3px 8px;
+    border-radius: var(--r-pill);
+    background: var(--accent-weak);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+  }
+  .os-step h3 {
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--fw-semi);
+    line-height: var(--lh-snug);
+  }
+  .os-step p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  /* Thin connector + chevron between steps */
+  .os-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: calc(-1 * var(--os-gap));
+    width: var(--os-gap);
+    height: 1px;
+    background: var(--border-strong);
+  }
+  .os-step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: calc(-1 * var(--os-gap) + 2px);
+    width: 5px;
+    height: 5px;
+    border-top: 1px solid var(--border-strong);
+    border-right: 1px solid var(--border-strong);
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  /* ---------- Services ---------- */
+  .services-lead {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+    gap: clamp(28px, 4vw, 56px);
+    align-items: center;
+  }
+  .services-head {
+    margin: 0;
+  }
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: var(--s-7);
+  }
+  .svc-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 22px;
+    color: inherit;
+    text-decoration: none;
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .svc-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+  .svc-card h3 {
+    margin: 4px 0 0;
+    font-size: 17px;
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--fw-semi);
+  }
+  .svc-desc {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .svc-best {
+    margin: 0;
+    color: var(--text-subtle);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .svc-cta {
+    margin-top: auto;
+    padding-top: 6px;
+    font-style: normal;
+    font-weight: var(--fw-semi);
+    font-size: 14px;
+    color: var(--accent);
+  }
+
+  /* ---------- Industries ---------- */
+  .ind-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: var(--s-6);
+  }
+  .ind-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 22px;
+    color: inherit;
+    text-decoration: none;
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .ind-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+  .ind-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ind-head h3 {
+    margin: 0;
+    font-size: 17px;
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--fw-semi);
+  }
+  .ind-outcome {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .ind-tags {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .ind-tags li {
+    padding: 3px 9px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    background: var(--surface-sunken);
+    color: var(--text-subtle);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .ind-go {
+    margin-top: auto;
+    padding-top: 4px;
+    font-style: normal;
+    font-weight: var(--fw-semi);
+    font-size: 14px;
+    color: var(--accent);
+  }
+
+  /* ---------- Proof ---------- */
+  .proof-cases {
+    margin-top: var(--s-6);
+  }
+
+  /* ---------- How it works loop ---------- */
+  .loop {
+    margin-top: var(--s-6);
+  }
+  .loop-steps {
+    --loop-gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--loop-gap);
+  }
+  .loop-step {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .loop-num {
+    display: inline-flex;
+    width: max-content;
+    padding: 3px 8px;
+    border-radius: var(--r-pill);
+    background: var(--accent-weak);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+  }
+  .loop-step b {
+    font-size: 19px;
+    letter-spacing: var(--tracking-tight);
+  }
+  .loop-desc {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .loop-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: calc(-1 * var(--loop-gap));
+    width: var(--loop-gap);
+    height: 1px;
+    background: var(--border-strong);
+  }
+  .loop-step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: calc(-1 * var(--loop-gap) + 2px);
+    width: 5px;
+    height: 5px;
+    border-top: 1px solid var(--border-strong);
+    border-right: 1px solid var(--border-strong);
+    transform: translateY(-50%) rotate(45deg);
+  }
+  /* Return path: Improve back to Audit */
+  .loop-return {
+    position: relative;
+    height: 56px;
+  }
+  .loop-return::before {
+    content: "";
+    position: absolute;
+    left: calc(100% / 6);
+    right: calc(100% / 6);
+    top: 0;
+    bottom: 16px;
+    border-left: 1px solid var(--border-strong);
+    border-right: 1px solid var(--border-strong);
+    border-bottom: 1px solid var(--border-strong);
+    border-radius: 0 0 14px 14px;
+  }
+  .loop-return::after {
+    content: "";
+    position: absolute;
+    left: calc(100% / 6);
+    top: -1px;
+    width: 6px;
+    height: 6px;
+    border-top: 1px solid var(--border-strong);
+    border-left: 1px solid var(--border-strong);
+    transform: translateX(-50%) rotate(45deg);
+  }
+  .loop-track {
+    position: absolute;
+    left: calc(100% / 6);
+    right: calc(100% / 6);
+    bottom: 16px;
+    height: 0;
+  }
+  .loop-track i {
+    position: absolute;
+    top: -2.5px;
+    left: 100%;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+    animation: loop-travel 9s linear infinite;
+  }
+  @keyframes loop-travel {
+    0%   { left: 100%; opacity: 0; }
+    8%   { opacity: 1; }
+    92%  { opacity: 1; }
+    100% { left: 0%; opacity: 0; }
+  }
+  .loop-label {
+    position: absolute;
+    left: 50%;
+    bottom: 5px;
+    transform: translateX(-50%);
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-subtle);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .loop-label svg {
+    color: var(--accent);
+  }
+
+  /* ---------- Resources ---------- */
+  .res-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: var(--s-6);
+  }
+  .res-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 22px;
+    color: inherit;
+    text-decoration: none;
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .res-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+  .res-cat {
+    color: var(--accent);
+    font-size: var(--fs-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    font-weight: var(--fw-black);
+  }
+  .res-card h3 {
+    margin: 0;
+    font-size: 18px;
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--fw-semi);
+  }
+  .res-card p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .res-go {
+    margin-top: auto;
+    padding-top: 4px;
+    font-style: normal;
+    font-weight: var(--fw-semi);
+    font-size: 14px;
+    color: var(--accent);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1100px) {
+    .os-flow {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .os-step::after,
+    .os-step::before {
+      display: none;
+    }
+    .module-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .ind-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 980px) {
+    .services-lead {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 900px) {
+    .leak-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .res-grid {
+      grid-template-columns: 1fr;
+    }
+    .loop-steps {
+      grid-template-columns: 1fr;
+    }
+    .loop-step:not(:last-child)::after,
+    .loop-step:not(:last-child)::before,
+    .loop-return::before,
+    .loop-return::after,
+    .loop-track {
+      display: none;
+    }
+    .loop-return {
+      height: auto;
+      text-align: center;
+    }
+    .loop-label {
+      position: static;
+      transform: none;
+      margin-top: 16px;
+    }
+  }
+  @media (max-width: 640px) {
+    .leak-grid,
+    .module-grid,
+    .ind-grid {
+      grid-template-columns: 1fr;
+    }
+    .os-flow {
+      grid-template-columns: 1fr;
+      --os-gap: 28px;
+    }
+    .os-step:not(:last-child)::after {
+      display: block;
+      top: auto;
+      right: auto;
+      left: 50%;
+      bottom: calc(-1 * var(--os-gap));
+      width: 1px;
+      height: var(--os-gap);
+    }
+    .os-step:not(:last-child)::before {
+      display: block;
+      top: auto;
+      right: auto;
+      left: 50%;
+      bottom: calc(-1 * var(--os-gap) + 3px);
+      transform: translateX(-50%) rotate(135deg);
+    }
+  }
+
+  /* ---------- Reduced motion: resting state stays complete ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .leak-card,
+    .svc-card,
+    .ind-card,
+    .res-card {
+      transition: none;
+    }
+    .loop-track {
+      display: none;
+    }
+  }
+</style>

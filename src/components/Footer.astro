@@ -1,11 +1,202 @@
 ---
 import { services, industries, site } from '../data/site';
+
+const year = new Date().getFullYear();
 ---
 <footer class="footer">
-  <div class="container footer-grid">
-    <div><a class="brand footer-brand" href="/"><img class="brand-img" src="/assets/simplufy-s-mark.png" alt="" /><span>Simplufy</span></a><p>{site.tagline}</p><p class="fine">Based in St. Petersburg, Florida. Built for contractors, specialty trades, clinics, education brands, and B2B service companies across the U.S.</p></div>
-    <div><h3>Services</h3>{services.map(s => <a href={`/services/${s.slug}/`}>{s.nav}</a>)}</div>
-    <div><h3>Industries</h3>{industries.slice(0,8).map(i => <a href={`/industries/${i.slug}/`}>{i.nav}</a>)}</div>
-    <div><h3>Start</h3><a href="/case-studies/">Case studies</a><a href="/resources/">Resources</a><a href="/contact/">Request an audit</a><a href="/contact/">Book a strategy call</a></div>
+  <div class="footer-inner">
+    <div class="footer-cta">
+      <div class="footer-cta-copy">
+        <h2>Book a strategy call with Simplufy.</h2>
+        <p>Pick a time and we will walk through what is working, what is leaking, and what should be fixed first.</p>
+      </div>
+      <a class="button primary footer-cta-button" href="/contact/">Book a strategy call</a>
+    </div>
+    <hr class="footer-divider" />
+    <div class="footer-columns">
+      <div class="footer-col footer-brand-col">
+        <a class="brand footer-brand" href="/" aria-label="Simplufy home"><img class="brand-img" src="/assets/simplufy-s-mark.png" alt="" /><span>Simplufy</span></a>
+        <p class="footer-tagline">{site.tagline}</p>
+        <p class="fine">Based in St. Petersburg, Florida. Built for contractors, specialty trades, clinics, education brands, and B2B service companies across the U.S.</p>
+      </div>
+      <nav class="footer-col" aria-label="Services">
+        <h3>Services</h3>
+        <ul>
+          {services.map(s => <li><a href={`/services/${s.slug}/`}>{s.nav}</a></li>)}
+        </ul>
+      </nav>
+      <nav class="footer-col footer-industries" aria-label="Industries">
+        <h3>Industries</h3>
+        <ul class="two-col">
+          {industries.map(i => <li><a href={`/industries/${i.slug}/`}>{i.nav}</a></li>)}
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Company">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="/case-studies/">Case Studies</a></li>
+          <li><a href="/resources/">Resources</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/contact/">Book a strategy call</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="footer-fine">
+      <p>&copy; {year} {site.name}. All rights reserved.</p>
+      <p class="footer-fine-right">Built in St. Petersburg, FL</p>
+    </div>
   </div>
 </footer>
+
+<style>
+  .footer-inner {
+    width: 100%;
+  }
+
+  /* ---- CTA row ---- */
+  .footer-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-6);
+    flex-wrap: wrap;
+    padding: var(--s-3) 0 var(--s-6);
+  }
+  .footer-cta h2 {
+    margin: 0 0 var(--s-2);
+    font-size: var(--fs-h2);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--fw-bold);
+    color: var(--text);
+  }
+  .footer-cta p {
+    margin: 0;
+    max-width: 54ch;
+    color: var(--text-muted);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+  .footer-cta a.footer-cta-button {
+    display: inline-flex;
+    margin: 0;
+    color: var(--on-accent);
+    white-space: nowrap;
+  }
+
+  .footer-divider {
+    border: 0;
+    height: 1px;
+    margin: 0 0 var(--s-7);
+    background: var(--border);
+  }
+
+  /* ---- Link columns ---- */
+  .footer-columns {
+    display: grid;
+    grid-template-columns: 1.3fr .9fr 1.4fr .9fr;
+    gap: var(--s-7);
+    align-items: start;
+  }
+  .footer-col h3 {
+    margin: 0 0 var(--s-4);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semi);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    color: var(--text-subtle);
+  }
+  .footer-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-2);
+  }
+  .footer-col ul.two-col {
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--s-4);
+  }
+  .footer-col li a {
+    display: inline-block;
+    margin: 0;
+    padding: 2px 0;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+    line-height: var(--lh-snug);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .footer-col li a:hover {
+    color: var(--accent);
+  }
+
+  /* ---- Brand column ---- */
+  .footer-brand-col .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    color: var(--text);
+  }
+  .footer-brand-col .footer-tagline {
+    margin: var(--s-4) 0 0;
+    max-width: 34ch;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+    line-height: var(--lh-body);
+  }
+  .footer-brand-col .fine {
+    margin: var(--s-3) 0 0;
+    max-width: 38ch;
+    color: var(--text-subtle);
+    font-size: var(--fs-label);
+    line-height: var(--lh-body);
+  }
+
+  /* ---- Fine print ---- */
+  .footer-fine {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    flex-wrap: wrap;
+    margin-top: var(--s-7);
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--border);
+  }
+  .footer-fine p {
+    margin: 0;
+    color: var(--text-subtle);
+    font-size: var(--fs-label);
+  }
+  .footer-fine-right {
+    text-align: right;
+  }
+
+  @media (max-width: 1020px) {
+    .footer-columns {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s-6);
+    }
+  }
+  @media (max-width: 640px) {
+    .footer-cta {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: var(--s-5);
+    }
+    .footer-columns {
+      grid-template-columns: 1fr;
+    }
+    .footer-col ul.two-col {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer-fine {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .footer-fine-right {
+      text-align: left;
+    }
+  }
+</style>

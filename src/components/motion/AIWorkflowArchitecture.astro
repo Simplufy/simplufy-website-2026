@@ -1,0 +1,398 @@
+---
+// AIWorkflowArchitecture — Signal Flow diagram for the AI Implementation page.
+// Task -> Agent -> HUMAN REVIEW gate (the hero) -> Output -> destinations.
+const tasks = [
+  'Summarize campaign data',
+  'Prepare sales context',
+  'Draft follow-up',
+  'Research account',
+  'Route intake',
+];
+const destinations = ['CRM task', 'Report', 'Content draft', 'Internal handoff'];
+---
+<div class="aiw" aria-label="How Simplufy runs AI workflows: an agent drafts the work, a human approval gate reviews it, and only approved output reaches the CRM, reports, content, or internal handoffs">
+  <div class="aiw-col aiw-tasks">
+    <span class="aiw-col-label">Incoming task</span>
+    <div class="aiw-chip-stack">
+      {tasks.map((t, i) => (
+        <span class="aiw-task-chip" style={`--i:${i}`}><i aria-hidden="true"></i>{t}</span>
+      ))}
+    </div>
+  </div>
+
+  <div class="aiw-link" aria-hidden="true"><span class="aiw-flow-dot"></span></div>
+
+  <div class="aiw-node aiw-agent">
+    <span class="aiw-orbit" aria-hidden="true"></span>
+    <span class="aiw-node-kicker">Agent</span>
+    <strong>Drafts the work</strong>
+  </div>
+
+  <div class="aiw-link" aria-hidden="true"><span class="aiw-flow-dot d2"></span></div>
+
+  <div class="aiw-gate-wrap">
+    <div class="aiw-node aiw-gate">
+      <span class="aiw-gate-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8.2"/>
+          <path d="M9.1 8.2v5.6M12.9 8.2v5.6"/>
+          <circle cx="18.4" cy="18.4" r="4.8" fill="currentColor" stroke="none"/>
+          <path d="M16.4 18.4l1.4 1.4 2.5-2.7" stroke="#fff" stroke-width="1.5"/>
+        </svg>
+      </span>
+      <span class="aiw-gate-chip">Approval gate</span>
+      <strong>Human review</strong>
+    </div>
+    <ul class="aiw-guardrails" aria-label="Guardrails">
+      <li>
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
+        Source data checked
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
+        Owner assigned
+      </li>
+    </ul>
+  </div>
+
+  <div class="aiw-link" aria-hidden="true"><span class="aiw-flow-dot d3"></span></div>
+
+  <div class="aiw-node aiw-output">
+    <span class="aiw-node-kicker">
+      <svg class="aiw-output-check" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
+      Output
+    </span>
+    <strong>Approved &amp; shipped</strong>
+  </div>
+
+  <div class="aiw-link aiw-link-mobile" aria-hidden="true"><span class="aiw-flow-dot d4"></span></div>
+
+  <div class="aiw-col aiw-dest-col">
+    <span class="aiw-col-label">Lands in</span>
+    <div class="aiw-dest-row">
+      <span class="aiw-fan" aria-hidden="true">
+        <svg viewBox="0 0 36 142" preserveAspectRatio="none" fill="none">
+          <path d="M0 71 C 18 71, 18 14, 36 14" stroke="currentColor" vector-effect="non-scaling-stroke"/>
+          <path d="M0 71 C 18 71, 18 52, 36 52" stroke="currentColor" vector-effect="non-scaling-stroke"/>
+          <path d="M0 71 C 18 71, 18 90, 36 90" stroke="currentColor" vector-effect="non-scaling-stroke"/>
+          <path d="M0 71 C 18 71, 18 128, 36 128" stroke="currentColor" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </span>
+      <ul class="aiw-dests">
+        {destinations.map((d) => <li>{d}</li>)}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<style>
+  .aiw {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 44px; /* room for the absolutely-positioned guardrails */
+  }
+
+  .aiw-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+  .aiw-col-label {
+    font-size: 10.5px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-subtle);
+  }
+
+  /* ---- Cycling task chips ---- */
+  .aiw-chip-stack {
+    display: grid;
+  }
+  .aiw-task-chip {
+    grid-area: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    box-shadow: var(--shadow-sm);
+    font-size: 12.5px;
+    font-weight: var(--fw-med);
+    color: var(--text);
+    white-space: nowrap;
+    width: max-content;
+    opacity: 0;
+    animation: aiw-cycle 20s var(--ease) infinite both;
+    animation-delay: calc(var(--i) * 4s);
+  }
+  .aiw-task-chip:first-child { opacity: 1; }
+  .aiw-task-chip i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+  }
+  @keyframes aiw-cycle {
+    0%    { opacity: 0; transform: translateY(6px); }
+    2.5%  { opacity: 1; transform: none; }
+    20%   { opacity: 1; transform: none; }
+    23%   { opacity: 0; transform: translateY(-6px); }
+    100%  { opacity: 0; transform: translateY(6px); }
+  }
+
+  /* ---- Connectors + traveling dots ---- */
+  .aiw-link {
+    position: relative;
+    flex: 1 1 36px;
+    min-width: 22px;
+    height: 1px;
+    background: var(--border-strong);
+  }
+  .aiw-link-mobile { display: none; }
+  .aiw-flow-dot {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 5px;
+    height: 5px;
+    margin: -2.5px 0 0 -2.5px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+    animation: aiw-flow-x 6s linear infinite backwards;
+  }
+  .aiw-flow-dot.d2 { animation-delay: 2s; }
+  .aiw-flow-dot.d3 { animation-delay: 4s; }
+  @keyframes aiw-flow-x {
+    0%   { left: 0%;   opacity: 0; }
+    6%   { opacity: 1; }
+    30%  { opacity: 1; }
+    36%  { left: 100%; opacity: 0; }
+    100% { left: 100%; opacity: 0; }
+  }
+
+  /* ---- Nodes ---- */
+  .aiw-node {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    flex: none;
+  }
+  .aiw-node strong {
+    font-size: 13.5px;
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text);
+  }
+  .aiw-node-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-subtle);
+  }
+
+  /* Agent — fixed box so the orbiting dot can trace its border */
+  .aiw-agent {
+    width: 150px;
+    height: 78px;
+  }
+  .aiw-orbit {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .aiw-orbit::before {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
+    offset-path: path('M 14 0 H 136 A 14 14 0 0 1 150 14 V 64 A 14 14 0 0 1 136 78 H 14 A 14 14 0 0 1 0 64 V 14 A 14 14 0 0 1 14 0 Z');
+    animation: aiw-orbit 8s linear infinite;
+  }
+  @keyframes aiw-orbit {
+    from { offset-distance: 0%; }
+    to   { offset-distance: 100%; }
+  }
+
+  /* Human review gate — the visual hero */
+  .aiw-gate-wrap {
+    position: relative;
+    flex: none;
+  }
+  .aiw-gate {
+    gap: 7px;
+    padding: 18px 24px;
+    background: var(--accent-weak);
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+    box-shadow: var(--shadow-md), 0 0 0 5px color-mix(in srgb, var(--accent) 5%, transparent);
+  }
+  .aiw-gate strong { font-size: 15px; font-weight: var(--fw-bold); }
+  .aiw-gate-icon {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
+    color: var(--accent);
+  }
+  .aiw-gate-chip {
+    font-size: 10px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--surface);
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    border-radius: var(--r-pill);
+    padding: 2px 9px;
+  }
+
+  /* Guardrails under the gate */
+  .aiw-guardrails {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: var(--s-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .aiw-guardrails li {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: var(--fw-med);
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+  .aiw-guardrails svg { color: var(--green-600); flex: none; }
+
+  /* Output */
+  .aiw-output { padding: 16px 20px; }
+  .aiw-output-check { color: var(--green-600); }
+
+  /* ---- Destination fan + chips ---- */
+  .aiw-dest-row {
+    display: flex;
+    align-items: stretch;
+  }
+  .aiw-fan {
+    flex: none;
+    width: 34px;
+    color: var(--border-strong);
+  }
+  .aiw-fan svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .aiw-dests {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .aiw-dests li {
+    display: flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 13px;
+    font-size: 12px;
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+  }
+
+  /* ---- Mobile: vertical flow ---- */
+  @media (max-width: 880px) {
+    .aiw {
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 0;
+    }
+    .aiw-col { align-items: center; }
+
+    .aiw-link {
+      flex: none;
+      width: 1px;
+      height: 34px;
+      min-width: 0;
+    }
+    .aiw-link-mobile { display: block; }
+    .aiw-flow-dot {
+      top: 0;
+      left: 50%;
+      margin: -2.5px 0 0 -2.5px;
+      animation-name: aiw-flow-y;
+    }
+    @keyframes aiw-flow-y {
+      0%   { top: 0%;   opacity: 0; }
+      6%   { opacity: 1; }
+      30%  { opacity: 1; }
+      36%  { top: 100%; opacity: 0; }
+      100% { top: 100%; opacity: 0; }
+    }
+    .aiw-flow-dot.d4 { animation-delay: 5s; }
+
+    .aiw-guardrails {
+      position: static;
+      transform: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: var(--s-3);
+    }
+
+    .aiw-fan { display: none; }
+    .aiw-dests {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--s-2);
+    }
+  }
+
+  /* ---- Reduced motion: one full static path, gate emphasized ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .aiw-flow-dot,
+    .aiw-orbit { display: none; }
+    .aiw-task-chip { display: none; }
+    .aiw-task-chip:first-child { display: inline-flex; opacity: 1; transform: none; }
+    .aiw-gate { box-shadow: var(--shadow-md), 0 0 0 5px color-mix(in srgb, var(--accent) 7%, transparent); }
+  }
+</style>

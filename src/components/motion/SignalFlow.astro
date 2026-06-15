@@ -1,0 +1,452 @@
+---
+/**
+ * SignalFlow — flagship "Signal Flow" motion diagram.
+ * Buyer signals (sources) travel thin SVG paths into the Simplufy system
+ * and exit as booked opportunities. Pure CSS animation, no dependencies.
+ *
+ * variant="full"  — six sources, five outcomes, ~560px tall (heroes, system sections)
+ * variant="mini"  — three sources, one outcome, ~320px tall (industry page heroes)
+ */
+interface Props {
+  variant?: 'full' | 'mini';
+}
+const { variant = 'full' } = Astro.props as Props;
+const isMini = variant === 'mini';
+
+const H = isMini ? 320 : 560;
+
+const sources = isMini
+  ? ['Search', 'Ads', 'Referral']
+  : ['Google Search', 'Meta', 'Maps', 'LSA', 'TikTok', 'Referral'];
+const outcomes = isMini
+  ? ['Booked']
+  : ['Booked call', 'Estimate', 'Consultation', 'Appointment', 'Enrollment'];
+const statuses = ['Captured', 'Routed', 'Followed up', 'Booked', 'Reported'];
+const systemRows = ['Website', 'CRM', 'Follow-up', 'Tracking'];
+
+/* Geometry in a 1000 x H viewBox. The SVG stretches (preserveAspectRatio="none")
+   and the HTML nodes are anchored with the same percentages, so endpoints align
+   at any panel size. vector-effect keeps strokes crisp. */
+const srcY = isMini ? [80, 160, 240] : [70, 154, 238, 322, 406, 490];
+const inY = isMini ? [130, 160, 190] : [200, 232, 264, 296, 328, 360];
+const outY = isMini ? [160] : [100, 190, 280, 370, 460];
+const exitY = isMini ? [160] : [216, 248, 280, 312, 344];
+
+const pct = (y: number) => `${((y / H) * 100).toFixed(3)}%`;
+
+const inPaths = srcY.map((y, i) => `M 180 ${y} C 292 ${y}, 292 ${inY[i]}, 400 ${inY[i]}`);
+const outPaths = outY.map((y, i) => `M 600 ${exitY[i]} C 708 ${exitY[i]}, 708 ${y}, 820 ${y}`);
+
+const dots = isMini
+  ? [
+      { p: inPaths[0], dur: 8, delay: 0 },
+      { p: inPaths[1], dur: 9, delay: 2.4 },
+      { p: inPaths[2], dur: 8.5, delay: 4.6 },
+      { p: outPaths[0], dur: 7.5, delay: 3.1 },
+    ]
+  : [
+      { p: inPaths[0], dur: 8.5, delay: 0 },
+      { p: inPaths[2], dur: 9.5, delay: 2.2 },
+      { p: inPaths[3], dur: 8, delay: 4.6 },
+      { p: inPaths[5], dur: 10, delay: 1.4 },
+      { p: outPaths[0], dur: 7.5, delay: 3.2 },
+      { p: outPaths[2], dur: 8.5, delay: 6.1 },
+    ];
+
+const ariaLabel = isMini
+  ? 'Diagram: search, ads, and referral signals flow through the Simplufy system — website, CRM, follow-up, and tracking — and come out as a booked opportunity.'
+  : 'Diagram: buyer signals from Google Search, Meta, Maps, Local Service Ads, TikTok, and referrals flow into one Simplufy system — website, CRM, follow-up, and tracking — and come out as booked calls, estimates, consultations, appointments, and enrollment inquiries.';
+---
+<div class={`sf sf--${variant}`} role="img" aria-label={ariaLabel}>
+  <div class="sf-stage">
+    <svg
+      class="sf-paths"
+      viewBox={`0 0 1000 ${H}`}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {inPaths.map((d) => (
+        <path class="sf-line" d={d} vector-effect="non-scaling-stroke" />
+      ))}
+      {outPaths.map((d) => (
+        <path class="sf-line" d={d} vector-effect="non-scaling-stroke" />
+      ))}
+      {dots.map((d) => (
+        <>
+          <path
+            class="sf-dot sf-dot--halo"
+            d="M 0 0 L 0.01 0"
+            stroke-linecap="round"
+            stroke-width="13"
+            stroke-opacity=".15"
+            vector-effect="non-scaling-stroke"
+            style={`offset-path: path('${d.p}'); animation-duration:${d.dur}s; animation-delay:${d.delay}s;`}
+          />
+          <path
+            class="sf-dot sf-dot--core"
+            d="M 0 0 L 0.01 0"
+            stroke-linecap="round"
+            stroke-width="6.5"
+            vector-effect="non-scaling-stroke"
+            style={`offset-path: path('${d.p}'); animation-duration:${d.dur}s; animation-delay:${d.delay}s;`}
+          />
+        </>
+      ))}
+    </svg>
+
+    <div class="sf-sources">
+      {sources.map((label, i) => (
+        <span class="sf-chip" style={`top:${pct(srcY[i])}`}><i></i>{label}</span>
+      ))}
+    </div>
+
+    <div class="sf-vconn sf-vconn--a" aria-hidden="true"><i></i></div>
+
+    <div class="sf-system">
+      <p class="sf-system__label"><i></i>Simplufy System</p>
+      <ul class="sf-rows" role="list">
+        {systemRows.map((row) => (
+          <li><i></i>{row}</li>
+        ))}
+      </ul>
+      <p class="sf-status">
+        {statuses.map((s, i) => (
+          <span
+            class={`st${s === 'Booked' ? ' st--booked' : ''}`}
+            style={`animation-delay:${i * 2}s`}
+          >{s}</span>
+        ))}
+      </p>
+    </div>
+
+    <div class="sf-vconn sf-vconn--b" aria-hidden="true"><i></i></div>
+
+    <div class="sf-outcomes">
+      {outcomes.map((label, i) => (
+        <span
+          class={`sf-chip${i === 0 ? ' is-win' : ''}`}
+          style={`top:${pct(outY[i])}`}
+        ><i></i>{label}</span>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .sf {
+    width: 100%;
+  }
+
+  /* ---- Panel ---- */
+  .sf-stage {
+    position: relative;
+    height: 560px;
+    background-color: var(--surface-sunken);
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--border) 60%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--border) 60%, transparent) 1px, transparent 1px);
+    background-size: 44px 44px;
+    background-position: 50% 50%;
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-sm);
+  }
+  .sf--mini .sf-stage {
+    height: 320px;
+  }
+  /* Fade the grid toward the edges so the diagram sits in a quiet field. */
+  .sf-stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(115% 95% at 50% 50%, transparent 38%, var(--surface-sunken) 97%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ---- Paths + traveling signal dots ---- */
+  .sf-paths {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .sf-line {
+    fill: none;
+    stroke: var(--border-strong);
+    stroke-width: 1.25;
+  }
+  .sf-dot {
+    display: none;
+    fill: none;
+    stroke: var(--accent);
+  }
+  @supports (offset-path: path('M 0 0 L 1 0')) {
+    .sf-dot {
+      display: block;
+      opacity: 0;
+      offset-rotate: 0deg;
+      animation: sfTravel 9s linear infinite;
+    }
+  }
+  @keyframes sfTravel {
+    0%   { offset-distance: 0%;   opacity: 0; }
+    7%   { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+
+  /* ---- Source / outcome chips ---- */
+  .sf-chip {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    box-shadow: var(--shadow-sm);
+    font-size: 11px;
+    font-weight: var(--fw-semi);
+    letter-spacing: 0.01em;
+    line-height: 1;
+    color: var(--text);
+    white-space: nowrap;
+    transform: translateY(-50%);
+    z-index: 2;
+  }
+  .sf-chip i {
+    flex: none;
+    width: 5px;
+    height: 5px;
+    border-radius: var(--r-pill);
+    background: var(--border-strong);
+  }
+  .sf-sources .sf-chip { right: 82%; }
+  .sf-outcomes .sf-chip { left: 82%; }
+
+  /* The first outcome periodically seals as a win, in step with the
+     system card's "Booked" status (60–84% of the shared 10s cycle). */
+  .sf-chip.is-win { animation: sfWin 10s var(--ease) infinite; }
+  .sf-chip.is-win i { animation: sfWinDot 10s var(--ease) infinite; }
+  @keyframes sfWin {
+    0%, 58% {
+      color: var(--text);
+      background: var(--surface);
+      border-color: var(--border);
+    }
+    63%, 82% {
+      color: var(--green-600);
+      background: color-mix(in srgb, var(--green-600) 7%, #fff);
+      border-color: color-mix(in srgb, var(--green-600) 42%, transparent);
+    }
+    90%, 100% {
+      color: var(--text);
+      background: var(--surface);
+      border-color: var(--border);
+    }
+  }
+  @keyframes sfWinDot {
+    0%, 58% { background: var(--border-strong); }
+    63%, 82% { background: var(--green-600); }
+    90%, 100% { background: var(--border-strong); }
+  }
+
+  /* ---- System card ---- */
+  .sf-system {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 21%;
+    min-width: 212px;
+    max-width: 256px;
+    transform: translate(-50%, -50%);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-md);
+    padding: 16px;
+    z-index: 2;
+  }
+  .sf-system__label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 10px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-subtle);
+  }
+  .sf-system__label i {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+    background: var(--accent);
+  }
+  .sf-rows {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .sf-rows li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 2px;
+    border-top: 1px solid var(--border);
+    font-size: 11.5px;
+    font-weight: var(--fw-med);
+    color: var(--text-muted);
+  }
+  .sf-rows i {
+    flex: none;
+    width: 4px;
+    height: 4px;
+    border-radius: var(--r-pill);
+    background: var(--border-strong);
+  }
+  .sf--mini .sf-system { min-width: 196px; padding: 14px; }
+  .sf--mini .sf-rows li { padding: 5px 2px; font-size: 11px; }
+
+  /* ---- Cycling status chip (Captured → … → Reported, 10s loop) ---- */
+  .sf-status {
+    display: grid;
+    justify-items: center;
+    margin: 12px 0 0;
+    min-height: 23px;
+  }
+  .sf-status .st {
+    grid-area: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: var(--r-pill);
+    font-size: 10px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--accent);
+    background: var(--accent-weak);
+    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    opacity: 0;
+    animation: sfStatus 10s var(--ease) infinite;
+  }
+  .sf-status .st::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: var(--r-pill);
+    background: currentColor;
+  }
+  .sf-status .st--booked {
+    color: var(--green-600);
+    background: color-mix(in srgb, var(--green-600) 8%, #fff);
+    border-color: color-mix(in srgb, var(--green-600) 40%, transparent);
+  }
+  @keyframes sfStatus {
+    0%   { opacity: 0; transform: translateY(3px); }
+    3%   { opacity: 1; transform: none; }
+    19%  { opacity: 1; transform: none; }
+    23%  { opacity: 0; transform: translateY(-3px); }
+    100% { opacity: 0; transform: translateY(3px); }
+  }
+
+  /* ---- Mobile connectors (hidden on desktop) ---- */
+  .sf-vconn { display: none; }
+
+  /* ---- Mobile: collapse to a vertical flow ---- */
+  @media (max-width: 700px) {
+    .sf .sf-stage {
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 24px 16px;
+    }
+    .sf-paths { display: none; }
+    .sf-sources,
+    .sf-outcomes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+    }
+    .sf-chip {
+      position: static;
+      transform: none;
+    }
+    .sf-system {
+      position: static;
+      transform: none;
+      width: 100%;
+      min-width: 0;
+      max-width: 340px;
+    }
+    .sf-vconn {
+      display: flex;
+      justify-content: center;
+      position: relative;
+      width: 100%;
+      height: 36px;
+      flex: none;
+    }
+    .sf-vconn::before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      bottom: 3px;
+      left: 50%;
+      width: 1px;
+      background: var(--border-strong);
+    }
+    .sf-vconn i {
+      position: absolute;
+      top: 3px;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      margin-left: -2.5px;
+      border-radius: var(--r-pill);
+      background: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+      opacity: 0;
+      animation: sfDrop 2.8s linear infinite;
+    }
+    .sf-vconn--b i { animation-delay: 1.4s; }
+  }
+  @keyframes sfDrop {
+    0%   { transform: translateY(0); opacity: 0; }
+    14%  { opacity: 1; }
+    82%  { opacity: 1; }
+    100% { transform: translateY(25px); opacity: 0; }
+  }
+
+  /* ---- Reduced motion: complete static diagram, resolved state ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .sf-dot { display: none !important; }
+    .sf-vconn i { display: none; }
+    .sf-status .st { opacity: 0; transform: none; }
+    .sf-status .st--booked { opacity: 1; }
+    .sf-chip.is-win {
+      color: var(--green-600);
+      background: color-mix(in srgb, var(--green-600) 7%, #fff);
+      border-color: color-mix(in srgb, var(--green-600) 42%, transparent);
+    }
+    .sf-chip.is-win i { background: var(--green-600); }
+  }
+</style>

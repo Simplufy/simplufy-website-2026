@@ -2,21 +2,231 @@
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { caseStudies } from '../../data/site';
+import { caseStudies, site } from '../../data/site';
+
+// Industry strings in the data are unique per study, so chips filter on
+// normalized groups derived from those values instead of ten one-card chips.
+const groupFor = (industry = '') => {
+  if (/coach|education|consult/i.test(industry)) return 'Coaching & education';
+  if (/pest|termite/i.test(industry)) return 'Pest control';
+  if (/scuba|charter|dive/i.test(industry)) return 'Recreation & tourism';
+  if (/auto|vehicle|detail/i.test(industry)) return 'Automotive services';
+  return 'Service businesses';
+};
+const groups = [...new Set(caseStudies.map((c) => groupFor(c.industry)))];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Simplufy Case Studies',
+    url: `${site.url}/case-studies/`,
+    description: 'Real client systems, campaigns, and booked-opportunity results from Simplufy growth builds.',
+    isPartOf: { '@type': 'WebSite', name: site.name, url: site.url }
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: caseStudies.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.title,
+      url: `${site.url}/case-studies/${c.slug}/`
+    }))
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${site.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Case Studies', item: `${site.url}/case-studies/` }
+    ]
+  }
+];
 ---
-<Base title="Case Studies & Client Results" description="Explore Simplufy client results and case studies for auto detailing shops, contractors, med spas, education, B2B services, websites, paid ads, CRM, SEO, and AI systems.">
+<Base
+  title="Case Studies & Client Results"
+  description="Explore Simplufy client results and case studies for auto detailing shops, contractors, med spas, education, B2B services, websites, paid ads, CRM, SEO, and AI systems."
+  keywords="marketing case studies, service business growth results, auto detailing marketing results, CRM automation case study, SEO AEO case study"
+  schema={schema}
+>
   <Header />
-  <main class="container">
-    <section class="service-hero">
-      <p class="eyebrow">Case studies</p>
-      <h1>Client wins, screenshots, and <span class="accent-word">measurable growth systems</span>.</h1>
-      <p>Explore proof from real campaigns across auto, trades, education, B2B services, and search-driven growth systems.</p>
+  <main>
+    <section class="container cs-hub-head">
+      <div class="section-head reveal">
+        <p class="eyebrow">Case studies</p>
+        <h1>Real systems. Real campaigns. Real <span class="accent-word">booked opportunity</span> signals.</h1>
+        <p>Every build below is a connected system — pages, campaigns, CRM pipelines, search visibility, and follow-up — documented with real screenshots and real numbers, not vague claims.</p>
+      </div>
+      <div class="cs-filters reveal" role="group" aria-label="Filter case studies by industry">
+        <button type="button" class="cs-chip" data-filter="all" aria-pressed="true">All</button>
+        {groups.map((group) => (
+          <button type="button" class="cs-chip" data-filter={group} aria-pressed="false">{group}</button>
+        ))}
+      </div>
     </section>
-    <section class="rich">
-      <div class="case-card-grid">
-        {caseStudies.map(c => <a class="service-card case-index-card" href={`/case-studies/${c.slug}/`}><figure class="case-card-thumb"><img src={c.images?.[0]?.src ?? '/assets/simplufy-s-mark.png'} alt={c.images?.[0]?.alt ?? `${c.client ?? c.industry} case study visual`} loading="lazy" /></figure><span>{c.client ?? 'Case study'}</span><h3>{c.title}</h3><p>{c.description}</p><em>{c.industry} →</em></a>)}
+
+    <section class="container cs-hub-grid-wrap">
+      <div class="cs-grid" id="case-study-grid">
+        {caseStudies.map((c) => (
+          <a class="cs-card reveal" href={`/case-studies/${c.slug}/`} data-industry={groupFor(c.industry)}>
+            <figure class="cs-thumb">
+              <img
+                src={c.images?.[0]?.src ?? '/assets/simplufy-s-mark.png'}
+                alt={c.images?.[0]?.alt ?? `${c.client ?? c.industry} case study screenshot`}
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+            <div class="cs-body">
+              <span class="cs-industry">{c.industry}</span>
+              <h2 class="cs-client">{c.client ?? 'Case study'}</h2>
+              <strong class="cs-metric">{c.metric}</strong>
+              <p class="cs-desc">{c.description}</p>
+              <span class="cs-go">Read the case study <span aria-hidden="true">→</span></span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="container section cs-cta-section">
+      <div class="cs-cta reveal">
+        <div>
+          <p class="eyebrow">Your turn</p>
+          <h2>Want booked opportunities you can <span class="accent-word">trace</span> back to the system?</h2>
+          <p>Book a strategy call and we will walk the same path these clients did: find the leak, fix the system, measure the result.</p>
+        </div>
+        <a class="button primary" href="/contact/">Book a strategy call</a>
       </div>
     </section>
   </main>
   <Footer />
+
+  <script>
+    const chips = document.querySelectorAll<HTMLButtonElement>('.cs-chip');
+    const cards = document.querySelectorAll<HTMLAnchorElement>('.cs-card');
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const filter = chip.dataset.filter;
+        chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+        cards.forEach((card) => {
+          const show = filter === 'all' || card.dataset.industry === filter;
+          card.toggleAttribute('hidden', !show);
+          if (show) card.classList.add('is-visible');
+        });
+      });
+    });
+  </script>
+
+  <style>
+    .cs-hub-head { padding-block: clamp(56px, 8vw, 104px) var(--s-6); }
+    .cs-hub-head h1 {
+      margin: 0 0 var(--s-4);
+      font-size: var(--fs-h1);
+      line-height: var(--lh-snug);
+      letter-spacing: var(--tracking-display);
+    }
+
+    .cs-filters { display: flex; flex-wrap: wrap; gap: 10px; margin-top: var(--s-6); }
+    .cs-chip {
+      appearance: none;
+      cursor: pointer;
+      font: inherit;
+      font-size: var(--fs-label);
+      font-weight: var(--fw-semi);
+      color: var(--text-muted);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--r-pill);
+      padding: 9px 16px;
+      transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease),
+        background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+    }
+    .cs-chip:hover { border-color: var(--text); color: var(--text); transform: translateY(-1px); }
+    .cs-chip[aria-pressed='true'] {
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
+    }
+
+    .cs-hub-grid-wrap { padding-bottom: var(--s-6); }
+    .cs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .cs-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
+        border-color var(--dur) var(--ease);
+    }
+    .cs-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+    .cs-card[hidden] { display: none; }
+
+    .cs-thumb {
+      margin: 0;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: var(--surface-sunken);
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+
+    .cs-body { display: grid; gap: 8px; padding: 24px 26px 26px; align-content: start; }
+    .cs-industry {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      font-weight: var(--fw-bold);
+      color: var(--text-subtle);
+    }
+    .cs-client { margin: 0; font-size: var(--fs-h3); font-weight: var(--fw-semi); letter-spacing: var(--tracking-tight); }
+    .cs-metric {
+      font-size: clamp(24px, 2.6vw, 32px);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      font-weight: var(--fw-bold);
+      color: var(--accent);
+    }
+    .cs-desc {
+      margin: 2px 0 0;
+      color: var(--text-muted);
+      line-height: var(--lh-body);
+      font-size: var(--fs-small);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .cs-go { margin-top: 6px; color: var(--accent); font-weight: var(--fw-semi); font-size: var(--fs-small); }
+
+    .cs-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: clamp(20px, 4vw, 48px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      box-shadow: var(--shadow-sm);
+      padding: clamp(28px, 4vw, 48px);
+    }
+    .cs-cta h2 {
+      margin: 0 0 10px;
+      font-size: var(--fs-h2);
+      line-height: var(--lh-snug);
+      letter-spacing: var(--tracking-display);
+      max-width: 640px;
+    }
+    .cs-cta p { margin: 0; color: var(--text-muted); line-height: var(--lh-body); max-width: 560px; }
+    .cs-cta .button { flex: 0 0 auto; }
+
+    @media (max-width: 900px) {
+      .cs-grid { grid-template-columns: 1fr; }
+      .cs-cta { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
 </Base>

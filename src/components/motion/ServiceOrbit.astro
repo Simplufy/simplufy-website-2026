@@ -1,0 +1,309 @@
+---
+// ServiceOrbit — homepage services visual.
+// Eight services orbit one output: booked opportunities. Every node links
+// to its service page. On mobile the same DOM relays out as a 2-col grid.
+import Icon from '../Icon.astro';
+
+const services = [
+  { slug: 'web-development',                          label: 'Web',         icon: 'web',    tip: 'Trust before the call',               x: 50,   y: 12 },
+  { slug: 'crm-solutions',                            label: 'CRM',         icon: 'crm',    tip: 'Follow-up that never sleeps',         x: 76.9, y: 23.1 },
+  { slug: 'google-ppc-management',                    label: 'Google PPC',  icon: 'ppc',    tip: 'Capture search intent',               x: 88,   y: 50 },
+  { slug: 'meta-advertising',                         label: 'Meta',        icon: 'meta',   tip: 'Create demand',                       x: 76.9, y: 76.9 },
+  { slug: 'google-local-service-ads',                 label: 'LSA',         icon: 'lsa',    tip: 'Local calls with trust signals',      x: 50,   y: 88 },
+  { slug: 'tiktok-ad-management',                     label: 'TikTok',      icon: 'tiktok', tip: 'Short-form attention',                x: 23.1, y: 76.9 },
+  { slug: 'seo-aeo-geo',                              label: 'SEO/AEO/GEO', icon: 'seo',    tip: 'Findability everywhere buyers ask',   x: 12,   y: 50 },
+  { slug: 'ai-implementation-agent-orchestration',    label: 'AI',          icon: 'ai',     tip: 'Repetitive work removed',             x: 23.1, y: 23.1 },
+];
+---
+<div class="so" aria-label="Eight services connected to one output: booked opportunities">
+  <svg class="so-lines" viewBox="0 0 100 100" aria-hidden="true">
+    <circle class="so-ring" cx="50" cy="50" r="38" fill="none" vector-effect="non-scaling-stroke"/>
+    {services.map((s, i) => (
+      <line class={`so-line l${i + 1}`} x1="50" y1="50" x2={s.x} y2={s.y} vector-effect="non-scaling-stroke"/>
+    ))}
+  </svg>
+
+  <span class="so-spin" aria-hidden="true"></span>
+
+  <div class="so-center">
+    <span class="so-center-kicker"><i aria-hidden="true"></i>The output</span>
+    <strong>Booked opportunities</strong>
+  </div>
+
+  <ul class="so-list">
+    {services.map((s, i) => (
+      <li class={`so-item n${i + 1}`} style={`--d:${i * 0.9}s`}>
+        <a href={`/services/${s.slug}/`} aria-label={`${s.label} — ${s.tip}`}>
+          <span class="so-node-row">
+            <span class="so-ic"><Icon name={s.icon} size={15} /></span>
+            <span class="so-node-label">{s.label}</span>
+          </span>
+          <span class="so-tip" aria-hidden="true">{s.tip}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .so {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    aspect-ratio: 1;
+    margin-inline: auto;
+  }
+
+  /* ---- Ring + connector lines ---- */
+  .so-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .so-ring {
+    stroke: var(--border);
+    stroke-dasharray: 2 5;
+  }
+  .so-line {
+    stroke: var(--border-strong);
+    transition: stroke var(--dur) var(--ease);
+  }
+
+  /* Brighten a node's line on hover/focus (graceful no-op without :has) */
+  .so:has(.n1 a:is(:hover, :focus-visible)) .l1,
+  .so:has(.n2 a:is(:hover, :focus-visible)) .l2,
+  .so:has(.n3 a:is(:hover, :focus-visible)) .l3,
+  .so:has(.n4 a:is(:hover, :focus-visible)) .l4,
+  .so:has(.n5 a:is(:hover, :focus-visible)) .l5,
+  .so:has(.n6 a:is(:hover, :focus-visible)) .l6,
+  .so:has(.n7 a:is(:hover, :focus-visible)) .l7,
+  .so:has(.n8 a:is(:hover, :focus-visible)) .l8 {
+    stroke: var(--accent);
+  }
+
+  /* ---- Orbiting signal dot ---- */
+  .so-spin {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    animation: so-rotate 40s linear infinite;
+  }
+  .so-spin::before {
+    content: '';
+    position: absolute;
+    top: 12%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+  @keyframes so-rotate {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* ---- Center node ---- */
+  .so-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+    padding: 18px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-md);
+  }
+  .so-center-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-subtle);
+  }
+  .so-center-kicker i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green-600);
+  }
+  .so-center strong {
+    font-size: 16px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  /* ---- Service nodes ---- */
+  .so-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .so-item {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    animation: so-breathe 8s ease-in-out infinite;
+    animation-delay: var(--d);
+  }
+  .so-item:hover,
+  .so-item:focus-within { z-index: 4; }
+  @keyframes so-breathe {
+    0%, 100% { scale: 1; }
+    50%      { scale: 1.015; }
+  }
+  .n1 { left: 50%;   top: 12%; }
+  .n2 { left: 76.9%; top: 23.1%; }
+  .n3 { left: 88%;   top: 50%; }
+  .n4 { left: 76.9%; top: 76.9%; }
+  .n5 { left: 50%;   top: 88%; }
+  .n6 { left: 23.1%; top: 76.9%; }
+  .n7 { left: 12%;   top: 50%; }
+  .n8 { left: 23.1%; top: 23.1%; }
+
+  .so-item a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    box-shadow: var(--shadow-sm);
+    color: var(--text);
+    white-space: nowrap;
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .so-item a:hover,
+  .so-item a:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+  .so-node-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .so-ic {
+    display: grid;
+    place-items: center;
+    color: var(--text-subtle);
+    transition: color var(--dur) var(--ease);
+  }
+  .so-item a:hover .so-ic,
+  .so-item a:focus-visible .so-ic { color: var(--accent); }
+  .so-node-label {
+    font-size: 13px;
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  /* ---- Tooltips ---- */
+  .so-tip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translate(-50%, 2px);
+    padding: 6px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    box-shadow: var(--shadow-md);
+    font-size: 12px;
+    font-weight: var(--fw-med);
+    color: var(--text-muted);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+  }
+  .so-item a:hover .so-tip,
+  .so-item a:focus-visible .so-tip {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  /* Edge nodes: pin the tooltip so long lines stay inside the canvas */
+  .n7 .so-tip { left: 0; transform: translateY(2px); }
+  .n7 a:hover .so-tip,
+  .n7 a:focus-visible .so-tip { transform: translateY(0); }
+  .n3 .so-tip { left: auto; right: 0; transform: translateY(2px); }
+  .n3 a:hover .so-tip,
+  .n3 a:focus-visible .so-tip { transform: translateY(0); }
+
+  /* ---- Mobile: same DOM, clean 2-column grid ---- */
+  @media (max-width: 760px) {
+    .so {
+      max-width: none;
+      aspect-ratio: auto;
+    }
+    .so-lines,
+    .so-spin { display: none; }
+
+    .so-center {
+      position: static;
+      transform: none;
+      width: 100%;
+      margin-bottom: var(--s-4);
+    }
+
+    .so-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--s-3);
+    }
+    .so-item {
+      position: static;
+      transform: none;
+      animation: none;
+    }
+    .so-item a {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+      width: 100%;
+      height: 100%;
+      padding: 13px 15px;
+      border-radius: var(--r-md);
+      white-space: normal;
+    }
+    .so-tip,
+    .n3 .so-tip,
+    .n7 .so-tip {
+      position: static;
+      opacity: 1;
+      transform: none;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--text-subtle);
+      white-space: normal;
+    }
+  }
+
+  /* ---- Reduced motion: no breathing, no orbit ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .so-spin { display: none; }
+    .so-item { animation: none; }
+  }
+</style>

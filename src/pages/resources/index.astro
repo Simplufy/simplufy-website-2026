@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { resources } from '../../data/site';
+import { resources, site } from '../../data/site';
 import generatedPages from '../../data/generatedSeoPages.json';
 
 const livePages = generatedPages.filter((page) => page.published !== false);
@@ -19,51 +19,117 @@ const sortedCategories = Object.keys(grouped).sort((a, b) => {
   if (ai !== -1 || bi !== -1) return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
   return a.localeCompare(b);
 });
----
-<Base title="Resources for service-business growth" description="Simplufy resources for CRM, automation, booked calls, estimate requests, ads, SEO, AI, and connected growth systems for service businesses.">
-<Header />
-<main>
-  <section class="container service-hero">
-    <p class="eyebrow">Resources</p>
-    <h1>Service-business resources for CRM, ads, SEO, automation, and follow-up.</h1>
-    <p>Browse practical Simplufy resources by operating problem: CRM handoffs, booked calls, estimate requests, appointment booking, paid media, search visibility, AI workflows, and full-service growth systems.</p>
-  </section>
+const orderedPages = sortedCategories.flatMap((category) =>
+  grouped[category].map((page) => ({ ...page, displayCategory: category }))
+);
 
-  {sortedCategories.map((category) => (
-    <section class="container section">
-      <div class="section-title-v4">
-        <p class="eyebrow">{category}</p>
-        <h2>{category} resources</h2>
-        <p>Use these guides to understand what breaks, what to fix first, and how Simplufy connects the page, campaign, CRM, and follow-up path around this part of the system.</p>
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Simplufy Resources',
+    url: `${site.url}/resources/`,
+    description: 'Guides on CRM follow-up, booked calls, paid media, search visibility, AI workflows, and connected growth systems for service businesses.',
+    isPartOf: { '@type': 'WebSite', name: site.name, url: site.url }
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${site.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Resources', item: `${site.url}/resources/` }
+    ]
+  }
+];
+---
+<Base
+  title="Resources for service-business growth"
+  description="Simplufy resources for CRM, automation, booked calls, estimate requests, ads, SEO, AI, and connected growth systems for service businesses."
+  keywords="service business marketing resources, CRM follow-up guide, booked calls guide, contractor paid media guide, SEO AEO GEO guide"
+  schema={schema}
+>
+  <Header />
+  <main>
+    <section class="container res-head">
+      <div class="section-head reveal">
+        <p class="eyebrow">Resources</p>
+        <h1>Search content that turns into <span class="accent-word">rankings</span>, sales assets, and AI visibility.</h1>
+        <p>Practical guides organized by operating problem: CRM handoffs, booked calls, estimate requests, appointment booking, paid media, search visibility, AI workflows, and full growth systems.</p>
       </div>
-      <div class="industry-grid">
-        {grouped[category].map((page) => (
-          <a class="industry-card" href={`/resources/${page.slug}/`}>
-            <p class="eyebrow">{page.heroEyebrow || page.category || 'Service resource'}</p>
-            <h3>{page.title}</h3>
-            <p>{page.metaDescription}</p>
+    </section>
+
+    <section class="container res-featured-section" aria-label="Foundational guides">
+      <div class="res-featured">
+        {resources.map((resource) => (
+          <a class="res-card reveal" href={`/resources/${resource.slug}/`}>
+            <span class="res-chip">{resource.category}</span>
+            <h2>{resource.title}</h2>
+            <p>{resource.description}</p>
+            <em>Read <span aria-hidden="true">→</span></em>
           </a>
         ))}
       </div>
     </section>
-  ))}
 
-  <section class="container section">
-    <div class="section-title-v4">
-      <p class="eyebrow">Foundational guides</p>
-      <h2>Start with the core marketing system pieces.</h2>
-      <p>These shorter guides cover SEO/AEO/GEO, CRM follow-up, and contractor paid-media channel decisions.</p>
-    </div>
-    <div class="industry-grid">
-      {resources.map((resource) => (
-        <a class="industry-card" href={`/resources/${resource.slug}/`}>
-          <p class="eyebrow">{resource.category}</p>
-          <h3>{resource.title}</h3>
-          <p>{resource.description}</p>
-        </a>
-      ))}
-    </div>
-  </section>
-</main>
-<Footer />
+    <section class="container section res-index-section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Guides and comparisons</p>
+        <h2>Every guide in the <span class="accent-word">library</span>, by topic.</h2>
+        <p>Service, industry, and growth-system guides covering what breaks, what to fix first, and how the page, campaign, CRM, and follow-up path connect.</p>
+      </div>
+      <div class="resource-list reveal">
+        {orderedPages.map((page) => (
+          <a href={`/resources/${page.slug}/`}>
+            <span class="r-cat">{page.displayCategory}</span>
+            <div><span class="r-title">{page.title}</span></div>
+            <span class="r-go">Read <span aria-hidden="true">→</span></span>
+          </a>
+        ))}
+      </div>
+    </section>
+  </main>
+  <Footer />
+
+  <style>
+    .res-head { padding-block: clamp(56px, 8vw, 104px) var(--s-7); }
+    .res-head h1 {
+      margin: 0 0 var(--s-4);
+      font-size: var(--fs-h1);
+      line-height: var(--lh-snug);
+      letter-spacing: var(--tracking-display);
+    }
+
+    .res-featured { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .res-card {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 28px;
+      transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+    }
+    .res-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+    .res-chip {
+      justify-self: start;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      font-weight: var(--fw-black);
+      color: var(--accent);
+      background: var(--accent-weak);
+      border: 1px solid color-mix(in srgb, var(--accent) 16%, transparent);
+      border-radius: var(--r-pill);
+      padding: 5px 12px;
+    }
+    .res-card h2 { margin: 4px 0 0; font-size: var(--fs-h3); line-height: var(--lh-snug); letter-spacing: var(--tracking-tight); font-weight: var(--fw-semi); }
+    .res-card p { margin: 0; color: var(--text-muted); line-height: var(--lh-body); font-size: var(--fs-small); }
+    .res-card em { font-style: normal; color: var(--accent); font-weight: var(--fw-semi); font-size: var(--fs-small); margin-top: 4px; }
+
+    @media (max-width: 900px) {
+      .res-featured { grid-template-columns: 1fr; }
+    }
+  </style>
 </Base>

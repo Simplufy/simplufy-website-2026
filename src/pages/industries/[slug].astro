@@ -3,98 +3,642 @@ import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import ContactForm from '../../components/ContactForm.astro';
-import PageHeroVisual from '../../components/PageHeroVisual.astro';
+import FAQ from '../../components/FAQ.astro';
+import Icon from '../../components/Icon.astro';
+import SignalFlow from '../../components/motion/SignalFlow.astro';
+import BrowserFrame from '../../components/BrowserFrame.astro';
+import ScreenshotCard from '../../components/ScreenshotCard.astro';
 import { industries, services, site } from '../../data/site';
-export function getStaticPaths(){ return industries.map(industry => ({ params:{ slug: industry.slug }, props:{ industry }})); }
-const { industry } = Astro.props;
-const industryVisuals = {
-  'auto-detailing-shops': { badge:'Detailing funnel', icon:'✦', title:'Coating, detail, and maintenance requests', theme:'red', kind:'auto-detailing', items:[{label:'Ceramic coating', value:'high-ticket'}, {label:'Maintenance', value:'recurring'}, {label:'Reviews', value:'trust signals'}], flow:['Search','Gallery','Quote','Booked'] },
-  'auto-styling-shops': { badge:'Styling shop growth', icon:'◆', title:'Tint, wrap, PPF, and performance demand', theme:'red', kind:'auto-styling', items:[{label:'PPF / Wrap', value:'premium jobs'}, {label:'Meta retargeting', value:'visual demand'}, {label:'Quote forms', value:'clean intake'}], flow:['Ad','Portfolio','Quote','Install'] },
-  'roofing-companies': { badge:'Roofing lead flow', icon:'⌂', title:'Storm demand into inspected roofs', theme:'red', kind:'roofing', items:[{label:'Emergency demand', value:'high intent'}, {label:'Inspection funnel', value:'fast booking'}, {label:'Local SEO', value:'market pages'}], flow:['Storm','Search','Inspection','Estimate'] },
-  'plumbing-companies': { badge:'Plumbing dispatch', icon:'◌', title:'Emergency calls and repair requests routed fast', theme:'red', kind:'plumbing', items:[{label:'Emergency pages', value:'urgent intent'}, {label:'Missed call text', value:'instant reply'}, {label:'Memberships', value:'recurring'}], flow:['Call','Route','Dispatch','Follow up'] },
-  'pest-control-companies': { badge:'Pest control demand', icon:'✕', title:'Seasonal campaigns and recurring plan leads', theme:'red', kind:'pest', items:[{label:'Termite', value:'inspection'}, {label:'Mosquito', value:'seasonal'}, {label:'Recurring plans', value:'retention'}], flow:['Search','Plan','Schedule','Renew'] },
-  'landscaping-companies': { badge:'Landscape growth', icon:'☘', title:'Lawn care, hardscapes, and outdoor project leads', theme:'red', kind:'landscape', items:[{label:'Lawn care', value:'recurring'}, {label:'Hardscapes', value:'high-ticket'}, {label:'Seasonality', value:'campaign timing'}], flow:['Yard','Design','Estimate','Project'] },
-  'window-companies': { badge:'Window quote funnel', icon:'▣', title:'Replacement, cleaning, tint, and treatment inquiries', theme:'red', kind:'windows', items:[{label:'Replacement', value:'quote-ready'}, {label:'Cleaning', value:'local demand'}, {label:'Tint / treatment', value:'offer pages'}], flow:['Search','Compare','Quote','Install'] },
-  'smart-home-installers': { badge:'Smart home system', icon:'⌁', title:'Automation, AV, security, and networking leads', theme:'red', kind:'smart-home', items:[{label:'Security', value:'trust'}, {label:'AV / Network', value:'premium installs'}, {label:'Automation', value:'consultative'}], flow:['Discover','Consult','Design','Install'] },
-  'contractors': { badge:'Contractor pipeline', icon:'▰', title:'Specialty trade inquiries into booked estimates', theme:'red', kind:'contractor', items:[{label:'Estimate requests', value:'qualified'}, {label:'Project pages', value:'specific'}, {label:'Speed-to-lead', value:'critical'}], flow:['Search','Proof','Estimate','Job'] },
-  'med-spas': { badge:'Med spa bookings', icon:'✚', title:'Consultations, treatments, and aesthetic offers', theme:'red', kind:'medspa', items:[{label:'Injectables', value:'consults'}, {label:'Laser / body', value:'offer funnels'}, {label:'Retention', value:'nurture'}], flow:['Offer','Consult','Book','Return'] },
-  'b2b-services': { badge:'B2B demand engine', icon:'◈', title:'Positioning and qualified sales conversations', theme:'red', kind:'b2b', items:[{label:'Authority pages', value:'trust'}, {label:'Lead magnets', value:'education'}, {label:'CRM stages', value:'pipeline'}], flow:['Problem','Proof','Call','Proposal'] },
-  'education-training': { badge:'Enrollment system', icon:'✎', title:'Inquiries, applications, and program enrollments', theme:'red', kind:'education', items:[{label:'Programs', value:'clear pathways'}, {label:'Admissions', value:'nurture'}, {label:'Open house', value:'event flows'}], flow:['Research','Inquiry','Nurture','Enroll'] }
-};
-const visual = industryVisuals[industry.slug] ?? industryVisuals.contractors;
-const industryProofs = {
-  'auto-detailing-shops': { eyebrow:'Buyer proof system', title:'Show high-ticket vehicle owners the finish, trust, and booking path before they call.', body:'Auto detailing buyers want to see premium work, understand coating packages, compare maintenance options, and book without back-and-forth. The proof system connects gallery-style credibility with quote-ready pages and CRM follow-up.', steps:['Vehicle gallery','Coating packages','Review proof','Booking engine','Maintenance follow-up'] },
-  'auto-styling-shops': { eyebrow:'Buyer proof system', title:'Turn wraps, tint, PPF, and performance work into a visual sales engine.', body:'Auto styling buyers are highly visual. The strongest pages show transformation proof, explain materials and process, qualify project type, and make quote requests feel simple.', steps:['Before / afters','Service tiers','Material trust','Quote intake','Install pipeline'] },
-  'roofing-companies': { eyebrow:'Buyer proof system', title:'Help homeowners move from storm concern to scheduled inspection.', body:'Roofing marketing has to build trust quickly. The system should make location coverage, insurance guidance, project proof, inspection CTAs, and fast follow-up obvious.', steps:['Storm intent','Local proof','Inspection CTA','Estimate tracking','Follow-up'] },
-  'plumbing-companies': { eyebrow:'Buyer proof system', title:'Route urgent plumbing demand into calls, dispatch, and repeat work.', body:'Plumbing buyers often need help immediately. The page system should separate emergency calls from planned installs, route leads fast, and support memberships or recurring service offers.', steps:['Emergency page','Call routing','Dispatch notes','Job follow-up','Membership offers'] },
-  'pest-control-companies': { eyebrow:'Buyer proof system', title:'Convert seasonal pest demand into inspections and recurring plans.', body:'Pest control pages need to match the exact issue the homeowner is dealing with, explain treatment confidence, and turn one-time searches into scheduled inspections and ongoing plan opportunities.', steps:['Pest-specific page','Treatment proof','Inspection form','Seasonal campaigns','Plan renewal'] },
-  'landscaping-companies': { eyebrow:'Buyer proof system', title:'Move homeowners from inspiration to estimates for better outdoor spaces.', body:'Landscaping marketing should show finished work, separate recurring maintenance from high-ticket projects, and give buyers a clear path from idea to consultation or estimate.', steps:['Project gallery','Service split','Design request','Estimate pipeline','Seasonal nurture'] },
-  'window-companies': { eyebrow:'Buyer proof system', title:'Make replacement, cleaning, tint, and treatment quotes easier to request.', body:'Window buyers compare options, timing, and trust. A strong system clarifies the service, shows local proof, captures quote details, and keeps follow-up organized.', steps:['Service pages','Local proof','Quote form','Install calendar','Review loop'] },
-  'smart-home-installers': { eyebrow:'Buyer proof system', title:'Translate technical installs into clear outcomes buyers can understand.', body:'Smart home and AV buyers need confidence that the system will be designed, installed, and supported correctly. The proof system turns complex capabilities into understandable consult paths.', steps:['Use-case pages','System diagram','Consult CTA','Design proposal','Support follow-up'] },
-  'contractors': { eyebrow:'Buyer proof system', title:'Use project proof to earn estimate requests from specialty trade buyers.', body:'Contractor websites work best when buyers can see relevant projects, understand the process, trust the company, and request an estimate with enough context for useful follow-up.', steps:['Project proof','Trade pages','Estimate request','CRM stage','Proposal follow-up'] },
-  'med-spas': { eyebrow:'Buyer proof system', title:'Create trust before the consultation for aesthetic and wellness buyers.', body:'Med spa marketing has to balance premium design, treatment clarity, compliance-aware messaging, and easy booking. The right pages help prospects understand treatments and feel confident taking the next step.', steps:['Treatment pages','Trust signals','Offer funnel','Consult booking','Retention nurture'] },
-  'b2b-services': { eyebrow:'Buyer proof system', title:'Make expertise, positioning, and sales conversations easier to evaluate.', body:'B2B buyers need to understand the problem you solve, why your team is credible, and what happens next. The system connects authority content, proof, lead magnets, and CRM stages.', steps:['Positioning','Authority proof','Lead magnet','Sales call','Pipeline stage'] },
-  'education-training': { eyebrow:'Buyer proof system', title:'Move students, parents, or professionals from research to enrollment action.', body:'Education and training buyers compare programs carefully. The system should clarify outcomes, explain pathways, capture inquiries, and nurture prospects through the decision cycle.', steps:['Program pages','Outcome proof','Inquiry form','Nurture flow','Enrollment step'] }
-};
-const industryProof = industryProofs[industry.slug] ?? industryProofs.contractors;
+import { industryDetails } from '../../data/industryDetails';
 
-const industryCopy = {
-  'auto-detailing-shops': { stackTitle:'Auto detailing growth needs premium proof, fast booking, and follow-up for high-ticket vehicle owners.', stackBody:'Ceramic coating, paint correction, maintenance details, and mobile appointments each need different trust signals. The service mix below is shaped around turning visual proof into quote requests and repeat customers.', ctaSubhead:'Tell us your detail packages, average ticket, service area, and current booking process. We will review where premium buyers are dropping off.', cards:[['Web pages for premium packages','Build coating, correction, maintenance, and gallery pages that justify higher-ticket work before the visitor calls.','/services/web-development/'],['Meta creative for transformations','Use before/after visuals, seasonal offers, and retargeting to bring warm vehicle owners back into the booking path.','/services/meta-advertising/'],['Google PPC for ready buyers','Capture searches for ceramic coating, mobile detailing, and paint correction with pages matched to the exact service.','/services/google-ppc-management/'],['CRM booking and maintenance nurture','Route quote requests, reminders, memberships, and reactivation campaigns into a pipeline your team can operate.','/services/crm-solutions/']] },
-  'auto-styling-shops': { stackTitle:'Tint, wrap, PPF, and performance buyers need to see the transformation before they request a quote.', stackBody:'Auto styling marketing has to separate premium install work from commodity pricing. The service stack focuses on visual proof, quote intake, retargeting, and search pages built around high-value modification demand.', ctaSubhead:'Share your highest-value install categories, visual assets, and quoting process. We will identify the pages and campaigns most likely to attract premium projects.', cards:[['Portfolio-led web design','Show PPF, tint, wraps, ceramic coatings, and performance work in a structure that turns visual interest into quote requests.','/services/web-development/'],['Meta retargeting for visual buyers','Use project visuals and offer angles to retarget people who viewed galleries, service pages, or quote forms.','/services/meta-advertising/'],['Search pages for install intent','Target buyers searching for PPF, ceramic tint, wraps, and local styling shops with offer-matched landing pages.','/services/seo-aeo-geo/'],['Quote intake CRM','Capture vehicle details, service interest, budget signals, and install timing so the team can follow up intelligently.','/services/crm-solutions/']] },
-  'roofing-companies': { stackTitle:'Roofing marketing has to convert urgent concern into scheduled inspections and trusted estimates.', stackBody:'Storm damage, repair, replacement, and insurance-guided searches all carry different intent. The stack below prioritizes local trust, inspection CTAs, call handling, and follow-up that keeps homeowners moving.', ctaSubhead:'Tell us your service area, roofing specialties, storm-season goals, and intake process. We will review the path from search to scheduled inspection.', cards:[['Inspection-focused landing pages','Build roof repair, replacement, storm damage, and service-area pages with proof, insurance guidance, and clear inspection CTAs.','/services/web-development/'],['Google PPC for urgent searches','Capture high-intent roofing searches with tight query control and landing pages that match the homeowner’s concern.','/services/google-ppc-management/'],['Local SEO and maps visibility','Structure service and location content so homeowners can find you when roof concern turns into research.','/services/seo-aeo-geo/'],['LSA and call routing','Review LSA eligibility, call quality, missed-call recovery, and CRM tracking for inspection requests.','/services/google-local-service-ads/']] },
-  'plumbing-companies': { stackTitle:'Plumbing demand moves fast — the page, phone, and dispatch path have to be obvious.', stackBody:'Emergency repairs, drain cleaning, water heaters, and memberships do not behave like slow comparison purchases. The stack focuses on urgent calls, clean routing, local visibility, and repeat-service nurture.', ctaSubhead:'Share your highest-margin plumbing services, emergency coverage, and call handling workflow. We will look for the fastest lead-response improvements.', cards:[['Emergency service pages','Create service pages that make emergency calls, repairs, and planned installs easy to understand and act on quickly.','/services/web-development/'],['LSA for eligible calls','Use Local Service Ads where category fit, reviews, and response speed can drive phone-first local demand.','/services/google-local-service-ads/'],['CRM dispatch workflow','Route calls, forms, reminders, job notes, and membership offers into stages your team can manage.','/services/crm-solutions/'],['Local search coverage','Build pages and FAQs around drain cleaning, leaks, water heaters, service areas, and repair questions buyers search under pressure.','/services/seo-aeo-geo/']] },
-  'pest-control-companies': { stackTitle:'Pest control pages must match the pest, the season, and the recurring-plan opportunity.', stackBody:'Termite inspections, mosquito control, rodent removal, and seasonal treatments need different urgency and trust cues. The stack below connects pest-specific intent to inspection booking and plan retention.', ctaSubhead:'Tell us which pest services matter most, your service area, and how inspections or recurring plans are currently sold. We will review the strongest growth path.', cards:[['Pest-specific landing pages','Build pages for termite, mosquito, rodent, and recurring-plan demand with treatment confidence and inspection CTAs.','/services/web-development/'],['Google PPC for seasonal demand','Capture high-intent searches when homeowners are actively dealing with a pest problem or comparing providers.','/services/google-ppc-management/'],['Local SEO for recurring visibility','Create search architecture around pest types, treatment questions, neighborhoods, and seasonal prevention.','/services/seo-aeo-geo/'],['CRM for inspections and renewals','Automate inspection reminders, plan renewal nurture, missed-call recovery, and post-treatment follow-up.','/services/crm-solutions/']] },
-  'landscaping-companies': { stackTitle:'Landscaping marketing has to separate recurring maintenance from high-ticket outdoor projects.', stackBody:'Lawn care, design-build, irrigation, hardscapes, and seasonal cleanups attract different buyers. The stack focuses on project galleries, estimate intake, seasonal campaigns, and follow-up by service type.', ctaSubhead:'Share your main landscape services, project photos, service area, and estimate process. We will identify the best pages and campaigns to prioritize.', cards:[['Project gallery website','Show finished yards, hardscapes, irrigation work, and maintenance packages in a way that turns inspiration into estimate requests.','/services/web-development/'],['Seasonal Meta campaigns','Use visual project proof and seasonal timing to create demand before homeowners start comparing options.','/services/meta-advertising/'],['Search pages for estimates','Build pages around lawn care, landscape design, hardscapes, irrigation, and local estimate intent.','/services/seo-aeo-geo/'],['CRM estimate pipeline','Track inquiry type, property details, appointment timing, proposal follow-up, and seasonal nurture.','/services/crm-solutions/']] },
-  'window-companies': { stackTitle:'Window buyers need clarity on service type, trust, timing, and quote details.', stackBody:'Replacement, cleaning, tint, treatments, and installation each require different proof and intake. The stack below helps buyers compare options and submit useful quote information.', ctaSubhead:'Tell us which window services you sell, your service area, and the information needed for a good quote. We will review the page and lead-capture path.', cards:[['Quote-focused service pages','Clarify replacement, cleaning, tint, and treatment options with proof, process, and direct quote CTAs.','/services/web-development/'],['Google PPC for quote-ready searches','Capture local searches from buyers comparing providers and ready to request pricing or installation details.','/services/google-ppc-management/'],['CRM quote routing','Collect window count, service type, property details, timing, and photos so follow-up starts with useful context.','/services/crm-solutions/'],['Local SEO for service categories','Build search coverage around window service types, questions, neighborhoods, and comparison intent.','/services/seo-aeo-geo/']] },
-  'smart-home-installers': { stackTitle:'Smart home and AV buyers need complex systems translated into simple outcomes.', stackBody:'Security, automation, networking, theater, lighting, and AV installs are consultative. The stack focuses on use-case pages, system diagrams, consultation CTAs, and proposal follow-up.', ctaSubhead:'Share your install categories, ideal project size, and consultation process. We will review how to make complex work easier for buyers to understand.', cards:[['Use-case website architecture','Explain smart home, AV, networking, security, and automation outcomes with pages built for consultative buyers.','/services/web-development/'],['SEO for solution research','Target searches around use cases, devices, rooms, systems, and installation questions rather than generic tech terms alone.','/services/seo-aeo-geo/'],['CRM for consultation handoff','Route consult requests, project notes, proposal stages, and follow-up tasks into a clean pipeline.','/services/crm-solutions/'],['AI-assisted proposal support','Use AI workflows for research, scope summaries, internal handoffs, and project documentation where human review stays in control.','/services/ai-implementation-agent-orchestration/']] },
-  'contractors': { stackTitle:'Contractor marketing has to prove capability before a homeowner or buyer requests an estimate.', stackBody:'Remodelers, electricians, painters, HVAC companies, pool builders, and specialty trades each need specific project proof and intake. The stack below turns service credibility into qualified estimate requests.', ctaSubhead:'Tell us your trade, average job value, service area, and how estimates are currently booked. We will review where qualified project demand is leaking.', cards:[['Trade-specific project pages','Create pages that show the process, proof, service areas, and estimate path for each high-value trade or project type.','/services/web-development/'],['Google PPC for estimate intent','Capture searches from buyers ready to compare contractors and request project pricing.','/services/google-ppc-management/'],['Local SEO for specialty trades','Build service, location, FAQ, and proof pages around profitable project categories and local demand.','/services/seo-aeo-geo/'],['CRM speed-to-lead','Route estimates, missed calls, project details, proposal follow-up, and review requests into one operating system.','/services/crm-solutions/']] },
-  'med-spas': { stackTitle:'Med spa marketing has to build trust before someone books a consultation.', stackBody:'Injectables, laser, body contouring, skincare, and wellness offers require premium design, treatment clarity, compliance-aware messaging, and easy booking. The stack focuses on confidence and consult conversion.', ctaSubhead:'Share your core treatments, compliance constraints, booking workflow, and best offers. We will review the safest path to more qualified consultations.', cards:[['Treatment-focused web design','Build premium treatment pages that explain benefits, expectations, trust signals, and consultation next steps clearly.','/services/web-development/'],['Meta offers and retargeting','Use visual education, treatment interest, and warm-audience retargeting to support consultation demand.','/services/meta-advertising/'],['Local SEO for treatments','Create answer-ready treatment, concern, and location pages that help buyers research safely before booking.','/services/seo-aeo-geo/'],['CRM booking and retention','Automate consult reminders, post-visit nurture, reactivation, and offer follow-up without losing the personal touch.','/services/crm-solutions/']] },
-  'b2b-services': { stackTitle:'B2B service marketing has to make expertise easier to evaluate before the sales call.', stackBody:'Consultants, agencies, professional services, IT, finance, HR, recruiting, and operations firms need authority, proof, clear positioning, and pipeline context. The stack below turns trust into qualified conversations.', ctaSubhead:'Tell us the buyer you want, the problem you solve, and the current sales cycle. We will review how to make your expertise clearer and easier to act on.', cards:[['Positioning-led website','Clarify the problem, offer, proof, process, and point of view so buyers understand why the conversation is worth having.','/services/web-development/'],['Linked proof and search content','Build resources, service pages, FAQs, and case studies that answer evaluation questions and support sales conversations.','/services/seo-aeo-geo/'],['Meta lead generation','Test founder-led creative, authority angles, lead magnets, and retargeting for qualified B2B demand.','/services/meta-advertising/'],['CRM pipeline visibility','Track lead source, fit, stage, notes, next step, and proposal follow-up so sales conversations do not disappear.','/services/crm-solutions/']] },
-  'education-training': { stackTitle:'Education and training marketing must turn careful research into inquiry and enrollment action.', stackBody:'Courses, coaching, schools, workforce programs, and training organizations need clear outcomes, program pathways, trust, and nurture. The stack focuses on inquiries, applications, and enrollment follow-up.', ctaSubhead:'Share your programs, audiences, enrollment goals, and current inquiry process. We will review the pages and workflows that should be strengthened first.', cards:[['Program page architecture','Explain programs, outcomes, schedules, formats, admissions steps, and proof so prospects know which path fits.','/services/web-development/'],['Meta campaigns for inquiries','Use founder or student-centered creative, lead magnets, open-house offers, and retargeting to create qualified interest.','/services/meta-advertising/'],['Search visibility for program demand','Build pages and resources around program comparisons, career outcomes, admissions questions, and local or online intent.','/services/seo-aeo-geo/'],['CRM enrollment nurture','Route inquiries, reminders, application steps, event follow-up, and enrollment communications into a structured pipeline.','/services/crm-solutions/']] }
+export function getStaticPaths(){ return industries.map(industry => ({ params:{ slug: industry.slug }, props:{ industry }})); }
+
+const { industry } = Astro.props;
+const detail = industryDetails[industry.slug];
+const pageUrl = `${site.url}/industries/${industry.slug}/`;
+
+const fitServices = detail.services
+  .map((slug) => services.find((s) => s.slug === slug))
+  .filter((s): s is (typeof services)[number] => Boolean(s));
+
+const firstSentence = (text: string) => {
+  const idx = text.indexOf('. ');
+  return idx === -1 ? text : `${text.slice(0, idx)}.`;
 };
-const pageCopy = industryCopy[industry.slug] ?? industryCopy.contractors;
-const schema = { '@context':'https://schema.org', '@type':'WebPage', name:industry.title, url:`${site.url}/industries/${industry.slug}/`, description:industry.description };
+
+/* Lowercased industry label that survives mid-sentence use. */
+const navLower =
+  industry.nav === 'B2B Services' ? 'B2B services'
+  : industry.nav === 'Education & Training' ? 'education and training'
+  : industry.nav.toLowerCase();
+
+/* "Everything points at the same outcome: ..." */
+const outcomeLine = detail.outcome.charAt(0).toLowerCase() + detail.outcome.slice(1);
+
+/* Industry-specific FAQ label + CTA copy (subheads re-housed from the previous template). */
+const localCopy: Record<string, { operator: string; headline: string; subhead: string }> = {
+  'auto-detailing-shops': { operator:'detailing shop', headline:'Want a growth system built for your detailing shop?', subhead:'Tell us your detail packages, average ticket, service area, and current booking process. We will review where premium buyers are dropping off.' },
+  'auto-styling-shops': { operator:'styling shop', headline:'Want a quote engine built for your styling shop?', subhead:'Share your highest-value install categories, visual assets, and quoting process. We will identify the pages and campaigns most likely to attract premium projects.' },
+  'roofing-companies': { operator:'roofing', headline:'Want more inspections booked from the demand you already have?', subhead:'Tell us your service area, roofing specialties, storm-season goals, and intake process. We will review the path from search to scheduled inspection.' },
+  'plumbing-companies': { operator:'plumbing', headline:'Want fewer missed calls and more booked jobs?', subhead:'Share your highest-margin plumbing services, emergency coverage, and call handling workflow. We will look for the fastest lead-response improvements.' },
+  'pest-control-companies': { operator:'pest control', headline:'Want more inspections and recurring plans on the books?', subhead:'Tell us which pest services matter most, your service area, and how inspections or recurring plans are currently sold. We will review the strongest growth path.' },
+  'landscaping-companies': { operator:'landscaping', headline:'Want more qualified estimates for your landscape work?', subhead:'Share your main landscape services, project photos, service area, and estimate process. We will identify the best pages and campaigns to prioritize.' },
+  'window-companies': { operator:'window company', headline:'Want more quote requests for your window services?', subhead:'Tell us which window services you sell, your service area, and the information needed for a good quote. We will review the page and lead-capture path.' },
+  'smart-home-installers': { operator:'smart home', headline:'Want more qualified consultations for premium installs?', subhead:'Share your install categories, ideal project size, and consultation process. We will review how to make complex work easier for buyers to understand.' },
+  'contractors': { operator:'contracting', headline:'Want a system that closes the estimate follow-up gap?', subhead:'Tell us your trade, average job value, service area, and how estimates are currently booked. We will review where qualified project demand is leaking.' },
+  'med-spas': { operator:'med spa', headline:'Want more consultations that actually show up?', subhead:'Share your core treatments, compliance constraints, booking workflow, and best offers. We will review the safest path to more qualified consultations.' },
+  'b2b-services': { operator:'B2B', headline:'Want qualified sales conversations you do not have to wait for?', subhead:'Tell us the buyer you want, the problem you solve, and the current sales cycle. We will review how to make your expertise clearer and easier to act on.' },
+  'education-training': { operator:'education', headline:'Want more inquiries that become enrollments?', subhead:'Share your programs, audiences, enrollment goals, and current inquiry process. We will review the pages and workflows that should be strengthened first.' }
+};
+const local = localCopy[industry.slug] ?? localCopy['contractors'];
+
+/* Proof blocks only where real client material exists. */
+const proofKind =
+  industry.slug === 'auto-detailing-shops' ? 'detailing'
+  : industry.slug === 'auto-styling-shops' ? 'styling'
+  : industry.slug === 'pest-control-companies' ? 'pest'
+  : (industry.slug === 'b2b-services' || industry.slug === 'education-training') ? 'momentum'
+  : 'generic';
+
+const schema = [
+  { '@context':'https://schema.org', '@type':'WebPage', name:industry.title, url:pageUrl, description:industry.description },
+  { '@context':'https://schema.org', '@type':'BreadcrumbList', itemListElement:[
+    { '@type':'ListItem', position:1, name:'Home', item:`${site.url}/` },
+    { '@type':'ListItem', position:2, name:'Industries', item:`${site.url}/#industries` },
+    { '@type':'ListItem', position:3, name:industry.nav, item:pageUrl }
+  ]},
+  { '@context':'https://schema.org', '@type':'FAQPage', mainEntity: detail.faqs.map(f => ({ '@type':'Question', name:f.q, acceptedAnswer:{ '@type':'Answer', text:f.a }})) }
+];
 ---
 <Base title={industry.title} description={`${industry.description} Simplufy builds web, CRM, Google PPC, Meta, LSA, TikTok, SEO/AEO/GEO, and AI systems for companies that sell services and need more qualified opportunities.`} keywords={industry.keywords} schema={schema}>
 <Header />
 <main>
-  <section class="service-hero visual-hero container reveal">
-    <div class="visual-hero-copy">
-      <div class="breadcrumb"><a href="/">Home</a> / Industries / {industry.title.replace('Digital Marketing for ','')}</div>
+
+  <section class="container ind-hero reveal">
+    <div class="ind-hero__copy">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/#industries">Industries</a> / <span>{industry.nav}</span></nav>
       <p class="eyebrow">Industry growth systems</p>
-      <h1>{industry.title}</h1>
-      <p>{industry.description}</p>
-      <div class="actions"><a class="button primary" href="/contact/">Request a free audit</a><a class="button ghost" href="/#services">See capabilities</a></div>
+      <h1>{detail.h1}</h1>
+      <p class="ind-hero__sub">{detail.intro}</p>
+      <div class="actions">
+        <a class="button primary" href="/contact/">Book a strategy call</a>
+        <a class="button ghost" href="#builds">See what we build</a>
+      </div>
     </div>
-    <PageHeroVisual visual={visual} />
+    <div class="ind-hero__visual">
+      <SignalFlow variant="mini" />
+    </div>
   </section>
-  <section class="container rich"><div class="section-head"><p class="eyebrow">Service stack</p><h2>{pageCopy.stackTitle}</h2><p>{pageCopy.stackBody}</p></div><div class="card-grid">{pageCopy.cards.map(card => <a class="service-card" href={card[2]}><span>✦</span><h3>{card[0]}</h3><p>{card[1]}</p><em>Open related service →</em></a>)}</div></section>
-  {industry.slug === 'auto-detailing-shops' && (
-    <section class="container section case-proof-grid">
-      <div class="section-head"><p class="eyebrow">Auto detailing client result</p><h2>Detail Depot went from $2K to <span class="accent-word">$12K+/month</span>.</h2><p>See how premium web design, Meta Ads, Google Search, booking engines, and CRM pipeline strategy helped auto detailing brands generate booked opportunities, including Detail Depot’s $83,260 pipeline, JP Mobile Detail’s 31 bookings at $15.51 CPA, the Detail Driven ecosystem’s zero-CAC portfolio automations, Always Fresh Detailing’s luxury Las Vegas repositioning, and Detail Driven’s 139 high-ticket Jackson Hole leads.</p><div class="actions"><a class="button primary" href="/case-studies/detail-depot-auto-detailing-growth-system/">Read Detail Depot</a><a class="button ghost" href="/case-studies/jp-mobile-detail-automated-booking-google-ads/">Read JP Mobile Detail</a><a class="button ghost" href="/case-studies/always-fresh-detailing-luxury-positioning-las-vegas/">Read Always Fresh</a><a class="button ghost" href="/case-studies/detail-driven-ecosystem-cross-brand-automation/">Read Ecosystem</a><a class="button ghost" href="/case-studies/detail-driven-auto-spa-high-ticket-meta-ads/">Read Detail Driven</a></div></div>
-      <div class="case-image-stack"><figure><img src="/assets/case-studies/detail-depot/detail-depot-website-preview.png" alt="Detail Depot premium auto detailing website preview" loading="lazy" /><figcaption>Premium website positioning for ceramic coating and detailing buyers.</figcaption></figure><figure><img src="/assets/case-studies/detail-depot/detail-depot-meta-ads-results.png" alt="Detail Depot Meta Ads campaign results screenshot" loading="lazy" /><figcaption>Campaign results showing lead volume, CPL, and spend.</figcaption></figure><figure><img src="/assets/case-studies/jp-mobile-detail/jp-mobile-detail-booking-engine.png" alt="JP Mobile Detail multi-step booking engine interface screenshot" loading="lazy" /><figcaption>JP Mobile Detail’s booking engine automates service tiers, vehicle-size selection, scheduling, and upsells.</figcaption></figure><figure><img src="/assets/case-studies/jp-mobile-detail/jp-mobile-detail-google-ads-performance.png" alt="JP Mobile Detail Google Ads performance dashboard screenshot" loading="lazy" /><figcaption>JP Mobile Detail captured 1,087 Google clicks at a $0.44 average CPC and 31 bookings at $15.51 CPA.</figcaption></figure><figure><img src="/assets/case-studies/always-fresh-detailing/always-fresh-detailing-website-preview.png" alt="Always Fresh Detailing luxury Las Vegas website preview" loading="lazy" /><figcaption>Always Fresh Detailing’s Las Vegas website repositioned the brand for affluent vehicle owners and premium coating buyers.</figcaption></figure><figure><img src="/assets/case-studies/detail-driven-ecosystem/detail-driven-ecosystem-auto-spa.png" alt="Detail Driven ecosystem Auto Spa storefront preview" loading="lazy" /><figcaption>The Detail Driven ecosystem unified Auto Spa, The Garage, Windshield Doctor, and Mike’s Bodyshop under one premium identity.</figcaption></figure><figure><img src="/assets/case-studies/detail-driven-auto-spa/detail-driven-meta-ads-performance.png" alt="Detail Driven Auto Spa Meta Ads campaign performance screenshot" loading="lazy" /><figcaption>Detail Driven’s Jackson Hole campaign generated 139 high-intent form leads at a $24.01 average CPL.</figcaption></figure></div>
+
+  <section class="container section">
+    <div class="section-head reveal">
+      <p class="eyebrow">What buyers need</p>
+      <h2>What buyers check before they <span class="accent-word">contact</span> you.</h2>
+      <p>Buyers compare two or three companies in one sitting. These are the checks they run before reaching out — and the signals the system is built to put in front of them first.</p>
+    </div>
+    <div class="needs-grid reveal">
+      {detail.buyerNeeds.map((need, index) => (
+        <div class="need-card">
+          <div class="need-card__head"><span class="num-chip">{String(index + 1).padStart(2, '0')}</span></div>
+          <p>{need}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="container section" id="builds">
+    <div class="section-head reveal">
+      <p class="eyebrow">What Simplufy builds</p>
+      <h2>What Simplufy <span class="accent-word">builds</span> for {navLower}.</h2>
+      <p>Everything below points at the same outcome: {outcomeLine}</p>
+    </div>
+    <div class="builds-grid reveal">
+      {detail.builds.map((build, index) => (
+        <article class="build-card">
+          <span class="num-chip">{String(index + 1).padStart(2, '0')}</span>
+          <h3>{build.title}</h3>
+          <p>{build.description}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="container section">
+    <div class="section-head reveal">
+      <p class="eyebrow">Best-fit services</p>
+      <h2>The services doing the <span class="accent-word">heavy lifting</span>.</h2>
+      <p>Every industry system draws from the same eight Simplufy services. For {navLower}, these are the ones that move booked work first.</p>
+    </div>
+    <div class="fit-grid reveal">
+      {fitServices.map((service) => (
+        <a class="fit-card" href={`/services/${service.slug}/`}>
+          <span class="icon-chip"><Icon name={service.icon} /></span>
+          <h3>{service.nav}</h3>
+          <p>{firstSentence(service.description)}</p>
+          <em>Explore {service.nav} <span aria-hidden="true">→</span></em>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="container section">
+    <div class="section-head reveal">
+      <p class="eyebrow">Common growth leaks</p>
+      <h2>Where good leads quietly <span class="accent-word">leak</span>.</h2>
+      <p>The patterns we find most often in audits. None of them are exotic — they are unfinished handoffs between marketing and follow-up, and each one is fixable.</p>
+    </div>
+    <ul class="leak-list reveal" role="list">
+      {detail.leaks.map((leak) => (
+        <li class="leak-chip"><span class="leak-dot" aria-hidden="true"></span>{leak}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="container section">
+    <div class="section-head reveal">
+      <p class="eyebrow">In practice</p>
+      <h2>Example campaigns, pages, and <span class="accent-word">workflows</span>.</h2>
+      <p>A sample of the concrete assets an engagement like this produces — each one wired into the CRM so the result stays measurable.</p>
+    </div>
+    <ol class="example-rows reveal">
+      {detail.examples.map((example, index) => (
+        <li>
+          <span class="ex-num">{String(index + 1).padStart(2, '0')}</span>
+          <p>{example}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  {proofKind === 'detailing' && (
+    <section class="container section proof-section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Proof, not promises</p>
+        <h2>These systems already run in <span class="accent-word">detailing</span> shops.</h2>
+        <p>Real campaign and pipeline numbers from detailing clients — the same offer pages, booking flows, and follow-up automations described above.</p>
+      </div>
+      <div class="stat-band proof-stats reveal">
+        <div><strong>$83,260</strong><span>pipeline generated</span><em>Detail Depot</em></div>
+        <div><strong>285</strong><span>leads at an $8.69 average CPL</span><em>Detail Depot — Meta Ads</em></div>
+        <div><strong>1,087</strong><span>Google Ads clicks</span><em>JP Mobile Detail</em></div>
+        <div><strong>$0.44</strong><span>average cost per click</span><em>JP Mobile Detail</em></div>
+      </div>
+      <div class="proof-split reveal">
+        <BrowserFrame src="/assets/case-studies/detail-depot/detail-depot-website-preview.png" alt="Detail Depot premium auto detailing website preview" caption="Detail Depot — premium positioning built for ceramic coating and detailing buyers." />
+        <div class="proof-links">
+          <p class="proof-links__label">Read the full case studies</p>
+          <a href="/case-studies/detail-depot-auto-detailing-growth-system/"><strong>Detail Depot</strong><span>From $2K to $12K+ months on an $83,260 pipeline</span><i aria-hidden="true">→</i></a>
+          <a href="/case-studies/jp-mobile-detail-automated-booking-google-ads/"><strong>JP Mobile Detail</strong><span>Automated booking engine and $0.44 CPC Google Ads</span><i aria-hidden="true">→</i></a>
+          <a href="/case-studies/always-fresh-detailing-luxury-positioning-las-vegas/"><strong>Always Fresh Detailing</strong><span>Luxury repositioning for Las Vegas vehicle owners</span><i aria-hidden="true">→</i></a>
+        </div>
+      </div>
     </section>
   )}
-  {industry.slug === 'auto-styling-shops' && (
-    <section class="container section case-proof-grid">
-      <div class="section-head"><p class="eyebrow">Luxury auto search result</p><h2>Auto Monitor built a <span class="accent-word">93.8K-citation</span> SEO & AEO engine.</h2><p>See how premium web strategy can win luxury automotive buyers: Auto Monitor grew search and AI-engine visibility, while Always Fresh Detailing used high-end UI/UX to reposition a Las Vegas detailing brand for affluent vehicle owners.</p><div class="actions"><a class="button primary" href="/case-studies/auto-monitor-luxury-seo-aeo-engine/">Read Auto Monitor</a><a class="button ghost" href="/case-studies/always-fresh-detailing-luxury-positioning-las-vegas/">Read Always Fresh</a></div></div>
-      <div class="case-image-stack"><figure><img src="/assets/case-studies/auto-monitor/auto-monitor-search-growth-overview.png" alt="Auto Monitor search and AEO growth overview screenshot" loading="lazy" /><figcaption>Search and AEO growth overview for a luxury automotive brokerage.</figcaption></figure><figure><img src="/assets/case-studies/auto-monitor/auto-monitor-ai-engine-citations.png" alt="Auto Monitor AI engine citations screenshot" loading="lazy" /><figcaption>AI engine citations showing answer-engine discovery growth.</figcaption></figure><figure><img src="/assets/case-studies/always-fresh-detailing/always-fresh-detailing-website-preview.png" alt="Always Fresh Detailing premium Las Vegas web design preview" loading="lazy" /><figcaption>Luxury Las Vegas detailing website built to create immediate trust with affluent automotive buyers.</figcaption></figure></div>
+
+  {proofKind === 'styling' && (
+    <section class="container section proof-section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Proof, not promises</p>
+        <h2>High-ticket auto work, <span class="accent-word">measured</span>.</h2>
+        <p>Detail Driven sells coating, protection, and styling work in Jackson Hole. Offer-driven Meta campaigns produced 139 high-intent form leads at a $24.01 average CPL, with cross-brand CRM automation running behind the storefronts.</p>
+      </div>
+      <div class="proof-split reveal">
+        <ScreenshotCard src="/assets/case-studies/detail-driven-auto-spa/detail-driven-meta-ads-performance.png" alt="Detail Driven Auto Spa Meta Ads campaign performance dashboard" label="Meta Ads Manager" metric="139 leads" note="$24.01 average CPL on high-ticket campaigns" />
+        <div class="proof-links">
+          <p class="proof-links__label">Read the full case studies</p>
+          <a href="/case-studies/detail-driven-auto-spa-high-ticket-meta-ads/"><strong>Detail Driven Auto Spa</strong><span>High-ticket Meta Ads in a premium mountain market</span><i aria-hidden="true">→</i></a>
+          <a href="/case-studies/detail-driven-ecosystem-cross-brand-automation/"><strong>Detail Driven Ecosystem</strong><span>Cross-brand CRM automation across a four-brand portfolio</span><i aria-hidden="true">→</i></a>
+        </div>
+      </div>
     </section>
   )}
-  {industry.slug === 'education-training' && (
-    <section class="container section case-proof-grid">
-      <div class="section-head"><p class="eyebrow">Online education client result</p><h2>Momentum Coaching built a <span class="accent-word">27.6x ROAS</span> B2B lead machine.</h2><p>See how founder-led video creatives, native Meta lead forms, and micro-budget funnel testing generated Momentum Coaching’s 27.6x ROAS B2B campaign and Savannah Schaffer’s $500/mo low-ticket membership launch.</p><div class="actions"><a class="button primary" href="/case-studies/momentum-coaching-b2b-lead-machine/">Read Momentum</a><a class="button ghost" href="/case-studies/savannah-schaffer-micro-continuity-membership/">Read Savannah</a></div></div>
-      <div class="case-image-stack"><figure><img src="/assets/case-studies/momentum-coaching/momentum-coaching-meta-ads-performance.png" alt="Momentum Coaching Meta Ads performance dashboard showing 134 B2B leads at $2.43 CPL" loading="lazy" /><figcaption>Founder-led B2B coaching campaign producing 134 leads, $2.43 CPL, and 27.6x ROAS.</figcaption></figure><figure><img src="/assets/case-studies/savannah-schaffer/savannah-schaffer-meta-ads-performance.png" alt="Savannah Schaffer Meta Ads performance dashboard for a low-ticket coaching membership" loading="lazy" /><figcaption>Savannah’s low-ticket membership funnel produced $500/mo in MRR from $133.22 in test spend.</figcaption></figure></div>
+
+  {proofKind === 'pest' && (
+    <section class="container section proof-section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Proof, not promises</p>
+        <h2>A 93-year pest brand, <span class="accent-word">modernized</span>.</h2>
+        <p>State Termite had operated since 1933 on a dated red-and-blue website that buried its protection plans. The rebuild leads with a clean green brand system, clear hierarchy, and an above-the-fold lead form.</p>
+      </div>
+      <div class="before-after reveal">
+        <BrowserFrame src="/assets/proof/state-termite/state-termite-old-red-blue-homepage.png" alt="State Termite legacy red and blue website homepage before the rebuild" caption="Before — crowded banners, mixed priorities, no clear next step." />
+        <BrowserFrame src="/assets/proof/state-termite/state-termite-new-green-homepage.png" alt="State Termite modern green website homepage after the rebuild" caption="After — conversion-led rebuild with a direct protection-plan CTA." />
+      </div>
+      <div class="proof-links proof-links--solo reveal">
+        <a href="/case-studies/state-termite-pest-control-legacy-modernization/"><strong>State Termite</strong><span>How a 1933 brand moved into a modern lead-capture engine</span><i aria-hidden="true">→</i></a>
+      </div>
     </section>
   )}
-  {industry.slug === 'b2b-services' && (
-    <section class="container section case-proof-grid">
-      <div class="section-head"><p class="eyebrow">B2B lead generation result</p><h2>Momentum Coaching turned $325.35 into <span class="accent-word">$9,000 front-end revenue</span>.</h2><p>A direct-response B2B Meta Ads campaign generated 134 targeted leads and 3 high-ticket coaching clients, while the Detail Driven ecosystem shows how multi-service portfolios can use CRM automations to create cross-brand backend revenue loops from an existing customer database.</p><div class="actions"><a class="button primary" href="/case-studies/momentum-coaching-b2b-lead-machine/">Read Momentum</a><a class="button ghost" href="/case-studies/detail-driven-ecosystem-cross-brand-automation/">Read Ecosystem</a></div></div>
-      <div class="case-image-stack"><figure><img src="/assets/case-studies/momentum-coaching/momentum-coaching-meta-ads-performance.png" alt="Momentum Coaching B2B Meta Ads campaign performance screenshot" loading="lazy" /><figcaption>B2B campaign proof: 134 leads, $325.35 ad spend, $9,000 immediate revenue.</figcaption></figure><figure><img src="/assets/case-studies/detail-driven-ecosystem/detail-driven-ecosystem-the-garage.png" alt="Detail Driven ecosystem The Garage unified brand network screenshot" loading="lazy" /><figcaption>Cross-brand ecosystem proof: unified web identity plus CRM automation to increase LTV across the portfolio.</figcaption></figure></div>
+
+  {proofKind === 'momentum' && (
+    <section class="container section proof-section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Proof, not promises</p>
+        {industry.slug === 'b2b-services'
+          ? <h2>$325.35 in, <span class="accent-word">$9,000</span> back.</h2>
+          : <h2>An offer validated at <span class="accent-word">27.6x</span> ROAS.</h2>}
+        {industry.slug === 'b2b-services'
+          ? <p>Momentum Coaching ran a direct-response B2B Meta campaign: 134 targeted leads at $2.43 each, three high-ticket clients, and a 27.6x return on ad spend — with every lead routed into same-day follow-up.</p>
+          : <p>Momentum Coaching used founder-led creative and native lead forms to produce 134 leads at $2.43 CPL and a 27.6x ROAS — proof that education and coaching offers can be validated on micro budgets before scaling.</p>}
+      </div>
+      <div class="proof-split reveal">
+        <ScreenshotCard src="/assets/case-studies/momentum-coaching/momentum-coaching-meta-ads-performance.png" alt="Momentum Coaching Meta Ads performance dashboard showing 134 leads at $2.43 CPL" label="Meta Ads Manager" metric="27.6x ROAS" note="134 leads at $2.43 CPL from $325.35 in test spend" />
+        <div class="proof-links">
+          <p class="proof-links__label">Read the full case study</p>
+          <a href="/case-studies/momentum-coaching-b2b-lead-machine/"><strong>Momentum Coaching</strong><span>A B2B lead machine built on founder-led creative</span><i aria-hidden="true">→</i></a>
+        </div>
+      </div>
     </section>
   )}
-  <section class={`container section media-showcase proof-showcase industry-proof-showcase industry-proof-${industry.slug}`}><div class="section-head"><p class="eyebrow">{industryProof.eyebrow}</p><h2>{industryProof.title}</h2><p>{industryProof.body}</p></div><div class="proof-system-card industry-proof-card"><div class="proof-system-header"><span>{visual.icon}</span><div><p>{industry.nav}</p><strong>{industryProof.title}</strong></div></div><div class="proof-system-flow industry-proof-flow">{industryProof.steps.map((step, index) => <div style={`--i:${index}`}><span>{String(index + 1).padStart(2, '0')}</span><strong>{step}</strong></div>)}</div><div class="industry-proof-orbit" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><div class="proof-system-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div></section>
-  <div class="container"><ContactForm mode="form" headline={`Want better marketing for ${industry.title.replace('Digital Marketing for ','').toLowerCase()}?`} subhead={pageCopy.ctaSubhead} points={pageCopy.cards.map(card => card[0])} /></div>
+
+  {proofKind === 'generic' && (
+    <section class="container proof-section proof-section--quiet">
+      <a class="proof-quiet reveal" href="/case-studies/">
+        <span class="proof-quiet__label">Case studies</span>
+        <span class="proof-quiet__text">See how these systems perform in other service industries</span>
+        <span class="proof-quiet__arrow" aria-hidden="true">→</span>
+      </a>
+    </section>
+  )}
+
+  <FAQ items={detail.faqs} eyebrow="Industry FAQ" heading={`Questions from ${local.operator} operators.`} />
+
+  <div class="container">
+    <ContactForm mode="form" headline={local.headline} subhead={local.subhead} points={detail.builds.map((b) => b.title)} />
+  </div>
+
 </main>
 <Footer />
 </Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .ind-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+    gap: clamp(32px, 5vw, 64px);
+    align-items: center;
+    padding-block: clamp(36px, 5.5vw, 72px) clamp(20px, 3.5vw, 44px);
+  }
+  .ind-hero .breadcrumb {
+    color: var(--text-subtle);
+    font-size: var(--fs-small);
+    margin-bottom: var(--s-5);
+  }
+  .ind-hero .breadcrumb a {
+    color: var(--text-muted);
+    font-weight: var(--fw-med);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .ind-hero .breadcrumb a:hover { color: var(--accent); }
+  .ind-hero h1 {
+    margin: 0 0 var(--s-4);
+    font-size: clamp(29px, 3.2vw, 41px);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--tracking-display);
+    font-weight: var(--fw-bold);
+    text-wrap: balance;
+  }
+  .ind-hero__sub {
+    margin: 0;
+    max-width: 56ch;
+    font-size: var(--fs-body-lg);
+    color: var(--text-muted);
+    line-height: var(--lh-body);
+  }
+  .ind-hero__visual { min-width: 0; }
+
+  /* ---------- Shared number chip ---------- */
+  .num-chip {
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border-radius: var(--r-sm);
+    background: var(--accent-weak);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 14%, transparent);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- What buyers need ---------- */
+  .needs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .need-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--s-5);
+    display: grid;
+    gap: var(--s-4);
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .need-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+  .need-card__head {
+    display: flex;
+    align-items: center;
+    gap: var(--s-4);
+  }
+  .need-card__head::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .need-card p {
+    margin: 0;
+    color: var(--text);
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    font-weight: var(--fw-med);
+    max-width: 44ch;
+  }
+
+  /* ---------- What Simplufy builds ---------- */
+  .builds-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .build-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    padding: clamp(24px, 3vw, 32px);
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .build-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+  .build-card h3 {
+    margin: var(--s-4) 0 var(--s-2);
+    font-size: var(--fs-h3);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--fw-semi);
+  }
+  .build-card p {
+    margin: 0;
+    color: var(--text-muted);
+    line-height: var(--lh-body);
+    font-size: var(--fs-body);
+  }
+
+  /* ---------- Best-fit services ---------- */
+  .fit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+    gap: 18px;
+  }
+  .fit-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--s-5);
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .fit-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+  .fit-card h3 {
+    margin: var(--s-2) 0 0;
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--tracking-tight);
+  }
+  .fit-card p {
+    margin: 0;
+    flex: 1;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+    line-height: 1.55;
+  }
+  .fit-card em {
+    font-style: normal;
+    color: var(--accent);
+    font-weight: var(--fw-semi);
+    font-size: var(--fs-small);
+  }
+
+  /* ---------- Common growth leaks ---------- */
+  .leak-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    max-width: 980px;
+  }
+  .leak-chip {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    color: var(--text);
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    font-weight: var(--fw-med);
+  }
+  .leak-dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin-top: 7px;
+    border-radius: var(--r-pill);
+    background: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+
+  /* ---------- Examples ---------- */
+  .example-rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 880px;
+  }
+  .example-rows li {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: var(--s-5);
+    align-items: baseline;
+    padding: 20px 4px;
+    border-top: 1px solid var(--border);
+  }
+  .example-rows li:last-child { border-bottom: 1px solid var(--border); }
+  .ex-num {
+    color: var(--accent);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-label);
+    letter-spacing: var(--tracking-label);
+  }
+  .example-rows p {
+    margin: 0;
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-med);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text);
+  }
+
+  /* ---------- Proof ---------- */
+  .proof-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(20px, 3vw, 36px);
+    align-items: start;
+    margin-top: clamp(20px, 3vw, 32px);
+  }
+  .proof-stats { margin-top: 0; }
+  .proof-links {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+  }
+  .proof-links__label {
+    margin: 0 0 2px;
+    font-size: var(--fs-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-subtle);
+    font-weight: var(--fw-bold);
+  }
+  .proof-links a {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    column-gap: 12px;
+    align-items: center;
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .proof-links a:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+  .proof-links a strong {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text);
+  }
+  .proof-links a span {
+    grid-column: 1;
+    margin-top: 2px;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+  }
+  .proof-links a i {
+    grid-row: 1 / span 2;
+    font-style: normal;
+    color: var(--accent);
+    font-weight: var(--fw-semi);
+    transition: transform var(--dur-fast) var(--ease);
+  }
+  .proof-links a:hover i { transform: translateX(3px); }
+  .proof-links--solo { max-width: 560px; margin-top: clamp(20px, 3vw, 32px); }
+  .before-after {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(20px, 3vw, 36px);
+    align-items: start;
+  }
+
+  /* Quiet single-row link card for industries without published proof */
+  .proof-section--quiet { padding-block: var(--s-4); }
+  .proof-quiet {
+    display: flex;
+    align-items: center;
+    gap: var(--s-5);
+    padding: 22px 26px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .proof-quiet:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+  .proof-quiet__label {
+    flex: none;
+    font-size: var(--fs-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: var(--fw-black);
+  }
+  .proof-quiet__text {
+    flex: 1;
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text);
+  }
+  .proof-quiet__arrow {
+    color: var(--accent);
+    font-weight: var(--fw-semi);
+    transition: transform var(--dur-fast) var(--ease);
+  }
+  .proof-quiet:hover .proof-quiet__arrow { transform: translateX(3px); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 980px) {
+    .ind-hero { grid-template-columns: 1fr; align-items: start; }
+    .proof-split { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 760px) {
+    .needs-grid,
+    .builds-grid,
+    .leak-list,
+    .before-after { grid-template-columns: 1fr; }
+    .stat-band.proof-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .proof-quiet { flex-wrap: wrap; gap: var(--s-3); }
+    .example-rows li { grid-template-columns: 40px 1fr; gap: var(--s-4); }
+  }
+  @media (max-width: 480px) {
+    .stat-band.proof-stats { grid-template-columns: 1fr; }
+  }
+
+  /* Hover lifts collapse to resting state under reduced motion (global rule also
+     zeroes transition durations; this keeps the layout fully readable at rest). */
+  @media (prefers-reduced-motion: reduce) {
+    .need-card:hover,
+    .build-card:hover,
+    .fit-card:hover,
+    .proof-links a:hover,
+    .proof-quiet:hover { transform: none; }
+    .proof-links a:hover i,
+    .proof-quiet:hover .proof-quiet__arrow { transform: none; }
+  }
+</style>

@@ -1,0 +1,322 @@
+---
+/**
+ * FunnelLeakScanner — audit visualization.
+ * Six pipeline stages with the leaks we typically find attached to each one.
+ * Leak chips start in an accent "leak" state and seal to green one-by-one
+ * when the diagram scrolls into view. No JS (or reduced motion) renders the
+ * sealed state from the start, so the resting diagram is always complete.
+ */
+const stages = [
+  { label: 'Traffic', leaks: [] as string[] },
+  { label: 'Page', leaks: ['Unclear offer', 'Thin service pages', 'No proof above the CTA'] },
+  { label: 'Form / Call', leaks: ['Missed call'] },
+  { label: 'CRM', leaks: ['Disconnected CRM'] },
+  { label: 'Follow-up', leaks: ['Slow speed-to-lead'] },
+  { label: 'Booked', leaks: ['Weak tracking'] },
+];
+
+let leakIndex = 0;
+const stageData = stages.map((stage, i) => ({
+  label: stage.label,
+  isLast: i === stages.length - 1,
+  chips: stage.leaks.map((label) => ({ label, delay: (0.1 + leakIndex++ * 0.15).toFixed(2) })),
+}));
+---
+<div class="fls">
+  <ol class="fls-track" role="list">
+    {stageData.map((stage) => (
+      <li class={`fls-stage${stage.isLast ? ' fls-stage--last' : ''}`}>
+        <span class="fls-node">{stage.label}</span>
+        {stage.chips.length > 0 && (
+          <ul class="fls-chips" role="list">
+            {stage.chips.map((chip) => (
+              <li class="fls-chip" style={`--d:${chip.delay}s`}>
+                <span class="fls-chip__mark" aria-hidden="true">
+                  <i class="fls-chip__dot"></i>
+                  <svg
+                    class="fls-chip__check"
+                    viewBox="0 0 12 12"
+                    width="11"
+                    height="11"
+                    fill="none"
+                    focusable="false"
+                  >
+                    <path
+                      d="M2.5 6.5 5 8.8l4.4-5.4"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                {chip.label}
+              </li>
+            ))}
+          </ul>
+        )}
+      </li>
+    ))}
+  </ol>
+  <p class="fls-hint">We diagnose the leak before prescribing the package.</p>
+</div>
+
+<script is:inline>
+  (function () {
+    var roots = document.querySelectorAll('.fls:not([data-fls])');
+    for (var i = 0; i < roots.length; i++) {
+      (function (root) {
+        root.setAttribute('data-fls', '');
+        var reduce = false;
+        try {
+          reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        } catch (err) {
+          reduce = false;
+        }
+        root.classList.add('js-armed');
+        if (reduce || !('IntersectionObserver' in window)) {
+          root.classList.add('is-sealed');
+          return;
+        }
+        var threshold = Math.min(0.4, (window.innerHeight * 0.5) / Math.max(root.offsetHeight, 1));
+        var io = new IntersectionObserver(
+          function (entries) {
+            for (var k = 0; k < entries.length; k++) {
+              if (entries[k].isIntersecting) {
+                root.classList.add('is-sealed');
+                io.disconnect();
+                return;
+              }
+            }
+          },
+          { threshold: threshold }
+        );
+        io.observe(root);
+      })(roots[i]);
+    }
+  })();
+</script>
+
+<style>
+  .fls {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-sm);
+    padding: clamp(24px, 4vw, 40px);
+  }
+
+  /* ---- Stage track ---- */
+  .fls-track {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  /* Horizontal pipeline line, node-center to node-center.
+     Base state is the sealed (green-tinted) line; the "leak" state below
+     overrides it until the observer fires. */
+  .fls-track::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: calc(100% / 12);
+    right: calc(100% / 12);
+    height: 1px;
+    background: color-mix(in srgb, var(--green-600) 35%, var(--border));
+    transition: background-color var(--dur-slow) var(--ease);
+    transition-delay: 1.3s;
+  }
+
+  .fls-stage {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .fls-node {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 16px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    font-size: 12.5px;
+    font-weight: var(--fw-semi);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    color: var(--text);
+  }
+  .fls-stage--last .fls-node {
+    color: var(--green-600);
+    border-color: color-mix(in srgb, var(--green-600) 45%, transparent);
+    transition: color var(--dur-slow) var(--ease), border-color var(--dur-slow) var(--ease);
+    transition-delay: 1.3s;
+  }
+
+  /* ---- Leak chips ---- */
+  .fls-chips {
+    position: relative;
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+  }
+  /* Hairline tick from node down to its chips */
+  .fls-chips::before {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    width: 1px;
+    height: 13px;
+    background: var(--border-strong);
+  }
+  /* Base = sealed (green, check shown). Leak state overrides below. */
+  .fls-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 9px;
+    border-radius: var(--r-pill);
+    font-size: 11px;
+    font-weight: var(--fw-semi);
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: var(--green-600);
+    background: color-mix(in srgb, var(--green-600) 7%, #fff);
+    border: 1px solid color-mix(in srgb, var(--green-600) 38%, transparent);
+    transition:
+      background-color var(--dur-slow) var(--ease),
+      color var(--dur-slow) var(--ease),
+      border-color var(--dur-slow) var(--ease);
+    transition-delay: var(--d, 0s);
+  }
+  .fls-chip__mark {
+    display: inline-grid;
+    place-items: center;
+    width: 11px;
+    height: 11px;
+    flex: none;
+  }
+  .fls-chip__dot,
+  .fls-chip__check {
+    grid-area: 1 / 1;
+    transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+    transition-delay: var(--d, 0s);
+  }
+  .fls-chip__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: var(--r-pill);
+    background: currentColor;
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  .fls-chip__check {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* ---- Leak state (JS armed, not yet sealed) ---- */
+  .fls.js-armed:not(.is-sealed) .fls-chip {
+    color: var(--accent);
+    background: var(--accent-weak);
+    border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  .fls.js-armed:not(.is-sealed) .fls-chip__dot {
+    opacity: 1;
+    transform: none;
+  }
+  .fls.js-armed:not(.is-sealed) .fls-chip__check {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  .fls.js-armed:not(.is-sealed) .fls-track::before {
+    background: var(--border-strong);
+  }
+  .fls.js-armed:not(.is-sealed) .fls-stage--last .fls-node {
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+
+  /* ---- Hint ---- */
+  .fls-hint {
+    margin: var(--s-5) 0 0;
+    text-align: center;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  /* ---- Mobile / narrow: vertical pipeline ---- */
+  @media (max-width: 920px) {
+    .fls-track {
+      grid-template-columns: 1fr;
+    }
+    .fls-track::before {
+      display: none;
+    }
+    .fls-stage + .fls-stage::before {
+      content: '';
+      width: 1px;
+      height: 18px;
+      margin: 12px auto;
+      background: color-mix(in srgb, var(--green-600) 35%, var(--border));
+      transition: background-color var(--dur-slow) var(--ease);
+      transition-delay: 1.3s;
+    }
+    .fls.js-armed:not(.is-sealed) .fls-stage + .fls-stage::before {
+      background: var(--border-strong);
+    }
+    .fls-chips {
+      margin-top: 14px;
+    }
+    .fls-chips::before {
+      top: -13px;
+      height: 11px;
+    }
+    .fls-chip {
+      white-space: normal;
+      text-align: left;
+    }
+  }
+
+  /* ---- Reduced motion: always render sealed ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .fls.js-armed:not(.is-sealed) .fls-chip {
+      color: var(--green-600);
+      background: color-mix(in srgb, var(--green-600) 7%, #fff);
+      border-color: color-mix(in srgb, var(--green-600) 38%, transparent);
+    }
+    .fls.js-armed:not(.is-sealed) .fls-chip__dot {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    .fls.js-armed:not(.is-sealed) .fls-chip__check {
+      opacity: 1;
+      transform: none;
+    }
+    .fls.js-armed:not(.is-sealed) .fls-track::before {
+      background: color-mix(in srgb, var(--green-600) 35%, var(--border));
+    }
+    .fls.js-armed:not(.is-sealed) .fls-stage--last .fls-node {
+      color: var(--green-600);
+      border-color: color-mix(in srgb, var(--green-600) 45%, transparent);
+    }
+    .fls.js-armed:not(.is-sealed) .fls-stage + .fls-stage::before {
+      background: color-mix(in srgb, var(--green-600) 35%, var(--border));
+    }
+  }
+</style>

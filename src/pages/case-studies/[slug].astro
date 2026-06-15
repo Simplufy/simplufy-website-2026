@@ -3,79 +3,429 @@ import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import ContactForm from '../../components/ContactForm.astro';
-import { caseStudies } from '../../data/site';
+import BrowserFrame from '../../components/BrowserFrame.astro';
+import ScreenshotCard from '../../components/ScreenshotCard.astro';
+import { caseStudies, site } from '../../data/site';
 
 export function getStaticPaths(){ return caseStudies.map(study => ({ params:{ slug: study.slug }, props:{ study }})); }
 const { study } = Astro.props;
-const hasFullStudy = Boolean(study.results || study.pillars || study.images);
-const relatedIndustryHref = study.industry?.includes('Pest') ? '/industries/pest-control-companies/' : study.industry?.includes('Exotic') ? '/industries/auto-styling-shops/' : '/industries/auto-detailing-shops/';
-const relatedIndustryLabel = study.industry?.includes('Pest') ? 'Pest control marketing' : study.industry?.includes('Exotic') ? 'Luxury auto marketing' : 'Auto detailing marketing';
+
+const canonical = `${site.url}/case-studies/${study.slug}/`;
+
+// Dashboard-style screenshots get a ScreenshotCard; website shots get a BrowserFrame.
+const dashRe = /(ads|performance|crm|pipeline|search|citation|console|clicks|impressions|dashboard|metrics)/i;
+const isDashboard = (image) => dashRe.test(`${image.src} ${image.alt}`);
+const labelFor = (image) => {
+  const s = `${image.src} ${image.alt}`.toLowerCase();
+  if (/crm|pipeline/.test(s)) return 'CRM pipeline';
+  if (/search|citation|console|impression/.test(s)) return 'Search performance';
+  if (/ads|performance|campaign/.test(s)) return 'Ad performance';
+  return 'Dashboard';
+};
+
+// Related studies: same normalized industry group first, then the rest.
+const groupFor = (industry = '') => {
+  if (/coach|education|consult/i.test(industry)) return 'coaching';
+  if (/pest|termite/i.test(industry)) return 'pest';
+  if (/scuba|charter|dive/i.test(industry)) return 'recreation';
+  if (/auto|vehicle|detail/i.test(industry)) return 'automotive';
+  return 'services';
+};
+const myGroup = groupFor(study.industry);
+const others = caseStudies.filter((c) => c.slug !== study.slug);
+const related = [
+  ...others.filter((c) => groupFor(c.industry) === myGroup),
+  ...others.filter((c) => groupFor(c.industry) !== myGroup)
+].slice(0, 2);
+
+const hasComparison = Boolean(study.comparison?.length);
+const hasCampaigns = Boolean(study.campaigns?.length);
+const hasRevenue = Boolean(study.revenue?.length);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: study.title,
+    description: study.description,
+    image: (study.images ?? []).map((image) => `${site.url}${image.src}`),
+    author: { '@type': 'Organization', name: site.name, url: site.url },
+    publisher: { '@type': 'Organization', name: site.name, url: site.url },
+    mainEntityOfPage: canonical,
+    about: study.industry
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${site.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Case Studies', item: `${site.url}/case-studies/` },
+      { '@type': 'ListItem', position: 3, name: study.title, item: canonical }
+    ]
+  }
+];
 ---
-<Base title={study.title} description={study.description}>
+<Base title={study.title} description={study.description} schema={schema}>
   <Header />
   <main>
-    <section class="case-hero container reveal">
-      <div>
-        <div class="breadcrumb"><a href="/case-studies/">Case Studies</a> / {study.industry}</div>
-        <p class="eyebrow">{study.client ? `${study.client} case study` : study.industry}</p>
+    <section class="container study-hero">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/case-studies/">Case Studies</a> / {study.client ?? study.industry}</nav>
+      <div class="study-hero-copy reveal">
+        <p class="eyebrow">{study.industry}</p>
         <h1 set:html={study.heading ?? study.title}></h1>
-        <p>{study.description}</p>
-        <div class="actions"><a class="button primary" href="/contact/">Build a similar system</a><a class="button ghost" href={relatedIndustryHref}>{relatedIndustryLabel}</a></div>
+        <div class="actions">
+          <a class="button primary" href="/contact/">Build a similar system</a>
+          <a class="button ghost" href="/case-studies/">All case studies</a>
+        </div>
       </div>
-      <aside class="case-summary-card">
-        <span>{study.location ?? 'Client result'}</span>
-        <strong>{study.metric}</strong>
-        <p>{study.headlineResult ?? 'A practical growth-system example showing how web, ads, CRM, search visibility, automation, and follow-up can work together to create more qualified opportunities.'}</p>
+      <aside class="study-result-strip reveal">
+        <div class="study-result-metric">
+          <span>{study.client}{study.location ? ` · ${study.location}` : ''}</span>
+          <strong>{study.metric}</strong>
+        </div>
+        <p>{study.headlineResult ?? study.description}</p>
       </aside>
     </section>
 
-    {hasFullStudy ? (
-      <>
-        <section class="container case-metrics reveal">
-          {study.results?.map((result) => <div><span>{result.label}</span><strong>{result.value}</strong><p>{result.note}</p></div>)}
-        </section>
-
-        <section class="container section case-proof-grid case-study-proof">
+    {Boolean(study.challengeIntro || study.challenge?.length) && (
+      <section class="container section study-situation">
+        <div class="study-situation-grid reveal">
           <div class="section-head">
-            <p class="eyebrow">Client results</p>
-            <h2 set:html={study.proofHeading ?? 'From inconsistent word-of-mouth to a <span class="accent-word">predictable lead engine</span>.'}></h2>
+            <p class="eyebrow">The situation</p>
+            <h2 set:html={study.challengeHeading ?? 'Where the system was <span class="accent-word">leaking</span> before the build.'}></h2>
             <p>{study.challengeIntro}</p>
+            <dl class="study-facts">
+              {study.client && (<><dt>Client</dt><dd>{study.client}</dd></>)}
+              {study.location && (<><dt>Location</dt><dd>{study.location}</dd></>)}
+              <dt>Industry</dt><dd>{study.industry}</dd>
+            </dl>
           </div>
-          <div class="case-image-stack">
-            {study.images?.map((image) => <figure><img src={image.src} alt={image.alt} loading="lazy" /><figcaption>{image.caption}</figcaption></figure>)}
-          </div>
-        </section>
+          {Boolean(study.challenge?.length) && (
+            <ul class="study-challenges">
+              {study.challenge.map((item) => <li>{item}</li>)}
+            </ul>
+          )}
+        </div>
+      </section>
+    )}
 
-        <section class="split-section"><div class="container split"><div><p class="eyebrow">The challenge</p><h2 set:html={study.challengeHeading ?? 'A premium service with no <span class="accent-word">predictable acquisition</span> system.'}></h2></div><div>{study.challenge?.map((item) => <p>{item}</p>)}</div></div></section>
+    {Boolean(study.pillars?.length) && (
+      <section class="container section study-system">
+        <div class="section-head reveal">
+          <p class="eyebrow">The system we built</p>
+          <h2 set:html={study.frameworkHeading ?? 'The connected system behind the <span class="accent-word">result</span>.'}></h2>
+        </div>
+        <div class="study-pillars reveal">
+          {study.pillars.map((pillar, index) => (
+            <article class="study-pillar">
+              <span class="study-pillar-num" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <h3>{pillar.title}</h3>
+              <p>{pillar.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
 
-        <section class="container section">
-          <div class="section-head"><p class="eyebrow">Growth framework</p><h2 set:html={study.frameworkHeading ?? 'The three-part system behind the <span class="accent-word">10x+ ad return</span>.'}></h2></div>
-          <div class="case-pillar-grid">
-            {study.pillars?.map((pillar, index) => <div class="rich-card"><b>0{index + 1}</b><h3>{pillar.title}</h3><p>{pillar.body}</p></div>)}
-          </div>
-        </section>
+    {Boolean(study.images?.length) && (
+      <section class="container section study-proof">
+        <div class="section-head reveal">
+          <p class="eyebrow">Screenshots & proof</p>
+          <h2 set:html={study.proofHeading ?? 'What the system looks like in <span class="accent-word">production</span>.'}></h2>
+        </div>
+        <div class="study-shots">
+          {study.images.map((image) => (
+            <div class="reveal">
+              {isDashboard(image)
+                ? <ScreenshotCard src={image.src} alt={image.alt} label={labelFor(image)} note={image.caption} />
+                : <BrowserFrame src={image.src} alt={image.alt} caption={image.caption} />}
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
 
-        <section class="container section case-data-section">
-          <div class="section-head"><p class="eyebrow">{study.dataEyebrow ?? 'Ad performance'}</p><h2 set:html={study.dataHeading ?? 'Premium local leads tracked from spend to <span class="accent-word">pipeline value</span>.'}></h2></div>
-          <div class="case-table-wrap">
+    {Boolean(study.results?.length) && (
+      <section class="container section study-results-section">
+        <div class="section-head reveal">
+          <p class="eyebrow">Results</p>
+          <h2>The numbers behind the <span class="accent-word">headline</span>.</h2>
+        </div>
+        <div class="study-results reveal">
+          {study.results.map((result) => (
+            <div class="study-stat">
+              <strong>{result.value}</strong>
+              <span>{result.label}</span>
+              <p>{result.note}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {(hasComparison || hasCampaigns || hasRevenue) && (
+      <section class="container section study-data">
+        <div class="section-head reveal">
+          <p class="eyebrow">{study.dataEyebrow ?? 'Campaign data'}</p>
+          <h2 set:html={study.dataHeading ?? 'Tracked from spend to <span class="accent-word">pipeline</span>, not vanity clicks.'}></h2>
+        </div>
+        {(hasComparison || hasCampaigns) && (
+          <div class="case-table-wrap reveal">
             <table class="case-table">
-              {study.comparison ? <thead><tr><th>Operational feature</th><th>The outdated legacy platform</th><th>The modernized growth architecture</th></tr></thead> : <thead><tr><th>Campaign</th><th>Leads</th><th>Avg. CPL</th><th>Investment</th></tr></thead>}
-              {study.comparison ? <tbody>{study.comparison.map((item) => <tr><td>{item.feature}</td><td>{item.legacy}</td><td>{item.modern}</td></tr>)}</tbody> : <tbody>{study.campaigns?.map((campaign) => <tr><td>{campaign.name}</td><td>{campaign.leads}</td><td>{campaign.cpl}</td><td>{campaign.spend}</td></tr>)}</tbody>}
+              {hasComparison ? (
+                <thead><tr><th>Operational feature</th><th>The outdated legacy platform</th><th>The modernized growth architecture</th></tr>
+              </thead>) : (
+                <thead><tr><th>Campaign</th><th>Leads</th><th>Avg. CPL</th><th>Investment</th></tr></thead>
+              )}
+              {hasComparison ? (
+                <tbody>{study.comparison.map((item) => <tr><td>{item.feature}</td><td>{item.legacy}</td><td>{item.modern}</td></tr>)}</tbody>
+              ) : (
+                <tbody>{study.campaigns.map((campaign) => <tr><td>{campaign.name}</td><td>{campaign.leads}</td><td>{campaign.cpl}</td><td>{campaign.spend}</td></tr>)}</tbody>
+              )}
             </table>
           </div>
-          <div class="case-revenue-grid">
-            {study.revenue?.map((item) => <div><span>{item.label}</span><strong>{item.value}</strong><p>{item.note}</p></div>)}
+        )}
+        {hasRevenue && (
+          <div class="study-revenue reveal">
+            {study.revenue.map((item) => (
+              <div class="study-stat study-stat--compact">
+                <strong>{item.value}</strong>
+                <span>{item.label}</span>
+                <p>{item.note}</p>
+              </div>
+            ))}
           </div>
-        </section>
-
-        <section class="container section case-takeaway">
-          <div class="rich-card"><p class="eyebrow">Ultimate takeaway</p><h2>{study.takeawayTitle}</h2><p>{study.takeaway}</p><div class="actions"><a class="button primary" href="/contact/">Request a free pipeline audit</a></div></div>
-        </section>
-      </>
-    ) : (
-      <section class="container rich service-layout"><div><div class="rich-card"><h2>Snapshot</h2><p><strong>{study.metric}</strong> — a focused example of the type of marketing system Simplufy builds: clear positioning, conversion-focused pages, tracked lead sources, CRM follow-up, and practical reporting.</p></div><div class="rich-card"><h2>What the strategy focuses on</h2><ul class="mini-list"><li>Clarifying the offer and buyer journey</li><li>Connecting website, SEO, paid ads, CRM, AI, or automation into one path</li><li>Improving lead quality, speed-to-lead, and sales visibility</li><li>Making the next step easier for qualified buyers</li></ul></div></div><aside class="rich-card"><h3>Want this kind of system?</h3><p>Request an audit and we will look for the highest-impact opportunities in your current marketing path.</p><a class="button primary" href="/contact/">Request a free audit</a></aside></section>
+        )}
+      </section>
     )}
-    <ContactForm headline="Want results like this?" variant="full-page" />
+
+    {(study.takeaway || study.takeawayTitle) && (
+      <section class="container section study-takeaway-section">
+        <aside class="study-takeaway reveal">
+          <p class="eyebrow">What made it work</p>
+          <h2>{study.takeawayTitle}</h2>
+          <p>{study.takeaway}</p>
+          <div class="actions"><a class="button primary" href="/contact/">Find the leak in your system</a></div>
+        </aside>
+      </section>
+    )}
+
+    {related.length > 0 && (
+      <section class="container section study-related-section">
+        <div class="section-head reveal">
+          <p class="eyebrow">More case studies</p>
+          <h2>Related systems in the <span class="accent-word">proof</span> library.</h2>
+        </div>
+        <div class="study-related reveal">
+          {related.map((other) => (
+            <a class="study-related-card" href={`/case-studies/${other.slug}/`}>
+              <span class="study-related-industry">{other.industry}</span>
+              <h3>{other.client ?? other.title}</h3>
+              <strong>{other.metric}</strong>
+              <p>{other.description}</p>
+              <em>Read the case study <span aria-hidden="true">→</span></em>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <div class="container">
+      <ContactForm headline="Want results like this?" variant="full-page" />
+    </div>
   </main>
   <Footer />
+
+  <style>
+    .study-hero { padding-block: clamp(48px, 7vw, 88px) var(--s-6); }
+    .study-hero-copy h1 {
+      margin: 0 0 var(--s-5);
+      max-width: 920px;
+      font-size: var(--fs-h1);
+      line-height: var(--lh-snug);
+      letter-spacing: var(--tracking-display);
+    }
+    .study-result-strip {
+      margin-top: var(--s-7);
+      display: grid;
+      grid-template-columns: minmax(260px, .8fr) 1.2fr;
+      gap: clamp(20px, 4vw, 48px);
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      box-shadow: var(--shadow-sm);
+      padding: clamp(24px, 4vw, 44px);
+    }
+    .study-result-metric { display: grid; gap: 8px; }
+    .study-result-metric span {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      font-weight: var(--fw-bold);
+      color: var(--text-subtle);
+    }
+    .study-result-metric strong {
+      font-size: clamp(30px, 3.8vw, 48px);
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+      color: var(--accent);
+    }
+    .study-result-strip > p { margin: 0; color: var(--text-muted); line-height: var(--lh-body); font-size: var(--fs-body-lg); }
+
+    .study-situation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: start; }
+    .study-situation-grid .section-head h2 { margin: 0 0 var(--s-4); }
+    .study-facts { margin: var(--s-5) 0 0; display: grid; grid-template-columns: 110px 1fr; gap: 8px 16px; }
+    .study-facts dt {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      font-weight: var(--fw-bold);
+      color: var(--text-subtle);
+      align-self: baseline;
+      padding-top: 3px;
+    }
+    .study-facts dd { margin: 0; font-weight: var(--fw-med); font-size: var(--fs-small); }
+    .study-challenges { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+    .study-challenges li {
+      position: relative;
+      padding: 18px 20px 18px 44px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      box-shadow: var(--shadow-sm);
+      color: var(--text-muted);
+      line-height: var(--lh-body);
+      font-size: var(--fs-small);
+    }
+    .study-challenges li::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 26px;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+    }
+
+    .study-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .study-pillar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 26px;
+      transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+    }
+    .study-pillar:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+    .study-pillar-num {
+      display: inline-block;
+      font-size: var(--fs-label);
+      font-weight: var(--fw-black);
+      letter-spacing: var(--tracking-label);
+      color: var(--accent);
+      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+      background: var(--accent-weak);
+      border-radius: var(--r-sm);
+      padding: 5px 10px;
+    }
+    .study-pillar h3 { margin: 16px 0 8px; font-size: var(--fs-h3); letter-spacing: var(--tracking-tight); font-weight: var(--fw-semi); }
+    .study-pillar p { margin: 0; color: var(--text-muted); line-height: var(--lh-body); font-size: var(--fs-small); }
+
+    .study-shots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; align-items: start; }
+    .study-shots > :first-child:nth-last-child(odd) { grid-column: 1 / -1; }
+
+    .study-results, .study-revenue { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .study-revenue { margin-top: 24px; }
+    .study-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+    .study-stat strong {
+      font-size: clamp(24px, 2.6vw, 34px);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--accent);
+    }
+    .study-stat--compact strong { font-size: clamp(20px, 2.2vw, 28px); }
+    .study-stat span {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      font-weight: var(--fw-bold);
+      color: var(--text-subtle);
+    }
+    .study-stat p { margin: 0; color: var(--text-muted); font-size: var(--fs-small); line-height: 1.5; }
+
+    .study-takeaway {
+      background: var(--surface);
+      border: 1px solid color-mix(in srgb, var(--accent) 16%, var(--border));
+      border-top: 3px solid var(--accent);
+      border-radius: var(--r-xl);
+      box-shadow: var(--shadow-sm);
+      padding: clamp(28px, 4.5vw, 56px);
+      max-width: 880px;
+    }
+    .study-takeaway h2 {
+      margin: 0 0 var(--s-4);
+      font-size: var(--fs-h2);
+      line-height: var(--lh-snug);
+      letter-spacing: var(--tracking-display);
+    }
+    .study-takeaway p { margin: 0; color: var(--text-muted); line-height: var(--lh-body); font-size: var(--fs-body-lg); }
+
+    .study-related { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .study-related-card {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 26px;
+      transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+    }
+    .study-related-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+    .study-related-industry {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      font-weight: var(--fw-bold);
+      color: var(--text-subtle);
+    }
+    .study-related-card h3 { margin: 0; font-size: var(--fs-h3); letter-spacing: var(--tracking-tight); font-weight: var(--fw-semi); }
+    .study-related-card strong { color: var(--accent); font-size: 20px; letter-spacing: -0.02em; }
+    .study-related-card p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: var(--fs-small);
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .study-related-card em { font-style: normal; color: var(--accent); font-weight: var(--fw-semi); font-size: var(--fs-small); }
+
+    @media (max-width: 1000px) {
+      .study-pillars { grid-template-columns: 1fr; }
+      .study-results, .study-revenue { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 820px) {
+      .study-result-strip, .study-situation-grid, .study-shots, .study-related { grid-template-columns: 1fr; }
+      .study-shots > :first-child:nth-last-child(odd) { grid-column: auto; }
+    }
+    @media (max-width: 540px) {
+      .study-results, .study-revenue { grid-template-columns: 1fr; }
+    }
+  </style>
 </Base>
