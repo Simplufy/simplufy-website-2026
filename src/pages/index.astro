@@ -12,7 +12,7 @@ import FunnelLeakScanner from '../components/motion/FunnelLeakScanner.astro';
 import ServiceOrbit from '../components/motion/ServiceOrbit.astro';
 import PhotoFrame from '../components/PhotoFrame.astro';
 import { site, services, industries, allClientLogos } from '../data/site';
-import { industryPhotos, photoSlots } from '../data/photos';
+import { industryPhotos, photoSlots, industryImages, teamPhoto } from '../data/photos';
 import { faqs } from '../data/faqs';
 import { serviceDetails } from '../data/serviceDetails';
 import { industryDetails } from '../data/industryDetails';
@@ -156,7 +156,7 @@ const schema = [
       <div class="ind-grid reveal">
         {industries.map((i) => (
           <a class="ind-card" href={`/industries/${i.slug}/`}>
-            <PhotoFrame class="ind-thumb" ratio="16/10" alt={`${i.nav} work`} label={industryPhotos[i.slug]} />
+            <PhotoFrame class="ind-thumb" ratio="16/10" alt={`${i.nav} work`} label={industryPhotos[i.slug]} src={industryImages[i.slug]} />
             <div class="ind-head">
               <span class="icon-chip"><Icon name={i.icon} /></span>
               <h3>{i.nav}</h3>
@@ -245,7 +245,7 @@ const schema = [
     <!-- 8b. WHO YOU'RE WORKING WITH -->
     <section class="container section">
       <div class="team-strip reveal">
-        <PhotoFrame class="team-photo" ratio="4/5" alt="The Simplufy team" label={photoSlots.founder} />
+        <PhotoFrame class="team-photo" ratio="3/4" alt="The Simplufy team on the course in St. Petersburg, Florida" src={teamPhoto} />
         <div>
           <p class="eyebrow">Who you’re working with</p>
           <h2>A small team that treats your pipeline like <span class="accent-word">our own</span>.</h2>

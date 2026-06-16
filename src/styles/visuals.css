@@ -179,7 +179,7 @@ h1, h2 { font-family: var(--font-serif); font-weight: var(--fw-semi); }
 
 /* ---------- Founder / team strip ---------- */
 .team-strip { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
-.team-strip .team-photo { --pf-ratio: 4/5; }
+.team-strip .team-photo { --pf-ratio: 3/4; }
 
 /* ---------- Full-bleed CTA band ---------- */
 .cta-band { position: relative; margin-block: var(--section-y); min-height: 420px; display: grid; align-items: center; overflow: hidden; border-radius: 0; }
@@ -200,7 +200,7 @@ h1, h2 { font-family: var(--font-serif); font-weight: var(--fw-semi); }
   .stat-band { grid-template-columns: repeat(2, 1fr); }
   .resource-list a { grid-template-columns: 1fr; gap: 4px; }
   .team-strip { grid-template-columns: 1fr; }
-  .team-strip .team-photo { --pf-ratio: 16/10; max-width: 420px; }
+  .team-strip .team-photo { --pf-ratio: 3/4; max-width: 360px; }
   .cta-band { min-height: 0; padding-block: var(--s-9); }
 }
 @media (max-width: 600px) {

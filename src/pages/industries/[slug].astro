@@ -11,7 +11,7 @@ import ScreenshotCard from '../../components/ScreenshotCard.astro';
 import PhotoFrame from '../../components/PhotoFrame.astro';
 import { industries, services, site } from '../../data/site';
 import { industryDetails } from '../../data/industryDetails';
-import { industryPhotos } from '../../data/photos';
+import { industryPhotos, industryImages } from '../../data/photos';
 
 export function getStaticPaths(){ return industries.map(industry => ({ params:{ slug: industry.slug }, props:{ industry }})); }
 
@@ -93,7 +93,7 @@ const schema = [
   </section>
 
   <section class="container">
-    <PhotoFrame class="reveal ind-work-photo" ratio="16/9" alt={`Real ${navLower} work`} label={industryPhotos[industry.slug]} caption={`Real ${navLower} work. Swap in your own client photography here.`} />
+    <PhotoFrame class="reveal ind-work-photo" ratio="16/9" alt={`${industry.nav} work delivered through a Simplufy growth system`} label={industryPhotos[industry.slug]} src={industryImages[industry.slug]} />
   </section>
 
   <section class="container section">

@@ -35,3 +35,22 @@ export const photoSlots = {
   contact: 'Office or team in St. Petersburg, FL',
   caseOnsite: 'On-site / real client work photo',
 };
+
+// Real industry photography (drop-in replaces the placeholder slots).
+export const industryImages: Record<string, string> = {
+  'auto-detailing-shops': '/assets/industries/auto-detailing-shops.webp',
+  'auto-styling-shops': '/assets/industries/auto-styling-shops.webp',
+  'roofing-companies': '/assets/industries/roofing-companies.webp',
+  'plumbing-companies': '/assets/industries/plumbing-companies.webp',
+  'pest-control-companies': '/assets/industries/pest-control-companies.webp',
+  'landscaping-companies': '/assets/industries/landscaping-companies.webp',
+  'window-companies': '/assets/industries/window-companies.webp',
+  'smart-home-installers': '/assets/industries/smart-home-installers.webp',
+  'contractors': '/assets/industries/contractors.webp',
+  'med-spas': '/assets/industries/med-spas.webp',
+  'b2b-services': '/assets/industries/b2b-services.webp',
+  'education-training': '/assets/industries/education-training.webp',
+};
+
+// Team photo for the homepage founder strip.
+export const teamPhoto = '/assets/team/simplufy-team.webp';
