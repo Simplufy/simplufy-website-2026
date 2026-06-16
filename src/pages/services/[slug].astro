@@ -7,6 +7,8 @@ import FAQ from '../../components/FAQ.astro';
 import Icon from '../../components/Icon.astro';
 import BrowserFrame from '../../components/BrowserFrame.astro';
 import ScreenshotCard from '../../components/ScreenshotCard.astro';
+import PhotoFrame from '../../components/PhotoFrame.astro';
+import { servicePhotos } from '../../data/photos';
 import PageArchitecture from '../../components/motion/PageArchitecture.astro';
 import CRMPipeline from '../../components/motion/CRMPipeline.astro';
 import PPCQueryMatch from '../../components/motion/PPCQueryMatch.astro';
@@ -309,6 +311,11 @@ const schema = [
         </li>
       ))}
     </ol>
+  </section>
+
+  <!-- 5b. Behind the build photo -->
+  <section class="container">
+    <PhotoFrame class="reveal" ratio="16/9" alt={`${service.nav} work in progress`} label={servicePhotos[service.slug]} caption="Add a real behind-the-build or client photo here." />
   </section>
 
   <!-- 6. Proof -->

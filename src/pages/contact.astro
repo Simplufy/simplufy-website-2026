@@ -3,7 +3,9 @@ import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ContactForm from '../components/ContactForm.astro';
+import PhotoFrame from '../components/PhotoFrame.astro';
 import { site } from '../data/site';
+import { photoSlots } from '../data/photos';
 
 const callIncludes = [
   'Website and SEO review',
@@ -46,6 +48,7 @@ const schema = [
           ))}
         </ul>
       </div>
+      <PhotoFrame class="contact-photo reveal" ratio="4/5" alt="The Simplufy team in St. Petersburg, Florida" label={photoSlots.contact} />
     </section>
 
     <ContactForm headline="Book a strategy call" subhead="Choose a time on the calendar. We will use the call to identify the highest-impact fix across your website, ads, CRM, search visibility, follow-up, and AI opportunities." />
@@ -84,8 +87,10 @@ const schema = [
 </Base>
 
 <style>
-  .contact-hero { padding-bottom: var(--s-5); }
+  .contact-hero { padding-bottom: var(--s-5); display: grid; grid-template-columns: 1.5fr .85fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
   .contact-hero-copy { max-width: 760px; }
+  .contact-photo { max-width: 340px; width: 100%; }
+  @media (max-width: 860px) { .contact-hero { grid-template-columns: 1fr; } .contact-photo { display: none; } }
   .contact-hero h1 { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--tracking-display); margin: var(--s-2) 0 0; }
   .contact-lede { font-size: var(--fs-body-lg); color: var(--text-muted); line-height: var(--lh-body); max-width: 640px; margin-top: var(--s-4); }
   .call-includes { list-style: none; margin: var(--s-6) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3) var(--s-5); max-width: 620px; }

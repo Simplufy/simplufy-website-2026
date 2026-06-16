@@ -10,7 +10,9 @@ import PartnerBadges from '../components/PartnerBadges.astro';
 import SignalFlow from '../components/motion/SignalFlow.astro';
 import FunnelLeakScanner from '../components/motion/FunnelLeakScanner.astro';
 import ServiceOrbit from '../components/motion/ServiceOrbit.astro';
+import PhotoFrame from '../components/PhotoFrame.astro';
 import { site, services, industries, wallLogos } from '../data/site';
+import { industryPhotos, photoSlots } from '../data/photos';
 import { faqs } from '../data/faqs';
 import { serviceDetails } from '../data/serviceDetails';
 import { industryDetails } from '../data/industryDetails';
@@ -148,6 +150,7 @@ const schema = [
       <div class="ind-grid reveal">
         {industries.map((i) => (
           <a class="ind-card" href={`/industries/${i.slug}/`}>
+            <PhotoFrame class="ind-thumb" ratio="16/10" alt={`${i.nav} work`} label={industryPhotos[i.slug]} />
             <div class="ind-head">
               <span class="icon-chip"><Icon name={i.icon} /></span>
               <h3>{i.nav}</h3>
@@ -233,6 +236,19 @@ const schema = [
       </div>
     </section>
 
+    <!-- 8b. WHO YOU'RE WORKING WITH -->
+    <section class="container section">
+      <div class="team-strip reveal">
+        <PhotoFrame class="team-photo" ratio="4/5" alt="The Simplufy team" label={photoSlots.founder} />
+        <div>
+          <p class="eyebrow">Who you’re working with</p>
+          <h2>A small team that treats your pipeline like <span class="accent-word">our own</span>.</h2>
+          <p class="team-copy">Simplufy is a focused growth-systems team based in St. Petersburg, Florida, building websites, ads, CRM, search, and AI systems for service companies across the U.S. You work directly with the people doing the work — not an account layer between you and the build.</p>
+          <div class="actions"><a class="button ghost" href="/contact/">Book a strategy call</a></div>
+        </div>
+      </div>
+    </section>
+
     <!-- 9. RESOURCES PREVIEW -->
     <section class="container section">
       <div class="section-head reveal">
@@ -250,6 +266,17 @@ const schema = [
         ))}
       </div>
       <div class="actions"><a class="button ghost" href="/resources/">Browse resources</a></div>
+    </section>
+
+    <!-- 9b. FULL-BLEED CTA BAND -->
+    <section class="cta-band reveal" aria-label="Book a strategy call">
+      <div class="cta-band__media"><PhotoFrame tone="dark" alt="Simplufy workspace" label={photoSlots.ctaBand} /></div>
+      <div class="cta-band__scrim" aria-hidden="true"></div>
+      <div class="container cta-band__inner">
+        <h2>Find the <span class="accent-word">leak</span> before spending more money.</h2>
+        <p>We walk through what is working, what is leaking, and what to fix first across your website, ads, CRM, search, and follow-up.</p>
+        <a class="button primary" href="/contact/">Book a strategy call</a>
+      </div>
     </section>
 
     <!-- 10. FAQ + CONTACT -->
@@ -464,10 +491,16 @@ const schema = [
     border-radius: var(--r-lg);
     box-shadow: var(--shadow-sm);
     padding: 22px;
+    overflow: hidden;
     color: inherit;
     text-decoration: none;
     transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
   }
+  .ind-card .ind-thumb { margin: -22px -22px 6px; }
+  .ind-card .ind-thumb :global(.photoframe__img),
+  .ind-card .ind-thumb :global(.photoframe__ph) { border-radius: 0; border-left: 0; border-right: 0; border-top: 0; }
+  .team-strip h2 { font-size: var(--fs-h2); line-height: var(--lh-snug); letter-spacing: var(--tracking-display); margin: 6px 0 0; }
+  .team-strip .team-copy { color: var(--text-muted); font-size: var(--fs-body-lg); line-height: var(--lh-body); margin: var(--s-4) 0 var(--s-6); max-width: 52ch; }
   .ind-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);

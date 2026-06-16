@@ -5,7 +5,9 @@ import Footer from '../../components/Footer.astro';
 import ContactForm from '../../components/ContactForm.astro';
 import BrowserFrame from '../../components/BrowserFrame.astro';
 import ScreenshotCard from '../../components/ScreenshotCard.astro';
+import PhotoFrame from '../../components/PhotoFrame.astro';
 import { caseStudies, site } from '../../data/site';
+import { photoSlots } from '../../data/photos';
 
 export function getStaticPaths(){ return caseStudies.map(study => ({ params:{ slug: study.slug }, props:{ study }})); }
 const { study } = Astro.props;
@@ -85,6 +87,10 @@ const schema = [
         </div>
         <p>{study.headlineResult ?? study.description}</p>
       </aside>
+    </section>
+
+    <section class="container">
+      <PhotoFrame class="reveal" ratio="16/9" alt={`${study.client} — on-site`} label={`${photoSlots.caseOnsite} (${study.client})`} caption={`Add a real photo of ${study.client} or their work to sit alongside the dashboards.`} />
     </section>
 
     {Boolean(study.challengeIntro || study.challenge?.length) && (

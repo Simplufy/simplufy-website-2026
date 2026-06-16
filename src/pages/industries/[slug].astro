@@ -8,8 +8,10 @@ import Icon from '../../components/Icon.astro';
 import SignalFlow from '../../components/motion/SignalFlow.astro';
 import BrowserFrame from '../../components/BrowserFrame.astro';
 import ScreenshotCard from '../../components/ScreenshotCard.astro';
+import PhotoFrame from '../../components/PhotoFrame.astro';
 import { industries, services, site } from '../../data/site';
 import { industryDetails } from '../../data/industryDetails';
+import { industryPhotos } from '../../data/photos';
 
 export function getStaticPaths(){ return industries.map(industry => ({ params:{ slug: industry.slug }, props:{ industry }})); }
 
@@ -88,6 +90,10 @@ const schema = [
     <div class="ind-hero__visual">
       <SignalFlow variant="mini" />
     </div>
+  </section>
+
+  <section class="container">
+    <PhotoFrame class="reveal ind-work-photo" ratio="16/9" alt={`Real ${navLower} work`} label={industryPhotos[industry.slug]} caption={`Real ${navLower} work — swap in your own client photography here.`} />
   </section>
 
   <section class="container section">
