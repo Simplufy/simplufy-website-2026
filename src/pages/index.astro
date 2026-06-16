@@ -12,7 +12,7 @@ import FunnelLeakScanner from '../components/motion/FunnelLeakScanner.astro';
 import ServiceOrbit from '../components/motion/ServiceOrbit.astro';
 import PhotoFrame from '../components/PhotoFrame.astro';
 import { site, services, industries, allClientLogos } from '../data/site';
-import { industryPhotos, photoSlots, industryImages, teamPhoto } from '../data/photos';
+import { industryPhotos, photoSlots, industryImages, teamPhoto, ctaImage } from '../data/photos';
 import { faqs } from '../data/faqs';
 import { serviceDetails } from '../data/serviceDetails';
 import { industryDetails } from '../data/industryDetails';
@@ -276,7 +276,7 @@ const schema = [
 
     <!-- 9b. FULL-BLEED CTA BAND -->
     <section class="cta-band reveal" aria-label="Book a strategy call">
-      <div class="cta-band__media"><PhotoFrame tone="dark" alt="Simplufy workspace" label={photoSlots.ctaBand} /></div>
+      <div class="cta-band__media"><PhotoFrame tone="dark" alt="The Simplufy office in St. Petersburg, Florida" label={photoSlots.ctaBand} src={ctaImage} /></div>
       <div class="cta-band__scrim" aria-hidden="true"></div>
       <div class="container cta-band__inner">
         <h2>Find the <span class="accent-word">leak</span> before spending more money.</h2>

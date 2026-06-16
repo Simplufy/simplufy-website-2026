@@ -54,3 +54,19 @@ export const industryImages: Record<string, string> = {
 
 // Team photo for the homepage founder strip.
 export const teamPhoto = '/assets/team/simplufy-team.webp';
+
+// Real "behind the build" photography per service page.
+export const serviceImages: Record<string, string> = {
+  'web-development': '/assets/services/web-development.webp',
+  'crm-solutions': '/assets/services/crm-solutions.webp',
+  'google-ppc-management': '/assets/services/google-ppc-management.webp',
+  'meta-advertising': '/assets/services/meta-advertising.webp',
+  'google-local-service-ads': '/assets/services/google-local-service-ads.webp',
+  'tiktok-ad-management': '/assets/services/tiktok-ad-management.webp',
+  'seo-aeo-geo': '/assets/services/seo-aeo-geo.webp',
+  'ai-implementation-agent-orchestration': '/assets/services/ai-implementation-agent-orchestration.webp',
+};
+
+// Office photography.
+export const ctaImage = '/assets/office/cta-office.webp';       // homepage full-bleed CTA band
+export const contactImage = '/assets/office/contact-team.webp'; // contact page
