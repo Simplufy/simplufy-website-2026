@@ -60,6 +60,13 @@ a:focus-visible, button:focus-visible, summary:focus-visible, .button:focus-visi
 .mobile-menu-btn[aria-expanded="true"] .hamburger-line:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
 .mobile-menu-btn[aria-expanded="true"] .hamburger-line:nth-child(2) { opacity: 0; }
 .mobile-menu-btn[aria-expanded="true"] .hamburger-line:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+/* Viewport-sized clip layer: contains the off-canvas drawer so its closed
+   (translateX(100%)) state cannot extend the page width / cause horizontal
+   scroll. transform makes it the containing block for the fixed children so
+   overflow:hidden clips them; it never touches html/body overflow (keeps the
+   sticky header working). */
+.mobile-menu-portal { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 998; transform: translateZ(0); }
+.mobile-menu-overlay, .mobile-menu-drawer { pointer-events: auto; }
 .mobile-menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.52); opacity: 0; visibility: hidden; transition: .28s ease; z-index: 998; backdrop-filter: blur(2px); }
 .mobile-menu-overlay.open { opacity: 1; visibility: visible; }
 .mobile-menu-drawer { position: fixed; top: 0; right: 0; width: min(340px, 88vw); height: 100vh; background: #fff; z-index: 999; transform: translateX(100%); visibility: hidden; opacity: 0; transition: transform .32s cubic-bezier(.4,0,.2,1), visibility .32s ease, opacity .32s ease; box-shadow: -14px 0 42px rgba(0,0,0,.18); display: flex; flex-direction: column; }
