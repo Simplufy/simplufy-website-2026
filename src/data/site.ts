@@ -626,7 +626,7 @@ export const clientLogos = [
 export const wallLogos = [
   { name:'ProTek', src:'/assets/hero-logos/protek-logo.webp' },
   { name:'Summit Auto Detailing', src:'/assets/hero-logos/summit-auto-detailing-logo.svg' },
-  { name:'Automonitor', src:'/assets/hero-logos/automonitor-logo.png' },
+  { name:'Automonitor', src:'/assets/hero-logos/automonitor-logo.png', tone:'dark' },
   { name:'Windshield Doctor', src:'/assets/client-logos/windshield-doctor-jackson-hole-wyoming-png.png' },
   { name:'Auto Spa', src:'/assets/client-logos/auto-spa-logo.png' },
   { name:"Mike's Body Shop", src:'/assets/client-logos/mikesbofyshopver1finalpng.png' },

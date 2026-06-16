@@ -75,7 +75,7 @@ const schema = [
     <section class="container">
       <div class="logo-wall-static reveal">
         <p>Client brands running on Simplufy growth systems</p>
-        <ul>{wallLogos.map((logo) => <li><img src={logo.src} alt={logo.name} loading="lazy" /></li>)}</ul>
+        <ul>{wallLogos.map((logo) => <li class={logo.tone === 'dark' ? 'logo-dark' : undefined}><img src={logo.src} alt={logo.name} loading="lazy" /></li>)}</ul>
       </div>
     </section>
 

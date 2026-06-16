@@ -81,12 +81,19 @@ h1, h2 { font-family: var(--font-serif); font-weight: var(--fw-semi); }
 .partner-badges li { display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-small); font-weight: var(--fw-semi); color: var(--text-muted); }
 .partner-badges__dot { width: 7px; height: 7px; border-radius: 999px; background: var(--accent); }
 
-/* ---------- Static logo wall ---------- */
-.logo-wall-static { border-block: 1px solid var(--border); padding-block: var(--s-6); display: grid; gap: 18px; }
+/* ---------- Static logo wall ----------
+   Logos vary in aspect ratio (5:1 wordmarks vs 1:1 badges). Equal-height
+   cells + a width cap keep their footprints roughly uniform while preserving
+   brand color (the badges read best in color). White-on-transparent marks
+   (tone="dark") get a small ink chip so they stay visible on the warm bg. */
+.logo-wall-static { border-block: 1px solid var(--border); padding-block: var(--s-7); display: grid; gap: 22px; }
 .logo-wall-static p { margin: 0; text-align: center; color: var(--text-subtle); font-size: var(--fs-small); font-weight: var(--fw-semi); letter-spacing: .02em; }
-.logo-wall-static ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: clamp(28px, 5vw, 64px); }
-.logo-wall-static img { max-height: 34px; width: auto; opacity: .9; filter: none; transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); }
-.logo-wall-static li:hover img { opacity: 1; transform: translateY(-2px); }
+.logo-wall-static ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: clamp(28px, 4vw, 56px); }
+.logo-wall-static li { display: flex; align-items: center; justify-content: center; min-height: 56px; }
+.logo-wall-static img { max-height: 46px; max-width: 150px; width: auto; object-fit: contain; transition: transform var(--dur) var(--ease); }
+.logo-wall-static li:hover img { transform: translateY(-2px); }
+.logo-wall-static li.logo-dark { background: var(--ink-surface); border-radius: var(--r-md); padding: 10px 18px; }
+.logo-wall-static li.logo-dark img { max-height: 30px; }
 
 /* ---------- Browser / device / screenshot frames ---------- */
 .bframe { margin: 0; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; background: var(--surface); box-shadow: var(--shadow-md); }
