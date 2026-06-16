@@ -633,3 +633,25 @@ export const wallLogos = [
   { name:'The Garage', src:'/assets/client-logos/the-garage-logo-png-transparent-bg.png' },
   { name:'Venice Dive Center', src:'/assets/client-logos/venice-dive-center-logo.png' }
 ];
+
+// Full client roster for the scrolling logo marquee (every real brand mark).
+// tone:'dark' = white-on-transparent mark that needs an ink chip to be visible.
+export const allClientLogos = [
+  { name:'Detail Depot', src:'/assets/hero-logos/client-logo-696967.png' },
+  { name:'Detail Driven', src:'/assets/client-logos/dd-circle-logo.png' },
+  { name:'ProTek Electrical & Lighting', src:'/assets/hero-logos/protek-logo.webp' },
+  { name:'The Auto Spa', src:'/assets/client-logos/auto-spa-logo.png' },
+  { name:'Automonitor', src:'/assets/hero-logos/automonitor-logo.png', tone:'dark' },
+  { name:"Mike's Body Shop", src:'/assets/client-logos/mikesbofyshopver1finalpng.png' },
+  { name:'Summit Auto Detailing', src:'/assets/hero-logos/summit-auto-detailing-logo.svg' },
+  { name:'Windshield Doctor', src:'/assets/client-logos/windshield-doctor-jackson-hole-wyoming-png.png' },
+  { name:'The Garage', src:'/assets/client-logos/the-garage-logo-png-transparent-bg.png' },
+  { name:'Always Fresh Auto Detailing', src:'/assets/client-logos/6793da1f8f4bfb939eb701e4.png' },
+  { name:'Carter Electric', src:'/assets/client-logos/image-1.jpg' },
+  { name:'Between Rounds Boxing', src:'/assets/client-logos/untitled-design.png' },
+  { name:'Venice Dive Center', src:'/assets/client-logos/venice-dive-center-logo.png' },
+  { name:'State Termite Pest Solutions', src:'/assets/client-logos/348s.png' },
+  { name:'Golden Auto Detailing', src:'/assets/client-logos/screenshot-2024-09-12-124928.png' },
+  { name:"Preston's Auto Detailing", src:'/assets/hero-logos/client-logo-ef5e8a13.png' },
+  { name:'M7', src:'/assets/hero-logos/client-logo-670533.png' }
+];

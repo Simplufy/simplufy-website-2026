@@ -11,7 +11,7 @@ import SignalFlow from '../components/motion/SignalFlow.astro';
 import FunnelLeakScanner from '../components/motion/FunnelLeakScanner.astro';
 import ServiceOrbit from '../components/motion/ServiceOrbit.astro';
 import PhotoFrame from '../components/PhotoFrame.astro';
-import { site, services, industries, wallLogos } from '../data/site';
+import { site, services, industries, allClientLogos } from '../data/site';
 import { industryPhotos, photoSlots } from '../data/photos';
 import { faqs } from '../data/faqs';
 import { serviceDetails } from '../data/serviceDetails';
@@ -71,11 +71,17 @@ const schema = [
       </div>
     </section>
 
-    <!-- 2. LOGO STRIP -->
-    <section class="container">
-      <div class="logo-wall-static reveal">
-        <p>Client brands running on Simplufy growth systems</p>
-        <ul>{wallLogos.map((logo) => <li class={logo.tone === 'dark' ? 'logo-dark' : undefined}><img src={logo.src} alt={logo.name} loading="lazy" /></li>)}</ul>
+    <!-- 2. LOGO MARQUEE -->
+    <section class="logo-marquee-band reveal" aria-label="Client brands running on Simplufy growth systems">
+      <p class="logo-marquee-label">Client brands running on Simplufy growth systems</p>
+      <div class="logo-marquee">
+        <div class="logo-marquee__track">
+          {[...allClientLogos, ...allClientLogos].map((logo, idx) => (
+            <span class:list={["logo-item", logo.tone === 'dark' && "logo-dark"]}>
+              <img src={logo.src} alt={idx < allClientLogos.length ? logo.name : ''} loading="lazy" aria-hidden={idx >= allClientLogos.length ? 'true' : undefined} />
+            </span>
+          ))}
+        </div>
       </div>
     </section>
 

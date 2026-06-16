@@ -81,19 +81,26 @@ h1, h2 { font-family: var(--font-serif); font-weight: var(--fw-semi); }
 .partner-badges li { display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-small); font-weight: var(--fw-semi); color: var(--text-muted); }
 .partner-badges__dot { width: 7px; height: 7px; border-radius: 999px; background: var(--accent); }
 
-/* ---------- Static logo wall ----------
-   Logos vary in aspect ratio (5:1 wordmarks vs 1:1 badges). Equal-height
-   cells + a width cap keep their footprints roughly uniform while preserving
-   brand color (the badges read best in color). White-on-transparent marks
-   (tone="dark") get a small ink chip so they stay visible on the warm bg. */
-.logo-wall-static { border-block: 1px solid var(--border); padding-block: var(--s-7); display: grid; gap: 22px; }
-.logo-wall-static p { margin: 0; text-align: center; color: var(--text-subtle); font-size: var(--fs-small); font-weight: var(--fw-semi); letter-spacing: .02em; }
-.logo-wall-static ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: clamp(28px, 4vw, 56px); }
-.logo-wall-static li { display: flex; align-items: center; justify-content: center; min-height: 56px; }
-.logo-wall-static img { max-height: 46px; max-width: 150px; width: auto; object-fit: contain; transition: transform var(--dur) var(--ease); }
-.logo-wall-static li:hover img { transform: translateY(-2px); }
-.logo-wall-static li.logo-dark { background: var(--ink-surface); border-radius: var(--r-md); padding: 10px 18px; }
-.logo-wall-static li.logo-dark img { max-height: 30px; }
+/* ---------- Scrolling logo marquee ----------
+   Right-to-left, slow, seamless (the roster is rendered twice and the track
+   shifts -50%). Logos vary in aspect ratio (5:1 wordmarks vs 1:1 badges), so a
+   fixed cell height + width cap keep footprints uniform; brand color is kept.
+   White-on-transparent marks (tone="dark") get an ink chip to stay visible. */
+.logo-marquee-band { border-block: 1px solid var(--border); padding-block: var(--s-7); display: grid; gap: 22px; overflow: hidden; }
+.logo-marquee-label { margin: 0; text-align: center; color: var(--text-subtle); font-size: var(--fs-small); font-weight: var(--fw-semi); letter-spacing: .02em; }
+.logo-marquee { position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.logo-marquee__track { display: flex; align-items: center; width: max-content; animation: logoMarquee 75s linear infinite; }
+.logo-marquee:hover .logo-marquee__track { animation-play-state: paused; }
+.logo-marquee .logo-item { display: flex; align-items: center; justify-content: center; height: 52px; margin-right: clamp(40px, 5vw, 72px); flex: none; }
+.logo-marquee .logo-item img { max-height: 44px; max-width: 150px; width: auto; object-fit: contain; }
+.logo-marquee .logo-dark { background: var(--ink-surface); border-radius: var(--r-md); padding: 8px 16px; }
+.logo-marquee .logo-dark img { max-height: 30px; }
+@keyframes logoMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .logo-marquee { -webkit-mask-image: none; mask-image: none; }
+  .logo-marquee__track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; }
+  .logo-marquee .logo-item { margin: 8px 18px; }
+}
 
 /* ---------- Browser / device / screenshot frames ---------- */
 .bframe { margin: 0; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; background: var(--surface); box-shadow: var(--shadow-md); }
