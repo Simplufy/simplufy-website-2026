@@ -1,6 +1,6 @@
 ---
 /**
- * CRMPipeline — mini kanban board.
+ * CRMPipeline: mini kanban board.
  * A highlighted lead card travels New Lead → … → Won on a slow 12s loop while
  * follow-up task chips (SMS, missed-call recovery, email) fade in at the early
  * stages. compact renders the first four columns for tighter placements.
@@ -65,7 +65,7 @@ const columns = compact ? columnsAll.slice(0, 4) : columnsAll;
 const step = compact ? 3 : 2; /* seconds per column in the 12s loop */
 
 const tasks: Record<string, { label: string; green?: boolean }> = {
-  new: { label: 'SMS sent — 38s' },
+  new: { label: 'SMS sent, 38s' },
   contacted: { label: 'Missed call recovered', green: true },
   qualified: { label: 'Email queued' },
 };

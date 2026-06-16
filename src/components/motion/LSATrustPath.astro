@@ -1,5 +1,5 @@
 ---
-// LSATrustPath — Signal Flow diagram for the Google Local Service Ads page.
+// LSATrustPath: Signal Flow diagram for the Google Local Service Ads page.
 // Eligibility -> Profile -> Reviews -> Call -> Booked job -> Feedback (loops back).
 const stages = [
   { key: 'eligibility', title: 'Eligibility', note: 'License, insurance, background check' },
@@ -182,7 +182,7 @@ const stages = [
     color: var(--text-subtle);
   }
 
-  /* Reviews stars — subtle accent fill */
+  /* Reviews stars: subtle accent fill */
   .lsa-stars {
     display: inline-flex;
     gap: 2px;
@@ -190,7 +190,7 @@ const stages = [
     opacity: 0.8;
   }
 
-  /* Call node — gentle pulse */
+  /* Call node: gentle pulse */
   .stage-call {
     animation: lsa-call-pulse 3.4s var(--ease) infinite;
   }
@@ -199,7 +199,7 @@ const stages = [
     50% { box-shadow: var(--shadow-sm), 0 0 0 6px color-mix(in srgb, var(--accent) 9%, transparent); }
   }
 
-  /* Booked job — won state */
+  /* Booked job: won state */
   .stage-booked {
     border-color: color-mix(in srgb, var(--green-600) 42%, var(--border));
   }

@@ -500,8 +500,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible, .button:focus-visi
 /* Per-service / per-industry accent colors.
    The hero-visual already reads var(--visual-accent) everywhere; it was just
    never given a value (every theme mapped to red, so all pages looked
-   identical). Giving each kind an accent — and remapping --red locally so the
-   decorative objects inherit it — differentiates 20+ pages with one variable. */
+   identical). Giving each kind an accent, and remapping --red locally so the
+   decorative objects inherit it, differentiates 20+ pages with one variable. */
 .page-hero-visual { --red: var(--visual-accent, #ff120d); }
 /* Services */
 .visual-web    { --visual-accent:#4f46e5; }

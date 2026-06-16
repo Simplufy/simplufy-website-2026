@@ -5,15 +5,15 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: 'What does Simplufy actually build?',
-    a: 'The connected system around your offer: website and landing pages, Google PPC, Meta, LSA, and TikTok campaigns, GoHighLevel CRM and follow-up automation, SEO/AEO/GEO structure, reporting, and practical AI workflows. Every piece points at the same outcome — booked calls, estimates, consultations, appointments, and enrollments you can actually measure.'
+    a: 'The connected system around your offer: website and landing pages, Google PPC, Meta, LSA, and TikTok campaigns, GoHighLevel CRM and follow-up automation, SEO/AEO/GEO structure, reporting, and practical AI workflows. Every piece points at the same outcome: booked calls, estimates, consultations, appointments, and enrollments you can actually measure.'
   },
   {
     q: 'Do you work with ecommerce or SaaS companies?',
-    a: 'Not as a focus. Simplufy is built for service businesses where the win is a booked call, estimate, consultation, appointment, or enrollment — not a cart checkout or a free trial. Ecommerce and SaaS need a different playbook around carts, subscriptions, and lifecycle events, and we would rather stay sharp at ours.'
+    a: 'Not as a focus. Simplufy is built for service businesses where the win is a booked call, estimate, consultation, appointment, or enrollment, not a cart checkout or a free trial. Ecommerce and SaaS need a different playbook around carts, subscriptions, and lifecycle events, and we would rather stay sharp at ours.'
   },
   {
     q: 'Can the website use GoHighLevel forms and booking calendars?',
-    a: 'Yes — natively. Forms, calendars, and booking flows are embedded directly into the site, so a visitor can move from a service page into a calendar without the site feeling disconnected from the CRM. Every submission lands in the pipeline with speed-to-lead texts, missed-call recovery, and reminders already attached.'
+    a: 'Yes, natively. Forms, calendars, and booking flows are embedded directly into the site, so a visitor can move from a service page into a calendar without the site feeling disconnected from the CRM. Every submission lands in the pipeline with speed-to-lead texts, missed-call recovery, and reminders already attached.'
   },
   {
     q: 'What is the difference between SEO, AEO, and GEO?',
@@ -21,19 +21,19 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: 'Can you build pages for specific services and industries?',
-    a: 'Yes. The site architecture is built to scale into pages like Google Ads for roofers, SEO for med spas, or CRM automation for plumbing companies — pages that match exactly how buyers search and compare. They also give paid traffic far more relevant destinations than one generic page.'
+    a: 'Yes. The site architecture is built to scale into pages like Google Ads for roofers, SEO for med spas, or CRM automation for plumbing companies, pages that match exactly how buyers search and compare. They also give paid traffic far more relevant destinations than one generic page.'
   },
   {
     q: 'Why do service businesses need more than a nice-looking website?',
-    a: 'Because most lost opportunities have nothing to do with looks: ads pointing at the wrong page, forms that route nowhere, follow-up that takes hours, and no way to tell which leads became jobs. The website is the front end of a system that includes search, paid traffic, CRM, automation, and reporting — and the system is what books the work.'
+    a: 'Because most lost opportunities have nothing to do with looks: ads pointing at the wrong page, forms that route nowhere, follow-up that takes hours, and no way to tell which leads became jobs. The website is the front end of a system that includes search, paid traffic, CRM, automation, and reporting, and the system is what books the work.'
   },
   {
     q: 'How do you decide what to fix first?',
-    a: 'We audit the full path from traffic to booked opportunity and find the biggest leak first. Sometimes that is a landing page; sometimes it is tracking, CRM stages, or follow-up speed. Diagnosis comes before prescription — then the work becomes a roadmap, not a package.'
+    a: 'We audit the full path from traffic to booked opportunity and find the biggest leak first. Sometimes that is a landing page; sometimes it is tracking, CRM stages, or follow-up speed. Diagnosis comes before prescription. Then the work becomes a roadmap, not a package.'
   },
   {
     q: 'Do you offer paid advertising management?',
-    a: 'Yes: Google PPC, Meta, Google Local Services Ads, and TikTok where they fit the business model. Campaigns are measured on booked calls, estimates, consultations, and enrollments — not cheap clicks or impressions. That usually means tightening the landing page, tracking, and follow-up alongside the ads themselves.'
+    a: 'Yes: Google PPC, Meta, Google Local Services Ads, and TikTok where they fit the business model. Campaigns are measured on booked calls, estimates, consultations, and enrollments, not cheap clicks or impressions. That usually means tightening the landing page, tracking, and follow-up alongside the ads themselves.'
   },
   {
     q: 'Can you help with local SEO and map visibility?',
@@ -49,11 +49,11 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: 'How is the website optimized for on-page SEO?',
-    a: 'Descriptive titles and meta descriptions, semantic headings, service- and industry-specific pages, internal linking, FAQ content, schema markup, sitemaps, and crawlable static HTML. On-page SEO means matching search intent with genuinely useful pages — not stuffing keywords into thin service pages.'
+    a: 'Descriptive titles and meta descriptions, semantic headings, service- and industry-specific pages, internal linking, FAQ content, schema markup, sitemaps, and crawlable static HTML. On-page SEO means matching search intent with genuinely useful pages, not stuffing keywords into thin service pages.'
   },
   {
     q: 'Can you add case studies, testimonials, videos, and project photos later?',
-    a: 'Yes — the site is designed to absorb proof as it accumulates. Client logos, screenshots, campaign results, CRM views, testimonials, and before-and-after work can be added across the homepage, service pages, industry pages, and case studies. Service buyers want evidence before they book, so the site keeps getting stronger.'
+    a: 'Yes. The site is designed to absorb proof as it accumulates. Client logos, screenshots, campaign results, CRM views, testimonials, and before-and-after work can be added across the homepage, service pages, industry pages, and case studies. Service buyers want evidence before they book, so the site keeps getting stronger.'
   },
   {
     q: 'What makes Simplufy different from a typical marketing agency?',

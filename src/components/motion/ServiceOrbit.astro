@@ -1,5 +1,5 @@
 ---
-// ServiceOrbit — homepage services visual.
+// ServiceOrbit: homepage services visual.
 // Eight services orbit one output: booked opportunities. Every node links
 // to its service page. On mobile the same DOM relays out as a 2-col grid.
 import Icon from '../Icon.astro';
@@ -33,7 +33,7 @@ const services = [
   <ul class="so-list">
     {services.map((s, i) => (
       <li class={`so-item n${i + 1}`} style={`--d:${i * 0.9}s`}>
-        <a href={`/services/${s.slug}/`} aria-label={`${s.label} — ${s.tip}`}>
+        <a href={`/services/${s.slug}/`} aria-label={`${s.label}, ${s.tip}`}>
           <span class="so-node-row">
             <span class="so-ic"><Icon name={s.icon} size={15} /></span>
             <span class="so-node-label">{s.label}</span>

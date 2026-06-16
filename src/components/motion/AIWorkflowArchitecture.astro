@@ -1,5 +1,5 @@
 ---
-// AIWorkflowArchitecture — Signal Flow diagram for the AI Implementation page.
+// AIWorkflowArchitecture: Signal Flow diagram for the AI Implementation page.
 // Task -> Agent -> HUMAN REVIEW gate (the hero) -> Output -> destinations.
 const tasks = [
   'Summarize campaign data',
@@ -208,7 +208,7 @@ const destinations = ['CRM task', 'Report', 'Content draft', 'Internal handoff']
     color: var(--text-subtle);
   }
 
-  /* Agent — fixed box so the orbiting dot can trace its border */
+  /* Agent: fixed box so the orbiting dot can trace its border */
   .aiw-agent {
     width: 150px;
     height: 78px;
@@ -234,7 +234,7 @@ const destinations = ['CRM task', 'Report', 'Content draft', 'Internal handoff']
     to   { offset-distance: 100%; }
   }
 
-  /* Human review gate — the visual hero */
+  /* Human review gate: the visual hero */
   .aiw-gate-wrap {
     position: relative;
     flex: none;
