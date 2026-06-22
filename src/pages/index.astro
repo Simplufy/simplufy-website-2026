@@ -12,7 +12,7 @@ import FunnelLeakScanner from '../components/motion/FunnelLeakScanner.astro';
 import ServiceOrbit from '../components/motion/ServiceOrbit.astro';
 import PhotoFrame from '../components/PhotoFrame.astro';
 import { site, services, industries, allClientLogos } from '../data/site';
-import { industryPhotos, photoSlots, industryImages, teamPhoto, ctaImage } from '../data/photos';
+import { industryPhotos, photoSlots, industryImages, ctaImage } from '../data/photos';
 import { faqs } from '../data/faqs';
 import { serviceDetails } from '../data/serviceDetails';
 import { industryDetails } from '../data/industryDetails';
@@ -238,19 +238,6 @@ const schema = [
             <svg viewBox="0 0 12 12" width="12" height="12" fill="none" focusable="false" aria-hidden="true"><path d="M10 6a4 4 0 1 1-1.2-2.85M10 1.4v2.1H7.9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
             The loop keeps tightening
           </span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 8b. WHO YOU'RE WORKING WITH -->
-    <section class="container section">
-      <div class="team-strip reveal">
-        <PhotoFrame class="team-photo" ratio="3/4" alt="The Simplufy team on the course in St. Petersburg, Florida" src={teamPhoto} />
-        <div>
-          <p class="eyebrow">Who you’re working with</p>
-          <h2>A small team that treats your pipeline like <span class="accent-word">our own</span>.</h2>
-          <p class="team-copy">Simplufy is a focused growth-systems team based in St. Petersburg, Florida, building websites, ads, CRM, search, and AI systems for service companies across the U.S. You work directly with the people doing the work, not an account layer between you and the build.</p>
-          <div class="actions"><a class="button ghost" href="/contact/">Book a strategy call</a></div>
         </div>
       </div>
     </section>
@@ -505,8 +492,6 @@ const schema = [
   .ind-card .ind-thumb { margin: -22px -22px 6px; }
   .ind-card .ind-thumb :global(.photoframe__img),
   .ind-card .ind-thumb :global(.photoframe__ph) { border-radius: 0; border-left: 0; border-right: 0; border-top: 0; }
-  .team-strip h2 { font-size: var(--fs-h2); line-height: var(--lh-snug); letter-spacing: var(--tracking-display); margin: 6px 0 0; }
-  .team-strip .team-copy { color: var(--text-muted); font-size: var(--fs-body-lg); line-height: var(--lh-body); margin: var(--s-4) 0 var(--s-6); max-width: 52ch; }
   .ind-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);

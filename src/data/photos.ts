@@ -52,9 +52,6 @@ export const industryImages: Record<string, string> = {
   'education-training': '/assets/industries/education-training.webp',
 };
 
-// Team photo for the homepage founder strip.
-export const teamPhoto = '/assets/team/simplufy-team.webp';
-
 // Real "behind the build" photography per service page.
 export const serviceImages: Record<string, string> = {
   'web-development': '/assets/services/web-development.webp',

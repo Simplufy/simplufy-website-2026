@@ -52,6 +52,10 @@ const services = [
     max-width: 620px;
     aspect-ratio: 1;
     margin-inline: auto;
+    /* Clip the rotating signal-dot box so its corners cannot extend past the
+       orbit and cause horizontal page overflow. Tooltips are pinned to stay
+       inside this canvas by design, so nothing visible is cut. */
+    overflow: clip;
   }
 
   /* ---- Ring + connector lines ---- */
