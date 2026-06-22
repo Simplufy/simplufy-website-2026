@@ -77,7 +77,7 @@ const schema = [
       <div class="logo-marquee">
         <div class="logo-marquee__track">
           {[...allClientLogos, ...allClientLogos].map((logo, idx) => (
-            <span class:list={["logo-item", logo.tone === 'dark' && "logo-dark"]}>
+            <span class:list={["logo-item", logo.tone === 'dark' && "logo-dark", idx >= allClientLogos.length && "logo-dup"]}>
               <img src={logo.src} alt={idx < allClientLogos.length ? logo.name : ''} loading="lazy" aria-hidden={idx >= allClientLogos.length ? 'true' : undefined} />
             </span>
           ))}

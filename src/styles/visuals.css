@@ -100,6 +100,9 @@ h1, h2 { font-family: var(--font-serif); font-weight: var(--fw-semi); }
   .logo-marquee { -webkit-mask-image: none; mask-image: none; }
   .logo-marquee__track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; }
   .logo-marquee .logo-item { margin: 8px 18px; }
+  /* The track is rendered twice for the seamless scroll; in the static
+     (non-animating) fallback, hide the duplicate copy so each logo shows once. */
+  .logo-marquee .logo-dup { display: none; }
 }
 
 /* ---------- Browser / device / screenshot frames ---------- */
