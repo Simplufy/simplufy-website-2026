@@ -25,18 +25,18 @@ export function HeroLoops({ className }: { className?: string }) {
       aria-hidden
       data-reduce-motion={reduce ? "true" : "false"}
     >
-      {/* Desktop 2×2 staggered grid — full card height, no overflow clip */}
-      <div className="relative mx-auto hidden w-full max-w-xl lg:grid lg:grid-cols-2 lg:gap-4 xl:max-w-none xl:gap-5">
+      {/* Desktop 2×2 light stagger — roomy gap so labels/timer never occlude */}
+      <div className="relative mx-auto hidden w-full max-w-xl lg:grid lg:grid-cols-2 lg:gap-x-5 lg:gap-y-5 xl:max-w-none xl:gap-x-6 xl:gap-y-6">
         <LoopShell className="z-20 -rotate-1 self-start">
           <SearchLoop />
         </LoopShell>
-        <LoopShell className="z-30 mt-6 rotate-[1.5deg] self-start xl:mt-8">
+        <LoopShell className="z-20 mt-3 rotate-[1.2deg] self-start xl:mt-4">
           <SpeedLoop />
         </LoopShell>
-        <LoopShell className="z-40 -mt-2 rotate-[0.6deg] self-start">
+        <LoopShell className="z-30 rotate-[0.5deg] self-start">
           <PipelineLoop />
         </LoopShell>
-        <LoopShell className="z-10 mt-4 -rotate-[1.5deg] self-start xl:mt-6">
+        <LoopShell className="z-40 mt-3 -rotate-[1.2deg] self-start xl:mt-4">
           <AdsLoop />
         </LoopShell>
       </div>

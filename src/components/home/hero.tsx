@@ -75,20 +75,23 @@ export function Hero() {
 
           {/* Animation loops composition */}
           <div
-            className="hero-enter relative min-w-0"
+            className="hero-enter relative min-w-0 lg:pt-[6rem]"
             style={{ ["--reveal-delay" as string]: "100ms" }}
           >
             <HeroLoops />
 
-            {/* Real proof chip only — Detail Depot from proofMetrics */}
-            <div className="hero-float pointer-events-none absolute -right-1 -top-3 z-50 hidden max-w-[11.5rem] rounded-2xl border border-border bg-card px-3.5 py-2.5 shadow-[0_12px_28px_-14px_rgba(12,12,12,0.35)] lg:block xl:-right-2 xl:-top-4">
-              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+            {/*
+              Proof chip sits in reserved top gutter (lg:pt-10), centered on the
+              column gap — clear of Speed-to-lead label/timer and Ads caption.
+            */}
+            <div className="hero-float pointer-events-none absolute left-[46%] top-1 z-50 hidden max-w-[10rem] -translate-x-1/2 rounded-2xl border border-border bg-card px-3 py-2 shadow-[0_12px_28px_-14px_rgba(12,12,12,0.35)] lg:block">
+              <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
                 {detailDepot.label}
               </p>
-              <p className="mt-0.5 text-lg font-semibold tracking-tight text-brand">
+              <p className="mt-0.5 text-base font-semibold tracking-tight text-brand">
                 {detailDepot.value}
               </p>
-              <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
+              <p className="mt-0.5 text-[10px] leading-snug text-muted-foreground">
                 {detailDepot.detail}
               </p>
             </div>
