@@ -1,0 +1,149 @@
+{
+  "industryImages": {
+    "plumbing-companies": "/industries/plumbing-companies.webp",
+    "roofing-companies": "/industries/roofing-companies.webp",
+    "pest-control-companies": "/industries/pest-control-companies.webp",
+    "landscaping-companies": "/industries/landscaping-companies.webp",
+    "window-companies": "/industries/window-companies.webp",
+    "smart-home-installers": "/industries/smart-home-installers.webp",
+    "contractors": "/industries/contractors.webp",
+    "auto-detailing-shops": "/industries/auto-detailing-shops.webp",
+    "auto-styling-shops": "/industries/auto-styling-shops.webp",
+    "med-spas": "/industries/med-spas.webp",
+    "b2b-services": "/industries/b2b-services.webp",
+    "education-training": "/industries/education-training.webp"
+  },
+  "hubAccent": "/industries/home-services-hvac.webp",
+  "assets": [
+    {
+      "slug": "plumbing-companies",
+      "source": "hf_03b3743b.png",
+      "dims": "1200x669",
+      "webp_q": 80,
+      "webp_kb": 100.6,
+      "jpg_q": 82,
+      "jpg_kb": 148.0,
+      "image": "/industries/plumbing-companies.webp"
+    },
+    {
+      "slug": "roofing-companies",
+      "source": "hf_e807f31e.png",
+      "dims": "1200x669",
+      "webp_q": 80,
+      "webp_kb": 88.5,
+      "jpg_q": 82,
+      "jpg_kb": 136.9,
+      "image": "/industries/roofing-companies.webp"
+    },
+    {
+      "slug": "pest-control-companies",
+      "source": "hf_ec122ede.png",
+      "dims": "1200x669",
+      "webp_q": 80,
+      "webp_kb": 77.1,
+      "jpg_q": 82,
+      "jpg_kb": 124.1,
+      "image": "/industries/pest-control-companies.webp"
+    },
+    {
+      "slug": "landscaping-companies",
+      "source": "hf_cc49c30e.png",
+      "dims": "1200x669",
+      "webp_q": 80,
+      "webp_kb": 75.7,
+      "jpg_q": 82,
+      "jpg_kb": 120.6,
+      "image": "/industries/landscaping-companies.webp"
+    },
+    {
+      "slug": "window-companies",
+      "source": "hf_30eed00e.png",
+      "dims": "1200x669",
+      "webp_q": 80,
+      "webp_kb": 73.9,
+      "jpg_q": 82,
+      "jpg_kb": 121.4,
+      "image": "/industries/window-companies.webp"
+    },
+    {
+      "slug": "smart-home-installers",
+      "source": "hf_1182e80f.png",
+      "dims": "1200x669",
+      "webp_q": 80,
+      "webp_kb": 91.6,
+      "jpg_q": 82,
+      "jpg_kb": 139.9,
+      "image": "/industries/smart-home-installers.webp"
+    },
+    {
+      "slug": "contractors",
+      "source": "hf_5426e535.png",
+      "dims": "1200x669",
+      "webp_q": 80,
+      "webp_kb": 125.8,
+      "jpg_q": 82,
+      "jpg_kb": 174.3,
+      "image": "/industries/contractors.webp"
+    },
+    {
+      "slug": "auto-detailing-shops",
+      "source": "hf_a41665fd.png",
+      "dims": "1200x669",
+      "webp_q": 80,
+      "webp_kb": 66.1,
+      "jpg_q": 82,
+      "jpg_kb": 114.3,
+      "image": "/industries/auto-detailing-shops.webp"
+    },
+    {
+      "slug": "home-services-hvac",
+      "source": "hf_b3d2bea6.png",
+      "dims": "1600x893",
+      "webp_q": 80,
+      "webp_kb": 192.0,
+      "jpg_q": 78,
+      "jpg_kb": 252.7,
+      "image": "/industries/home-services-hvac.webp"
+    },
+    {
+      "slug": "auto-styling-shops",
+      "source": "auto-styling-shops.png",
+      "dims": "1200x675",
+      "webp_q": 80,
+      "webp_kb": 70.8,
+      "jpg_q": 82,
+      "jpg_kb": 123.1,
+      "image": "/industries/auto-styling-shops.webp"
+    },
+    {
+      "slug": "med-spas",
+      "source": "med-spas.png",
+      "dims": "1200x675",
+      "webp_q": 80,
+      "webp_kb": 96.5,
+      "jpg_q": 82,
+      "jpg_kb": 154.3,
+      "image": "/industries/med-spas.webp"
+    },
+    {
+      "slug": "b2b-services",
+      "source": "b2b-services.png",
+      "dims": "1200x675",
+      "webp_q": 80,
+      "webp_kb": 98.8,
+      "jpg_q": 82,
+      "jpg_kb": 147.4,
+      "image": "/industries/b2b-services.webp"
+    },
+    {
+      "slug": "education-training",
+      "source": "education-training.png",
+      "dims": "1200x675",
+      "webp_q": 80,
+      "webp_kb": 93.4,
+      "jpg_q": 82,
+      "jpg_kb": 142.8,
+      "image": "/industries/education-training.webp"
+    }
+  ]
+}

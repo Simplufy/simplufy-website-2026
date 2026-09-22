@@ -1,17 +1,18 @@
 # Dependencies
 node_modules/
 
-# Build output
+# Next.js
+.next/
+out/
+
+# Build / Cloudflare
 dist/
-
-# Astro
-.astro/
-
-# Wrangler
 .wrangler/
+.astro/
 
 # Logs
 *.log
+npm-debug.log*
 
 # OS
 .DS_Store
@@ -26,3 +27,7 @@ Thumbs.db
 # Environment
 .env
 .env.local
+.env.*.local
+
+# TypeScript
+*.tsbuildinfo
